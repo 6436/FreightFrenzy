@@ -14,7 +14,7 @@ open class FourWheelDrivetrain {
     private lateinit var fr: DcMotorEx
     private lateinit var bl: DcMotorEx
     private lateinit var br: DcMotorEx
-    lateinit var motors: Array<DcMotorEx>
+    protected lateinit var motors: Array<DcMotorEx>
 
     open fun initialize() {
         fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
