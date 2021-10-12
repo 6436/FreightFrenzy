@@ -22,7 +22,7 @@ class Lift : OpMode() {
 
         motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
     override fun loop() {
