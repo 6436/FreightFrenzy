@@ -97,8 +97,8 @@ open class Mecanum {
 
     private fun drive() {
         val translate = Vector(
-            gamepad1.left_stick_x.toDouble(),
-                    gamepad1.left_stick_y.toDouble()
+            -gamepad1.left_stick_x.toDouble(),
+            gamepad1.left_stick_y.toDouble()
         ).rotatedAboutOrigin(-heading)
         val x = translate.x
         val y = translate.y
@@ -116,5 +116,11 @@ open class Mecanum {
         powers.zip(motors) { power, motor ->
             motor.power = power / max * MAX_POWER
         }
+    }
+
+    fun telemetry() {
+        telemetry.addData("heading", heading)
+        telemetry.addData("x", location.x)
+        telemetry.addData("y", location.y)
     }
 }

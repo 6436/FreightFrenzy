@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
+import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
 import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
 
@@ -14,7 +17,10 @@ class TeleOp : OpMode() {
     private val drivetrain = Mecanum()
 
     override fun init() {
+        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+
         globalHardwareMap = hardwareMap
+        globalTelemetry = telemetry as MultipleTelemetry
         globalGamepad1 = gamepad1
         globalGamepad2 = gamepad2
 
@@ -28,5 +34,7 @@ class TeleOp : OpMode() {
         for (i in hubs) i.clearBulkCache()
 
         drivetrain.update()
+
+        drivetrain.telemetry()
     }
 }
