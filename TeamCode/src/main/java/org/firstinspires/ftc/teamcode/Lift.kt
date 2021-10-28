@@ -1,33 +1,29 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.Servo
 
 @TeleOp
-class Lift : OpMode() {
-    private companion object {
-        const val POWER = 0.6
-    }
-
-    private lateinit var motor: DcMotorEx
+class Lift : Motor() {
+    private lateinit var servo: Servo
 
     override fun init() {
-        motor = hardwareMap.get(DcMotorEx::class.java, ::motor.name)
+        super.init()
 
-        motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-
-        motor.targetPosition = 0
-
-        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-        motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        servo = hardwareMap.get(Servo::class.java, ::servo.name)
     }
 
     override fun loop() {
-        val power = gamepad1.right_stick_y
+        super.loop()
 
-        motor.power = power * POWER
+        if (gamepad1.x) {
+            servo.position = 0.7
+        } else if (gamepad1.y) {
+            servo.position = 0.0
+        } else if (gamepad1.dpad_up) {
+            servo.position += 0.01
+        } else if (gamepad1.dpad_down) {
+            servo.position -= 0.01
+        }
     }
 }

@@ -18,10 +18,12 @@ open class Mecanum {
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
         const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
 
-        const val ROBOT_CIRCUMFERENCE_COUNTS = 3000
+        const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
 
-        const val MAX_POWER = 0.5
+        const val MAX_POWER = 0.9
     }
+
+    private val imu = Imu()
 
     private lateinit var fl: DcMotorEx
     private lateinit var fr: DcMotorEx
@@ -30,6 +32,8 @@ open class Mecanum {
     private lateinit var motors: Array<DcMotorEx>
 
     fun initialize() {
+        imu.initialize()
+
         fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
         fr = hardwareMap.get(DcMotorEx::class.java, ::fr.name)
         bl = hardwareMap.get(DcMotorEx::class.java, ::bl.name)
@@ -99,11 +103,11 @@ open class Mecanum {
         val translate = Vector(
             -gamepad1.left_stick_x.toDouble(),
             gamepad1.left_stick_y.toDouble()
-        ).rotatedAboutOrigin(-heading)
+        ).rotatedAboutOrigin(heading)
         val x = translate.x
         val y = translate.y
 
-        val turn = gamepad1.right_stick_x.toDouble()
+        val turn = -gamepad1.right_stick_x.toDouble()
 
         val flPower = y + x + turn
         val frPower = y - x - turn
