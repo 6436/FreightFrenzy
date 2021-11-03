@@ -101,5 +101,8 @@ class TeleOp : OpMode() {
 
 
         drivetrain.telemetry()
+        telemetry.addData("intakeServo", intakeServo.position)
+        telemetry.addData("liftServo", liftServo.position)
+        telemetry.addData("liftMotor", liftMotor.currentPosition)
     }
 }
