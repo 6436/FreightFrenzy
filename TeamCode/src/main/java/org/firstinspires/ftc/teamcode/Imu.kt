@@ -24,7 +24,7 @@ class Imu {
 
             var changeHeading = angle - lastAngle
 
-            if (abs(changeHeading) > 180.0) changeHeading += -sign(changeHeading) * 360.0
+            if (abs(changeHeading) > 180.0) changeHeading -= sign(changeHeading) * 360.0
 
             field += changeHeading
 
