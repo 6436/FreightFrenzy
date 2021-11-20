@@ -63,33 +63,35 @@ class TeleOp : OpMode() {
 
         drivetrain.update()
 
-        intakeMotor.power = if (gamepad1.left_trigger > 0.0) -0.55 else if (gamepad1.right_trigger > 0.0) 0.55 else 0.0
+        intakeMotor.power = if (gamepad1.left_trigger > 0.0) -0.55 else if (gamepad1.right_bumper) 0.55 else if (gamepad1.right_trigger > 0.0) 0.95 else 0.0
 
         when {
             gamepad2.dpad_up -> {
-                intakeServo.position = 0.67
+                intakeServo.position = 0.7
             }
             gamepad2.dpad_down -> {
-                intakeServo.position = 0.07
+                intakeServo.position = 0.31
             }
-//            gamepad1.dpad_right -> {
-//                intakeServo.position += 0.01
-//            }
-//            gamepad1.dpad_left -> {
-//                intakeServo.position -= 0.01
-//            }
+            gamepad2.dpad_right -> {
+                intakeServo.position += 0.01
+            }
+            gamepad2.dpad_left -> {
+                intakeServo.position -= 0.01
+            }
         }
 
 
         when {
             gamepad2.right_bumper -> {
-                liftMotor.targetPosition = 3000
+                liftMotor.targetPosition = 2800
             }
             gamepad2.y -> {
                 liftMotor.targetPosition = 1200
+//                liftMotor.targetPosition+= 1
             }
             gamepad2.x -> {
                 liftMotor.targetPosition = 0
+//                liftMotor.targetPosition -= 1
             }
         }
         liftMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
@@ -97,17 +99,21 @@ class TeleOp : OpMode() {
 
         when {
             gamepad2.a -> {
-                liftServo.position = 0.0
+                liftServo.position = 0.358
             }
             gamepad2.b -> {
-                liftServo.position = 0.43
+                liftServo.position = 0.8
             }
-            gamepad2.left_trigger > 0.0 -> {
-                liftMotor.targetPosition = 500
-                                liftServo.position =0.2
-            }            gamepad2.right_trigger > 0.0 -> {
-                                liftServo.position -= 0.001
-            }
+//            gamepad2.left_trigger > 0.0 -> {
+//                liftMotor.targetPosition = 500
+//                                liftServo.position =0.2
+//            }
+//            gamepad2.right_trigger > 0.0 -> {
+//                                liftServo.position -= 0.001
+//            }
+//            gamepad2.left_bumper -> {
+//                liftServo.position += 0.001
+//            }
         }
 
 
