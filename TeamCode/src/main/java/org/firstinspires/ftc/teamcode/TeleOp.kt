@@ -63,30 +63,15 @@ class TeleOp : OpMode() {
 
         drivetrain.update()
 
-        intakeMotor.power = if (gamepad1.left_trigger > 0.0) -0.55 else if (gamepad1.right_bumper) 0.55 else if (gamepad1.right_trigger > 0.0) 0.95 else 0.0
-
-        when {
-            gamepad2.dpad_up -> {
-                intakeServo.position = 0.7
-            }
-            gamepad2.dpad_down -> {
-                intakeServo.position = 0.31
-            }
-            gamepad2.dpad_right -> {
-                intakeServo.position += 0.01
-            }
-            gamepad2.dpad_left -> {
-                intakeServo.position -= 0.01
-            }
-        }
+        intakeMotor.power = if (gamepad1.left_trigger > 0.0) 0.55 else if (gamepad1.right_bumper) -0.55 else if (gamepad1.right_trigger > 0.0) -0.95 else 0.0
 
 
         when {
             gamepad2.right_bumper -> {
-                liftMotor.targetPosition = 2800
+                liftMotor.targetPosition = -2800
             }
             gamepad2.y -> {
-                liftMotor.targetPosition = 1200
+                liftMotor.targetPosition = -1200
 //                liftMotor.targetPosition+= 1
             }
             gamepad2.x -> {
@@ -104,21 +89,20 @@ class TeleOp : OpMode() {
             gamepad2.b -> {
                 liftServo.position = 0.8
             }
-//            gamepad2.left_trigger > 0.0 -> {
-//                liftMotor.targetPosition = 500
-//                                liftServo.position =0.2
-//            }
-//            gamepad2.right_trigger > 0.0 -> {
-//                                liftServo.position -= 0.001
-//            }
-//            gamepad2.left_bumper -> {
-//                liftServo.position += 0.001
-//            }
+            gamepad2.left_trigger > 0.0 -> {
+                liftMotor.targetPosition = 500
+                                liftServo.position =0.2
+            }
+            gamepad2.right_trigger > 0.0 -> {
+                                liftServo.position -= 0.001
+            }
+            gamepad2.left_bumper -> {
+                liftServo.position += 0.001
+            }
         }
 
 
         drivetrain.telemetry()
-        telemetry.addData("intakeServo", intakeServo.position)
         telemetry.addData("liftServo", liftServo.position)
         telemetry.addData("liftMotor", liftMotor.currentPosition)
     }
