@@ -127,9 +127,9 @@ open class Mecanum {
 
     fun move() {
         for (i in motors) {
-            i.power = 0.25
+            i.power = -0.25
         }
-        while (motors[1].currentPosition>-COUNTS_PER_INCH*48) {
+        while (motors[1].currentPosition>-COUNTS_PER_INCH*26) {
 
         }
         for ( i in motors) {

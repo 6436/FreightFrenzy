@@ -18,7 +18,6 @@ class Auto : LinearOpMode() {
 //    private lateinit var hubs: List<LynxModule>
 
     private val drivetrain = Mecanum()
-    private lateinit var intakeServo: Servo
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -33,9 +32,8 @@ class Auto : LinearOpMode() {
 
         drivetrain.initialize()
 
-        intakeServo = hardwareMap.get(Servo::class.java, ::intakeServo.name)
- drivetrain.move()
+        waitForStart()
+        drivetrain.move()
 
-        intakeServo.position = 0.1
     }
 }
