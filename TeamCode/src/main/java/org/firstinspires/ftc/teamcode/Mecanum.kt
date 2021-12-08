@@ -8,8 +8,9 @@ import kotlin.math.*
 
 class Mecanum {
     private companion object {
+        const val INCHES_PER_FEET = 12
         const val MILLIMETERS_PER_INCH = 25.4
-        const val DEGREES_PER_ROTATION = 360.0
+        const val DEGREES_PER_ROTATION = 360
 
         const val COUNTS_PER_ROTATION = 537.6
         const val WHEEL_DIAMETER_MILLIMETERS = 100.0
@@ -17,6 +18,7 @@ class Mecanum {
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
         const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
+        const val COUNTS_PER_FEET = COUNTS_PER_INCH * INCHES_PER_FEET
 
         const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
 
@@ -36,7 +38,7 @@ class Mecanum {
     fun initialize() {
 //        imu.initialize()
         hubs = hardwareMap.getAll(LynxModule::class.java)
-        for (i in hubs) i.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+        for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
         fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
         fr = hardwareMap.get(DcMotorEx::class.java, ::fr.name)
@@ -47,14 +49,14 @@ class Mecanum {
         for (i in motors.indices) motors[i].direction =
             if (i % 2 == 0) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
 
-        for (i in motors) {
-            i.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        for (motor in motors) {
+            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-            i.targetPosition = 0
+            motor.targetPosition = 0
 
-            i.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-            i.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
     }
 
@@ -65,12 +67,12 @@ class Mecanum {
     }
 
     fun read() {
-        for (i in motors) {
-            i.currentPosition
+        for (motor in motors) {
+            motor.currentPosition
 
 //            i.velocity
 
-            i.isBusy
+            motor.isBusy
         }
     }
 
@@ -105,6 +107,14 @@ class Mecanum {
 
         lastAPosition = aPosition
         lastBPosition = bPosition
+    }
+
+    fun tempauto() {
+        for (motor in motors) {
+            motor.targetPosition = (12 * COUNTS_PER_FEET).roundToInt()
+            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
+            motor.power = 0.25
+        }
     }
 
     private fun drive() {

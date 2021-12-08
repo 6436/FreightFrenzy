@@ -37,6 +37,7 @@ class Autonomous : LinearOpMode() {
 
         waitForStart()
 
-        drivetrain.move(12, 120, 10)
+        drivetrain.tempauto()
+//        drivetrain.move(12, 120, 10)
     }
 }
