@@ -67,12 +67,14 @@ class Mecanum {
     }
 
     fun read() {
+        for (hub in hubs) hub.clearBulkCache()
+
         for (motor in motors) {
             motor.currentPosition
 
 //            i.velocity
 
-            motor.isBusy
+//            motor.isBusy
         }
     }
 
@@ -111,13 +113,19 @@ class Mecanum {
 
     fun tempauto() {
         for (motor in motors) {
-            motor.targetPosition = (12 * COUNTS_PER_FEET).roundToInt()
+            motor.targetPosition = (10 * COUNTS_PER_FEET).roundToInt()
             motor.mode = DcMotor.RunMode.RUN_TO_POSITION
             motor.power = 0.25
         }
+        while (fl.isBusy) {
+
+        }
+        for (motor in motors) {
+            motor.power = 0.0
+        }
     }
 
-    private fun drive() {
+    fun drive() {
 //        val translate = Vector(
 //            -gamepad1.left_stick_x.toDouble(),
 //            gamepad1.left_stick_y.toDouble()
@@ -203,7 +211,7 @@ class Mecanum {
             powers.zip(motors) { power, motor ->
                 motor.power = power / max * MAX_POWER
             }
-        } while (true)
+        } while (max != 0.0 && !isStopRequested())
     }
 
     fun telemetry() {

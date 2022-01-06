@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 
 @TeleOp
-class TeleOp : CarouselTest() {
+class DrivetrainIntake : CarouselTest() {
     private val drivetrain = Mecanum()
     private lateinit var intake: DcMotorEx
     private lateinit var lift: DcMotorEx
@@ -46,7 +46,6 @@ class TeleOp : CarouselTest() {
 
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
 
-        scoring.position = 0.56
     }
 
     override fun loop() {
@@ -57,10 +56,10 @@ class TeleOp : CarouselTest() {
         telemetry.addData("intakeVelocity", intake.power)
 
 //        lift.power = if (gamepad1.left_bumper) -0.5 else if (gamepad1.right_bumper) 0.5 else 0.0
-        lift.targetPosition = if (gamepad2.x) 0 else if (gamepad2.y) -812 else if (gamepad2.right_bumper) -2050 else lift.targetPosition
+        lift.targetPosition = if (gamepad1.x) 0 else if (gamepad1.y) -812 else if (gamepad1.right_bumper) -2050 else lift.targetPosition
         telemetry.addData("lift targetPosition", lift.targetPosition)
 
-        scoring.position = if (gamepad2.dpad_up || gamepad2.x) 0.56 else if (gamepad2.a) 0.98 else if (gamepad2.b) 0.1 else scoring.position
+        scoring.position = if (gamepad1.dpad_up || gamepad1.x) 0.56 else if (gamepad1.a) 0.98 else if (gamepad1.b) 0.1 else scoring.position
         telemetry.addData("scoring position", scoring.position)
     }
 }

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
 import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
+import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 
 @Autonomous(preselectTeleOp = "TeleOp")
 class Autonomous : LinearOpMode() {
@@ -25,19 +26,24 @@ class Autonomous : LinearOpMode() {
 
         globalHardwareMap = hardwareMap
 
+        globalIsStopRequested = ::isStopRequested
+
         drivetrain.initialize()
         thread {
-            drivetrain.read()
+            while (!isStopRequested) {
+                drivetrain.read()
 
-            drivetrain.odometry()
+                drivetrain.odometry()
 
-            drivetrain.telemetry()
-            telemetry.update()
+                drivetrain.telemetry()
+
+                telemetry.update()
+            }
         }
 
         waitForStart()
 
-        drivetrain.tempauto()
-//        drivetrain.move(12, 120, 10)
+//        drivetrain.tempauto()
+        drivetrain.move(36, 36, 45)
     }
 }

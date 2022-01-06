@@ -21,14 +21,15 @@ class Imu {
     var heading = 0.0
         get() {
             val angle = imu.angularOrientation.firstAngle.toDouble()
-
-            var changeHeading = angle - lastAngle
-
-            if (abs(changeHeading) > 180.0) changeHeading -= sign(changeHeading) * 360.0
-
-            field += changeHeading
-
-            lastAngle = angle
-            return field
+//
+//            var changeHeading = angle - lastAngle
+//
+//            if (abs(changeHeading) > 180.0) changeHeading -= sign(changeHeading) * 360.0
+//
+//            field += changeHeading
+//
+//            lastAngle = angle
+//            return field
+            return angle
         }
 }
