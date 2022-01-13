@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.*
 import kotlin.math.*
 
 class Mecanum {
@@ -20,7 +21,7 @@ class Mecanum {
 
         const val ROBOT_CIRCUMFERENCE_COUNTS = 3810.11636002
 
-        const val MAX_POWER = 0.9
+        const val POWER = 0.9
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -118,7 +119,7 @@ class Mecanum {
         val max = (powers.map { abs(it) } + 1.0).maxOrNull()!!
 
         powers.zip(motors) { power, motor ->
-            motor.power = power / max * MAX_POWER
+            motor.power = power / max * POWER
         }
     }
 
@@ -180,7 +181,7 @@ class Mecanum {
             val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
             powers.zip(motors) { power, motor ->
-                motor.power = power / maxPower * MAX_POWER
+                motor.power = power / maxPower * POWER
             }
         } while (maxPower != 0.0 && !isStopRequested())
     }

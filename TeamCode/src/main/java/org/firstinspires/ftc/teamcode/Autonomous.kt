@@ -4,6 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.hardware.Carousel
+import org.firstinspires.ftc.teamcode.hardware.Lift
+import org.firstinspires.ftc.teamcode.hardware.Mecanum
+import org.firstinspires.ftc.teamcode.hardware.Scoring
 import kotlin.concurrent.thread
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
@@ -11,10 +15,10 @@ import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @Autonomous(preselectTeleOp = "TeleOp")
 class Autonomous : LinearOpMode() {
-
     private val drivetrain = Mecanum()
     private val lift = Lift()
     private val scoring = Scoring()
+    private val carousel = Carousel()
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -26,6 +30,7 @@ class Autonomous : LinearOpMode() {
         drivetrain.initialize()
         lift.initialize()
         scoring.initialize()
+        carousel.initialize()
 
         thread {
             while (!isStopRequested) {
@@ -34,6 +39,9 @@ class Autonomous : LinearOpMode() {
                 drivetrain.odometry()
 
                 drivetrain.telemetry()
+                lift.telemetry()
+                scoring.telemetry()
+                carousel.telemetry()
 
                 telemetry.update()
             }
@@ -42,8 +50,14 @@ class Autonomous : LinearOpMode() {
         waitForStart()
 
         drivetrain.move(0, 31, 0)
+        sleep(2000)
         lift.up()
+        sleep(2000)
         scoring.right()
+        sleep(2000)
         drivetrain.move(-20, 11, 0)
+        sleep(2000)
+        carousel.red()
+        sleep(20000)
     }
 }

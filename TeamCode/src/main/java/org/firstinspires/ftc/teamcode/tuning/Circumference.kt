@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.tuning
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.Imu
+import org.firstinspires.ftc.teamcode.hardware.Imu
 import kotlin.math.absoluteValue
 
 @TeleOp
