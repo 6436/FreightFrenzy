@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.gamepad2
+import org.firstinspires.ftc.teamcode.hardwareMap
 
 class Lift {
     private companion object {
@@ -48,6 +50,6 @@ class Lift {
     }
 
     fun telemetry() {
-        telemetry.addData("lift targetPosition", lift.targetPosition)
+        org.firstinspires.ftc.teamcode.telemetry.addData("lift targetPosition", lift.targetPosition)
     }
 }

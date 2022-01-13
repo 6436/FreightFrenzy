@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.hardware.bosch.BNO055IMU
+import org.firstinspires.ftc.teamcode.hardwareMap
 import kotlin.math.abs
 import kotlin.math.sign
 
