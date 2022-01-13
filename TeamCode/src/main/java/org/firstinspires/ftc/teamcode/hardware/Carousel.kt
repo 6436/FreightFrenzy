@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
+import org.firstinspires.ftc.teamcode.telemetry
 
 class Carousel {
     private companion object {
@@ -40,6 +41,6 @@ class Carousel {
     }
 
     fun telemetry() {
-        org.firstinspires.ftc.teamcode.telemetry.addData("carousel power", carousel.power)
+        telemetry.addData("carousel power", carousel.power)
     }
 }

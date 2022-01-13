@@ -9,6 +9,10 @@ import kotlin.math.*
 
 class Mecanum {
     private companion object {
+        const val POWER = 0.9
+
+        const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
+
         const val MILLIMETERS_PER_INCH = 25.4
         const val DEGREES_PER_ROTATION = 360.0
 
@@ -18,10 +22,6 @@ class Mecanum {
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
         const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
-
-        const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
-
-        const val POWER = 0.9
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -123,8 +123,8 @@ class Mecanum {
         }
     }
 
-    private var lastTargetHeading = 0.0
     private var lastTargetLocation = Point()
+    private var lastTargetHeading = 0.0
     fun move(
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,

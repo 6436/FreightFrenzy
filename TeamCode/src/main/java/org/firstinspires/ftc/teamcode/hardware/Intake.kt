@@ -14,7 +14,7 @@ class Intake {
     private lateinit var intake: DcMotorEx
 
     fun initialize() {
-        intake = hardwareMap.get(DcMotorEx::class.java, ::suck.name)
+        intake = hardwareMap.get(DcMotorEx::class.java, ::intake.name)
 
         intake.direction = DcMotorSimple.Direction.REVERSE
 
