@@ -8,9 +8,8 @@ import kotlin.math.*
 
 class Mecanum {
     private companion object {
-        const val INCHES_PER_FEET = 12
         const val MILLIMETERS_PER_INCH = 25.4
-        const val DEGREES_PER_ROTATION = 360
+        const val DEGREES_PER_ROTATION = 360.0
 
         const val COUNTS_PER_ROTATION = 537.6
         const val WHEEL_DIAMETER_MILLIMETERS = 100.0
@@ -18,14 +17,11 @@ class Mecanum {
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
         const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
-        const val COUNTS_PER_FEET = COUNTS_PER_INCH * INCHES_PER_FEET
 
-        const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
+        const val ROBOT_CIRCUMFERENCE_COUNTS = 3810.11636002
 
         const val MAX_POWER = 0.9
     }
-
-//    private val imu = Imu()
 
     private lateinit var hubs: List<LynxModule>
 
@@ -36,7 +32,6 @@ class Mecanum {
     private lateinit var motors: Array<DcMotorEx>
 
     fun initialize() {
-//        imu.initialize()
         hubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
@@ -60,19 +55,11 @@ class Mecanum {
         }
     }
 
-    fun update() {
-        read()
-        odometry()
-        drive()
-    }
-
     fun read() {
+        for (hub in hubs) hub.clearBulkCache()
+
         for (motor in motors) {
             motor.currentPosition
-
-//            i.velocity
-
-            motor.isBusy
         }
     }
 
@@ -109,15 +96,7 @@ class Mecanum {
         lastBPosition = bPosition
     }
 
-    fun tempauto() {
-        for (motor in motors) {
-            motor.targetPosition = (12 * COUNTS_PER_FEET).roundToInt()
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            motor.power = 0.25
-        }
-    }
-
-    private fun drive() {
+    fun update() {
 //        val translate = Vector(
 //            -gamepad1.left_stick_x.toDouble(),
 //            gamepad1.left_stick_y.toDouble()
@@ -198,12 +177,12 @@ class Mecanum {
             val brPower = aPower + rightPower
             val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
 
-            val max = powers.map { abs(it) }.maxOrNull()!!
+            val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
             powers.zip(motors) { power, motor ->
-                motor.power = power / max * MAX_POWER
+                motor.power = power / maxPower * MAX_POWER
             }
-        } while (true)
+        } while (maxPower != 0.0 && !isStopRequested())
     }
 
     fun telemetry() {

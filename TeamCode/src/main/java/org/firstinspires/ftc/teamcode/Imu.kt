@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.hardware.bosch.BNO055IMU
-import kotlin.math.sign
 import kotlin.math.abs
+import kotlin.math.sign
 
 class Imu {
-    private lateinit var imu: BNO055IMU
+    lateinit var imu: BNO055IMU
 
     fun initialize() {
         val parameterz = BNO055IMU.Parameters()
@@ -17,11 +17,12 @@ class Imu {
         imu.initialize(parameterz)
     }
 
+    val angle
+        get() = imu.angularOrientation.firstAngle.toDouble()
+
     private var lastAngle = 0.0
     var heading = 0.0
         get() {
-            val angle = imu.angularOrientation.firstAngle.toDouble()
-
             var changeHeading = angle - lastAngle
 
             if (abs(changeHeading) > 180.0) changeHeading -= sign(changeHeading) * 360.0

@@ -1,29 +1,53 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 
-@TeleOp
-class Lift : Motor() {
-    private lateinit var servo: Servo
-
-    override fun init() {
-        super.init()
-
-        servo = hardwareMap.get(Servo::class.java, ::servo.name)
+class Lift {
+    private companion object {
+        const val POWER = 0.8
     }
 
-    override fun loop() {
-        super.loop()
+    private lateinit var lift: DcMotorEx
 
-        if (gamepad1.x) {
-            servo.position = 0.7
-        } else if (gamepad1.y) {
-            servo.position = 0.0
-        } else if (gamepad1.dpad_up) {
-            servo.position += 0.01
-        } else if (gamepad1.dpad_down) {
-            servo.position -= 0.01
+    fun initialize() {
+        lift = hardwareMap.get(DcMotorEx::class.java, ::lift.name)
+
+        lift.direction = DcMotorSimple.Direction.REVERSE
+
+        lift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        lift.targetPosition = 0
+
+        lift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+        lift.mode = DcMotor.RunMode.RUN_TO_POSITION
+
+        lift.power = POWER
+    }
+
+    fun update() {
+        when {
+            gamepad2.x -> down()
+            gamepad2.y -> middle()
+            gamepad2.right_bumper -> up()
         }
+    }
+
+    fun down() {
+        lift.targetPosition = 0
+    }
+
+    fun middle() {
+        lift.targetPosition = 812
+    }
+
+    fun up() {
+        lift.targetPosition = 2050
+    }
+
+    fun telemetry() {
+        telemetry.addData("lift targetPosition", lift.targetPosition)
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.tuning
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -6,13 +6,12 @@ import com.qualcomm.robotcore.hardware.Servo
 
 @TeleOp
 class ServoAdjust : OpMode() {
-
     private lateinit var servo: Servo
 
     override fun init() {
         servo = hardwareMap.get(Servo::class.java, ::servo.name)
-        servo.position = 0.0
 
+        servo.position = 0.0
     }
 
     override fun loop() {
@@ -26,6 +25,6 @@ class ServoAdjust : OpMode() {
             }
         }
 
-        telemetry.addData("Servo Pos: ", servo.position)
+        telemetry.addData("servo position", servo.position)
     }
 }
