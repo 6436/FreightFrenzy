@@ -8,7 +8,7 @@ lateinit var gamepad1: Gamepad
 lateinit var gamepad2: Gamepad
 
 lateinit var telemetry: Telemetry
-private const val TELEMETRY_FORMAT = "%.2f"
+const val TELEMETRY_FORMAT = "%.2f"
 fun Telemetry.addFormattedData(caption: String, value: Any) =
     this.addData(caption, TELEMETRY_FORMAT, value)!!
 
