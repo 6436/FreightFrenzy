@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 
 abstract class Drivetrain : OpMode() {
     private lateinit var hubs: List<LynxModule>
@@ -20,7 +21,7 @@ abstract class Drivetrain : OpMode() {
     override fun init() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        org.firstinspires.ftc.teamcode.hardwareMap = hardwareMap
+        globalHardwareMap = hardwareMap
 
         hubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL

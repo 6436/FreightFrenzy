@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
+import org.firstinspires.ftc.teamcode.telemetry
 
 class Intake {
     private companion object {
@@ -48,6 +49,6 @@ class Intake {
     }
 
     fun telemetry() {
-        org.firstinspires.ftc.teamcode.telemetry.addData("intake power", intake.power)
+        telemetry.addData("intake power", intake.power)
     }
 }

@@ -187,8 +187,12 @@ class Mecanum {
     }
 
     fun telemetry() {
-        telemetry.addData("x", location.x)
-        telemetry.addData("y", location.y)
-        telemetry.addData("heading", heading)
+        telemetry.addLine("drivetrain current position\n")
+            .addFormattedData("fl", fl.currentPosition).addFormattedData("fr", fr.currentPosition)
+            .addFormattedData("\nbl", bl.currentPosition).addFormattedData("br", br.currentPosition)
+
+        telemetry.addLine("drivetrain location").addFormattedData("x", location.x)
+            .addFormattedData("y", location.y)
+        telemetry.addFormattedData("drivetrain heading", heading)
     }
 }

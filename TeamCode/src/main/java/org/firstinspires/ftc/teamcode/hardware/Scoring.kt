@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.gamepad2
 import org.firstinspires.ftc.teamcode.hardwareMap
+import org.firstinspires.ftc.teamcode.telemetry
 
 class Scoring {
     private lateinit var scoring: Servo
@@ -34,6 +35,6 @@ class Scoring {
     }
 
     fun telemetry() {
-        org.firstinspires.ftc.teamcode.telemetry.addData("scoring position", scoring.position)
+        telemetry.addData("scoring position", scoring.position)
     }
 }
