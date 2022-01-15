@@ -29,6 +29,7 @@ class Carousel {
         when {
             gamepad1.dpad_left -> red()
             gamepad1.dpad_right -> blue()
+            else -> off()
         }
     }
 
@@ -38,6 +39,10 @@ class Carousel {
 
     fun blue() {
         carousel.power = -POWER
+    }
+
+    fun off() {
+        carousel.power = 0.0
     }
 
     fun telemetry() {
