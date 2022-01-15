@@ -193,7 +193,8 @@ class Mecanum {
             .addData("\nbl", TELEMETRY_FORMAT, bl.currentPosition)
             .addData("br", TELEMETRY_FORMAT, br.currentPosition)
 
-        telemetry.addLine("drivetrain location").addData("x", TELEMETRY_FORMAT, location.x)
+        telemetry.addLine("drivetrain location")
+            .addData("x", TELEMETRY_FORMAT, location.x)
             .addData("y", TELEMETRY_FORMAT, location.y)
         telemetry.addData("drivetrain heading", TELEMETRY_FORMAT, heading)
     }
