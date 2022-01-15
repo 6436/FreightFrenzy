@@ -16,7 +16,7 @@ class MoveForwardAutonomous : LinearOpMode() {
     private lateinit var fr: DcMotorEx
     private lateinit var bl: DcMotorEx
     private lateinit var br: DcMotorEx
-    lateinit var motors: Array<DcMotorEx>
+    private lateinit var motors: Array<DcMotorEx>
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
