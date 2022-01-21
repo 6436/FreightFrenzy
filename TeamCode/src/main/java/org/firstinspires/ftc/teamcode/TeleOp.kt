@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @TeleOp
-class TeleOp : OpMode() {
+open class TeleOp : OpMode() {
     private val drivetrain = Mecanum()
     private val intake = Intake()
     private val lift = Lift()

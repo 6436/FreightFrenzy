@@ -35,7 +35,6 @@ class Autonomous : LinearOpMode() {
         thread {
             while (!isStopRequested) {
                 drivetrain.read()
-
                 drivetrain.odometry()
 
                 drivetrain.telemetry()
