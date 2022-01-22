@@ -2,19 +2,27 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 
 class Carousel {
     private companion object {
-        const val POWER = 0.9
+        //        // 365 degrees
+//        const val WHEEL_CIRCUMFERENCE_INCHES = Math.PI * 4
+//        const val CAROUSEL_CIRCUMFERENCE_INCHES = Math.PI * 15
+//        const val COUNTS_PER_ROTATION = 537.6
+//        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
+        const val POWER = 0.55
     }
 
     private lateinit var carousel: DcMotorEx
 
     fun initialize() {
         carousel = hardwareMap.get(DcMotorEx::class.java, ::carousel.name)
+
+        carousel.direction = DcMotorSimple.Direction.REVERSE
 
         carousel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 

@@ -183,19 +183,19 @@ class Mecanum {
             powers.zip(motors) { power, motor ->
                 motor.power = power / maxPower * POWER
             }
-        } while (maxPower != 0.0 && !isStopRequested())
+        } while (!(maxPower == 0.0 || isStopRequested()))
     }
 
     fun telemetry() {
         telemetry.addLine("drivetrain current position\n")
-            .addData("fl", TELEMETRY_FORMAT, fl.currentPosition)
-            .addData("fr", TELEMETRY_FORMAT, fr.currentPosition)
-            .addData("\nbl", TELEMETRY_FORMAT, bl.currentPosition)
-            .addData("br", TELEMETRY_FORMAT, br.currentPosition)
+            .addData("fl", fl.currentPosition)
+            .addData("fr", fr.currentPosition)
+            .addData("\nbl", bl.currentPosition)
+            .addData("br", br.currentPosition)
 
-        telemetry.addLine("drivetrain location")
-            .addData("x", TELEMETRY_FORMAT, location.x)
-            .addData("y", TELEMETRY_FORMAT, location.y)
-        telemetry.addData("drivetrain heading", TELEMETRY_FORMAT, heading)
+        telemetry.addLine("drivetrain location\n")
+            .addFormattedData("x", location.x)
+            .addFormattedData("y", location.y)
+        telemetry.addFormattedData("drivetrain heading", heading)
     }
 }

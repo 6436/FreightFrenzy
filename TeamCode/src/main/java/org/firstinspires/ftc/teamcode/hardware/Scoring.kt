@@ -27,11 +27,11 @@ class Scoring {
     }
 
     fun left() {
-        scoring.position = 0.98
+        scoring.position = 0.1
     }
 
     fun right() {
-        scoring.position = 0.1
+        scoring.position = 0.98
     }
 
     fun telemetry() {
