@@ -14,7 +14,7 @@ class Carousel {
 //        const val CAROUSEL_CIRCUMFERENCE_INCHES = Math.PI * 15
 //        const val COUNTS_PER_ROTATION = 537.6
 //        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
-        const val POWER = 0.55
+        const val POWER = 0.5
     }
 
     private lateinit var carousel: DcMotorEx

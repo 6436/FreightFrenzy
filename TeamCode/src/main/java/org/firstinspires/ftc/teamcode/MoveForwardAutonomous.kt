@@ -4,55 +4,50 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import kotlin.math.roundToInt
+import org.firstinspires.ftc.teamcode.hardware.Carousel
+import org.firstinspires.ftc.teamcode.hardware.Lift
+import org.firstinspires.ftc.teamcode.hardware.Mecanum
+import org.firstinspires.ftc.teamcode.hardware.Scoring
+import kotlin.concurrent.thread
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
+import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
+import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @Autonomous(preselectTeleOp = "TeleOp")
 class MoveForwardAutonomous : LinearOpMode() {
-    private lateinit var fl: DcMotorEx
-    private lateinit var fr: DcMotorEx
-    private lateinit var bl: DcMotorEx
-    private lateinit var br: DcMotorEx
-    private lateinit var motors: Array<DcMotorEx>
+    private val drivetrain = Mecanum()
+    private val lift = Lift()
+    private val scoring = Scoring()
+    private val carousel = Carousel()
 
     override fun runOpMode() {
-        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+//        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
+        globalTelemetry = telemetry
         globalHardwareMap = hardwareMap
+        globalIsStopRequested = ::isStopRequested
 
-        fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
-        fr = hardwareMap.get(DcMotorEx::class.java, ::fr.name)
-        bl = hardwareMap.get(DcMotorEx::class.java, ::bl.name)
-        br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
-        motors = arrayOf(fl, fr, bl, br)
+        drivetrain.initialize()
+        lift.initialize()
+        scoring.initialize()
+        carousel.initialize()
 
-        for (i in motors.indices) motors[i].direction =
-            if (i % 2 == 0) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+        thread {
+            while (!isStopRequested) {
+                drivetrain.read()
+                drivetrain.odometry()
 
-        for (motor in motors) {
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+                drivetrain.telemetry()
+                lift.telemetry()
+                scoring.telemetry()
+                carousel.telemetry()
 
-            motor.targetPosition = 0
-
-            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                telemetry.update()
+            }
         }
 
         waitForStart()
 
-        for (motor in motors) {
-            motor.targetPosition = (10 * 43.4653422824).roundToInt()
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            motor.power = 0.25
-        }
-        while (fl.isBusy) {
-        }
-        for (motor in motors) {
-            motor.power = 0.0
-        }
+        drivetrain.move(0, 48)
     }
 }

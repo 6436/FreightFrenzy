@@ -47,7 +47,7 @@ class Lift {
     }
 
     fun up() {
-        lift.targetPosition = 2050
+        lift.targetPosition = 2100
     }
 
     fun telemetry() {
