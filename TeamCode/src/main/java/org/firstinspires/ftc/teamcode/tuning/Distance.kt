@@ -8,12 +8,10 @@ import kotlin.math.roundToInt
 @TeleOp
 class Distance : Drivetrain() {
     private companion object {
-        const val POWER = 0.25
-
         const val MILLIMETERS_PER_INCH = 25.4
 
         const val COUNTS_PER_ROTATION = 537.6
-        const val WHEEL_DIAMETER_MILLIMETERS = 100.0
+        const val WHEEL_DIAMETER_MILLIMETERS = 96.0
 
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI

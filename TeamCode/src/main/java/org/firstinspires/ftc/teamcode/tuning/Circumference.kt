@@ -6,10 +6,6 @@ import kotlin.math.absoluteValue
 
 @TeleOp
 class Circumference : Drivetrain() {
-    private companion object {
-        const val POWER = 0.25
-    }
-
     private val imu = Imu()
 
     override fun init() {

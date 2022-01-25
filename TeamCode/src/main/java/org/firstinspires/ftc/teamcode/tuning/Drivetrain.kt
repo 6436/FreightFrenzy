@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import org.firstinspires.ftc.teamcode.telemetry
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 
 abstract class Drivetrain : OpMode() {
+    protected companion object {
+        const val POWER = 0.25
+    }
+
     private lateinit var hubs: List<LynxModule>
 
     private lateinit var fl: DcMotorEx
