@@ -21,3 +21,5 @@ fun Telemetry.Item.addFormattedData(caption: String, value: Any) =
 lateinit var hardwareMap: HardwareMap
 
 lateinit var isStopRequested: () -> Boolean
+
+lateinit var liftIsUp: () -> Boolean

@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import org.firstinspires.ftc.teamcode.gamepad2
-import org.firstinspires.ftc.teamcode.hardwareMap
-import org.firstinspires.ftc.teamcode.telemetry
+import org.firstinspires.ftc.teamcode.*
 
 class Lift {
     private companion object {
-        const val POWER = 0.8
+        const val POWER = 0.85
     }
 
     private lateinit var lift: DcMotorEx
@@ -28,6 +26,8 @@ class Lift {
         lift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
         lift.power = POWER
+
+        liftIsUp = {lift.currentPosition > 712}
     }
 
     fun update() {
@@ -42,7 +42,7 @@ class Lift {
         lift.targetPosition = 0
     }
 
-    fun middle() {
+    private fun middle() {
         lift.targetPosition = 812
     }
 
@@ -51,6 +51,6 @@ class Lift {
     }
 
     fun telemetry() {
-        telemetry.addData("lift targetPosition", lift.targetPosition)
+        telemetry.addData("lift currentPosition", lift.currentPosition)
     }
 }

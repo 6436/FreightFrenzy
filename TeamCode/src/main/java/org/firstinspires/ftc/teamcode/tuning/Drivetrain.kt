@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.telemetry
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 
 abstract class Drivetrain : OpMode() {
@@ -52,5 +53,11 @@ abstract class Drivetrain : OpMode() {
         for (motor in motors) {
             motor.currentPosition
         }
+
+        telemetry.addLine("drivetrain current position\n")
+            .addData("fl", fl.currentPosition)
+            .addData("fr", fr.currentPosition)
+            .addData("\nbl", bl.currentPosition)
+            .addData("br", br.currentPosition)
     }
 }

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
 
 @TeleOp
-class ServoAdjust : OpMode() {
+class Servo : OpMode() {
     private lateinit var servo: Servo
 
     override fun init() {

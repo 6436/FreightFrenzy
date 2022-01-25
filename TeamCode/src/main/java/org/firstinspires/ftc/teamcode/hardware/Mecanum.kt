@@ -9,7 +9,7 @@ import kotlin.math.*
 
 class Mecanum {
     private companion object {
-        const val POWER = 0.9
+        const val POWER = 0.95
 
         const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
 
@@ -105,10 +105,10 @@ class Mecanum {
 //        val x = translate.x
 //        val y = translate.y
 
-        val x = -gamepad1.left_stick_x.toDouble() * 0.8
-        val y = gamepad1.left_stick_y.toDouble() * 0.8
+        val x = -gamepad1.left_stick_x.toDouble() * 0.9
+        val y = gamepad1.left_stick_y.toDouble() * 0.9
 
-        val turn = -gamepad1.right_stick_x.toDouble() * 0.7
+        val turn = -gamepad1.right_stick_x.toDouble() * 0.8
 
         val flPower = y + x + turn
         val frPower = y - x - turn
