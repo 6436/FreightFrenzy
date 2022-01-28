@@ -28,13 +28,16 @@ class Distance : Drivetrain() {
         }
     }
 
+    private var flag = true
     override fun loop() {
         super.loop()
 
-        if (gamepad1.x) {
+        if (gamepad1.x && flag) {
             for (motor in motors) {
                 motor.power = POWER
             }
+
+            flag = false
         }
 
         telemetry.addData(

@@ -11,7 +11,7 @@ class Mecanum {
     private companion object {
         const val POWER = 0.95
 
-        const val ROBOT_CIRCUMFERENCE_COUNTS = 3400.0
+        const val ROBOT_CIRCUMFERENCE_COUNTS = 3553.38475408
 
         const val MILLIMETERS_PER_INCH = 25.4
         const val DEGREES_PER_ROTATION = 360.0
@@ -42,8 +42,7 @@ class Mecanum {
         br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
         motors = arrayOf(fl, fr, bl, br)
 
-        for (i in motors.indices) motors[i].direction =
-            if (i % 2 == 0) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+        fl.direction = DcMotorSimple.Direction.REVERSE
 
         for (motor in motors) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

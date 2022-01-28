@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.tuning
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
+import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 abstract class Drivetrain : OpMode() {
     protected companion object {
@@ -23,8 +22,7 @@ abstract class Drivetrain : OpMode() {
     lateinit var motors: Array<DcMotorEx>
 
     override fun init() {
-        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-
+        globalTelemetry = telemetry
         globalHardwareMap = hardwareMap
 
         hubs = hardwareMap.getAll(LynxModule::class.java)
@@ -36,8 +34,7 @@ abstract class Drivetrain : OpMode() {
         br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
         motors = arrayOf(fl, fr, bl, br)
 
-        for (i in motors.indices) motors[i].direction =
-            if (i % 2 == 0) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+        fl.direction = DcMotorSimple.Direction.REVERSE
 
         for (motor in motors) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
