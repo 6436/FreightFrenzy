@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.hardware.Carousel
-import org.firstinspires.ftc.teamcode.hardware.Lift
-import org.firstinspires.ftc.teamcode.hardware.Mecanum
-import org.firstinspires.ftc.teamcode.hardware.Scoring
+import org.firstinspires.ftc.teamcode.hardware.*
 import kotlin.concurrent.thread
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
@@ -17,6 +12,7 @@ abstract class BaseAutonomous : LinearOpMode() {
     protected val lift = Lift()
     protected val scoring = Scoring()
     protected val carousel = Carousel()
+    protected val camera = Camera()
 
     override fun runOpMode() {
 //        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -29,6 +25,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         lift.initialize()
         scoring.initialize()
         carousel.initialize()
+        camera.initialize()
 
         thread {
             while (!isStopRequested) {
@@ -45,6 +42,8 @@ abstract class BaseAutonomous : LinearOpMode() {
         }
 
         waitForStart()
+
+        camera.off()
 
         autonomous()
 
