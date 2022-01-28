@@ -1,48 +1,36 @@
 package org.firstinspires.ftc.teamcode.tuning
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import kotlin.math.PI
-import kotlin.math.roundToInt
+import org.firstinspires.ftc.teamcode.hardware.Mecanum
+import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
+import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
+import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
+import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @TeleOp
-class Distance : Drivetrain() {
+class Distance : OpMode() {
     private companion object {
-        const val MILLIMETERS_PER_INCH = 25.4
-
-        const val COUNTS_PER_ROTATION = 537.6
-        const val WHEEL_DIAMETER_MILLIMETERS = 96.0
-
-        const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
-        const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
-        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
+        const val POWER = 0.2
     }
+
+    private val drivetrain = Mecanum()
 
     override fun init() {
-        super.init()
+        globalGamepad1 = gamepad1
+        globalGamepad2 = gamepad2
+        globalHardwareMap = hardwareMap
+        globalTelemetry = telemetry
 
-        for (motor in motors) {
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-
-            motor.targetPosition = (120.0 * COUNTS_PER_INCH).roundToInt()
-        }
+        drivetrain.initialize()
     }
 
-    private var flag = true
     override fun loop() {
-        super.loop()
-
-        if (gamepad1.x && flag) {
-            for (motor in motors) {
-                motor.power = POWER
-            }
-
-            flag = false
+        for (motor in drivetrain.motors) {
+            motor.power = if (gamepad1.x && drivetrain.location.magnitude < 10.0) POWER else 0.0
         }
 
-        telemetry.addData(
-            "average inches",
-            motors.map { it.currentPosition }.average() / COUNTS_PER_INCH
-        )
+        drivetrain.telemetry()
     }
 }
+

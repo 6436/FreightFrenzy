@@ -19,7 +19,7 @@ open class TeleOp : OpMode() {
     private val carousel = Carousel()
 
     override fun init() {
-        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+//        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         globalGamepad1 = gamepad1
         globalGamepad2 = gamepad2

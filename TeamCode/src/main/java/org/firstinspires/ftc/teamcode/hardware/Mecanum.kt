@@ -30,7 +30,7 @@ class Mecanum {
     private lateinit var fr: DcMotorEx
     private lateinit var bl: DcMotorEx
     private lateinit var br: DcMotorEx
-    private lateinit var motors: Array<DcMotorEx>
+    lateinit var motors: Array<DcMotorEx>
 
     fun initialize() {
         hubs = hardwareMap.getAll(LynxModule::class.java)
@@ -64,7 +64,7 @@ class Mecanum {
     }
 
     @Volatile
-    private var location = Point()
+    var location = Point()
 
     @Volatile
     private var heading = 0.0
