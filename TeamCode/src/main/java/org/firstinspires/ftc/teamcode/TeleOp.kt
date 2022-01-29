@@ -34,6 +34,9 @@ open class TeleOp : OpMode() {
     }
 
     override fun loop() {
+//        drivetrain.read()
+//        drivetrain.odometry()
+
         drivetrain.update()
         intake.update()
         lift.update()

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode
 
 import kotlin.math.*
 
+const val DEGREES_PER_ROTATION = 360.0
+
 fun Double.toRadians() = this * PI / 180.0
 
 typealias Point = Vector

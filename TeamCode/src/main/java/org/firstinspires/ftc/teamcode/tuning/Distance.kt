@@ -26,8 +26,11 @@ class Distance : OpMode() {
     }
 
     override fun loop() {
+        drivetrain.read()
+        drivetrain.odometry()
+
         for (motor in drivetrain.motors) {
-            motor.power = if (gamepad1.x && drivetrain.location.magnitude < 10.0) POWER else 0.0
+            motor.power = if (gamepad1.x && drivetrain.location.magnitude < 120.0) POWER else 0.0
         }
 
         drivetrain.telemetry()

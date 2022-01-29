@@ -5,6 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 @Autonomous(preselectTeleOp = "TeleOp")
 class MoveTowardIntakeFourFeet : BaseAutonomous() {
     override fun autonomous() {
-        drivetrain.move(0, -48)
+        drivetrain.move(y=-48)
     }
 }

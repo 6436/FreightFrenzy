@@ -10,18 +10,18 @@ import kotlin.math.*
 class Mecanum {
     private companion object {
         const val POWER = 0.95
+        const val DISTANCE_CONSTANT = 12.0 / 11.0 * 121.0 / 118.0
 
         const val ROBOT_CIRCUMFERENCE_COUNTS = 3553.38475408
 
         const val MILLIMETERS_PER_INCH = 25.4
-        const val DEGREES_PER_ROTATION = 360.0
 
         const val COUNTS_PER_ROTATION = 537.6
         const val WHEEL_DIAMETER_MILLIMETERS = 96.0
 
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
-        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
+        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES * DISTANCE_CONSTANT
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -140,7 +140,7 @@ class Mecanum {
 
             val aPower: Double
             val bPower: Double
-            if (remainingLocationDisplacement.magnitude < 1.0) {
+            if (remainingLocationDisplacement.magnitude < 6.0) {
                 aPower = 0.0
                 bPower = 0.0
             } else {

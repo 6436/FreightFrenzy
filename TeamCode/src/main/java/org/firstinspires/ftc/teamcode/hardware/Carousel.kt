@@ -9,11 +9,14 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Carousel {
     private companion object {
-        //        // 365 degrees
-//        const val WHEEL_CIRCUMFERENCE_INCHES = Math.PI * 4
-//        const val CAROUSEL_CIRCUMFERENCE_INCHES = Math.PI * 15
-//        const val COUNTS_PER_ROTATION = 537.6
-//        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES
+        const val WHEEL_DIAMETER_INCHES = 4.0
+        const val CAROUSEL_DIAMETER_INCHES = 15.0
+
+        const val COUNTS_PER_WHEEL_ROTATION = 537.6
+
+        const val COUNTS_PER_CAROUSEL_ROTATION =
+            COUNTS_PER_WHEEL_ROTATION / WHEEL_DIAMETER_INCHES * CAROUSEL_DIAMETER_INCHES
+
         const val POWER = 0.5
     }
 
@@ -21,8 +24,6 @@ class Carousel {
 
     fun initialize() {
         carousel = hardwareMap.get(DcMotorEx::class.java, ::carousel.name)
-
-        carousel.direction = DcMotorSimple.Direction.REVERSE
 
         carousel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
@@ -35,17 +36,20 @@ class Carousel {
 
     fun update() {
         when {
-            gamepad1.dpad_left -> red()
-            gamepad1.dpad_right -> blue()
+            gamepad1.dpad_left -> redOn()
+            gamepad1.dpad_right -> blueOn()
             else -> off()
         }
     }
 
-    fun red() {
+    fun redDeliver() {
+    }
+
+    fun redOn() {
         carousel.power = POWER
     }
 
-    fun blue() {
+    fun blueOn() {
         carousel.power = -POWER
     }
 
