@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
+enum class Alliance(val value: Double) {
+    RED(1.0), BLUE(-1.0)
+}
+
 lateinit var gamepad1: Gamepad
 lateinit var gamepad2: Gamepad
 

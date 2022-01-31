@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
+import java.lang.Thread.sleep
 
 class Carousel {
     private companion object {
+        const val POWER = 0.5
+        const val MAX_POWER = 0.9
+
         const val WHEEL_DIAMETER_INCHES = 4.0
         const val CAROUSEL_DIAMETER_INCHES = 15.0
 
@@ -16,8 +20,6 @@ class Carousel {
 
         const val COUNTS_PER_CAROUSEL_ROTATION =
             COUNTS_PER_WHEEL_ROTATION / WHEEL_DIAMETER_INCHES * CAROUSEL_DIAMETER_INCHES
-
-        const val POWER = 0.5
     }
 
     private lateinit var carousel: DcMotorEx
@@ -36,21 +38,25 @@ class Carousel {
 
     fun update() {
         when {
-            gamepad1.dpad_left -> redOn()
-            gamepad1.dpad_right -> blueOn()
+            gamepad1.dpad_left -> on(Alliance.RED)
+            gamepad1.dpad_right -> on(Alliance.BLUE)
             else -> off()
         }
     }
 
-    fun redDeliver() {
+    private fun on(alliance: Alliance) {
+        carousel.power = alliance.value * POWER
     }
 
-    fun redOn() {
-        carousel.power = POWER
+    private fun launch(alliance: Alliance) {
+        carousel.power = alliance.value * MAX_POWER
     }
 
-    fun blueOn() {
-        carousel.power = -POWER
+    fun deliver(alliance: Alliance) {
+        on(alliance)
+        sleep(1300)
+        launch(alliance)
+        sleep(400)
     }
 
     fun off() {

@@ -7,7 +7,7 @@ class BlueAuto : BaseAutonomous() {
     override fun autonomous() {
         drivetrain.move(41, 0)
         sleep(2000)
-        lift.up()
+        lift.top()
         sleep(2000)
         scoring.right()
         sleep(2000)

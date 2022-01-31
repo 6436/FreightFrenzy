@@ -21,7 +21,8 @@ class Mecanum {
 
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
-        const val COUNTS_PER_INCH = COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES * DISTANCE_CONSTANT
+        const val COUNTS_PER_INCH =
+            COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES * DISTANCE_CONSTANT
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -127,8 +128,14 @@ class Mecanum {
     fun move(
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
-        heading: Number = lastTargetHeading
+        heading: Number = lastTargetHeading,
+        brake: Boolean = true
     ) {
+        for (motor in motors) {
+            motor.zeroPowerBehavior =
+                if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
+        }
+
         val targetLocation = Point(x, y)
 
         val differenceAngle = heading.toDouble() - this.heading
@@ -183,6 +190,9 @@ class Mecanum {
                 motor.power = power / maxPower * POWER
             }
         } while (!(maxPower == 0.0 || isStopRequested()))
+
+        lastTargetLocation = targetLocation
+        lastTargetHeading = targetHeading
     }
 
     fun telemetry() {

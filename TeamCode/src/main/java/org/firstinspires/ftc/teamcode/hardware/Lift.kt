@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import org.firstinspires.ftc.teamcode.*
+import org.firstinspires.ftc.teamcode.gamepad2
+import org.firstinspires.ftc.teamcode.hardwareMap
+import org.firstinspires.ftc.teamcode.telemetry
 
 class Lift {
     private companion object {
@@ -26,28 +28,30 @@ class Lift {
         lift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
         lift.power = POWER
-
-        liftIsUp = {lift.currentPosition > 712}
     }
 
     fun update() {
         when {
             gamepad2.x -> down()
-            gamepad2.y -> middle()
-            gamepad2.right_bumper -> up()
+            gamepad2.y -> bottom()
+            gamepad2.right_bumper -> top()
         }
+    }
+
+    fun bottom() {
+        lift.targetPosition = 812
+    }
+
+    fun middle() {
+        lift.targetPosition = 1456
+    }
+
+    fun top() {
+        lift.targetPosition = 2100
     }
 
     fun down() {
         lift.targetPosition = 0
-    }
-
-    private fun middle() {
-        lift.targetPosition = 812
-    }
-
-    fun up() {
-        lift.targetPosition = 2100
     }
 
     fun telemetry() {
