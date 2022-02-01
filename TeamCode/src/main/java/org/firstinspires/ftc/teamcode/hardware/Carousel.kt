@@ -56,7 +56,8 @@ class Carousel {
         on(alliance)
         sleep(1300)
         launch(alliance)
-        sleep(400)
+        sleep(600)
+        off()
     }
 
     fun off() {

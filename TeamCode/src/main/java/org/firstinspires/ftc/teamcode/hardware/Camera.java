@@ -22,6 +22,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import static org.firstinspires.ftc.teamcode.GlobalsKt.hardwareMap;
+import static org.firstinspires.ftc.teamcode.GlobalsKt.telemetry;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -84,6 +85,10 @@ public class Camera {
 
     public void off() {
         webcam.stopStreaming();
+    }
+
+    public void telemetry() {
+        telemetry.addData("camera analysis", getAnalysis());
     }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {

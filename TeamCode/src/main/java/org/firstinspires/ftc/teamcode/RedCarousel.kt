@@ -14,45 +14,54 @@ class RedCarousel : BaseAutonomous() {
         drivetrain.move(-32, 7)
         sleep(100)
         carousel.deliver(Alliance.RED)
-        sleep(2500)
-        carousel.off()
-        drivetrain.move(y = 40)
+        drivetrain.move(
+            y = when (camera.analysis) {
+                SkystonePosition.LEFT -> 48.5
+                else -> 46.2
+            }
+        )
         lift.bonus()
-        sleep(500)
-        drivetrain.move(19.5, 46)
-        sleep(500)
+        sleep(1000)
+        drivetrain.move(
+            x = 20.7 - when (camera.analysis) {
+                SkystonePosition.RIGHT -> 0.0
+                else -> 2.3
+            }
+        )
+        sleep(1000)
         scoring.right()
-        sleep(1500)
+        sleep(2500)
         scoring.up()
-        sleep(200)
+        sleep(500)
         lift.down()
         when (camera.analysis) {
-            SkystonePosition.LEFT -> drivetrain.move(x = 6)
-            SkystonePosition.CENTER -> drivetrain.move(x = -6)
+            SkystonePosition.LEFT -> drivetrain.move(x = -7.7)
+            SkystonePosition.CENTER -> drivetrain.move(x = 2.5)
             else -> {}
         }
         intake.duckSuck()
-        sleep(500)
+        sleep(1000)
         drivetrain.move(y = 35)
-        sleep(500)
+        sleep(1000)
         intake.off()
         lift.top()
-        sleep(100)
-        drivetrain.move(19, 47)
+        sleep(500)
+        drivetrain.move(19, 45.5)
         sleep(500)
         scoring.right()
         sleep(1800)
-        drivetrain.move(-33, 30)
+
+        drivetrain.move(
+            -32, 30.7
+        )
     }
 
     fun fast() {
         drivetrain.move(-32, 7)
         sleep(100)
         carousel.deliver(Alliance.RED)
-        sleep(1800)
-        carousel.off()
 
-        drivetrain.move(y = 40, brake = false)
+        drivetrain.move(y = 41, brake = false)
         lift.bonus()
         scoring.right()
         drivetrain.move(19.5, 46)
@@ -72,6 +81,11 @@ class RedCarousel : BaseAutonomous() {
         drivetrain.move(19, 46)
         sleep(1000)
 
-        drivetrain.move(-32, 30)
+        drivetrain.move(
+            -32, when (camera.analysis) {
+                SkystonePosition.RIGHT -> 28.5
+                else -> 30
+            }
+        )
     }
 }

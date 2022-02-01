@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
+import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @TeleOp
 class Camera : LinearOpMode() {
@@ -11,13 +12,14 @@ class Camera : LinearOpMode() {
 
     override fun runOpMode() {
         globalHardwareMap = hardwareMap
+        globalTelemetry = telemetry
 
         camera.initialize()
 
         waitForStart()
 
         while (opModeIsActive()) {
-            telemetry.addData("Analysis", camera.analysis)
+            camera.telemetry()
             telemetry.update()
 
             // Don't burn CPU cycles busy-looping in this sample

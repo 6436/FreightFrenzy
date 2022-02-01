@@ -40,6 +40,7 @@ abstract class BaseAutonomous : LinearOpMode() {
                 lift.telemetry()
                 scoring.telemetry()
                 carousel.telemetry()
+                camera.telemetry()
 
                 telemetry.update()
             }
