@@ -170,7 +170,7 @@ class Mecanum {
 
             val leftPower: Double
             val rightPower: Double
-            if (remainingAngleDisplacement < 5.0) {
+            if (remainingAngleDisplacement.absoluteValue < 5.0) {
                 leftPower = 0.0
                 rightPower = 0.0
             } else {

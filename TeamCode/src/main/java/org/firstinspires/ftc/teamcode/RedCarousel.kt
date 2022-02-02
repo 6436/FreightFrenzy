@@ -6,8 +6,11 @@ import org.firstinspires.ftc.teamcode.hardware.Camera.SkystoneDeterminationPipel
 @Autonomous(preselectTeleOp = "TeleOp")
 class RedCarousel : BaseAutonomous() {
     override fun autonomous() {
-        original()
-//        fast()
+        drivetrain.move(-33.5, 7.8)
+
+        sleep(100)
+        carousel.deliver(Alliance.RED)
+        drivetrain.move(-27, 51.5)
     }
 
     fun original() {
