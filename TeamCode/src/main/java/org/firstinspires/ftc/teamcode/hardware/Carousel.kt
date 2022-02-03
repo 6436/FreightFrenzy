@@ -10,7 +10,7 @@ import java.lang.Thread.sleep
 
 class Carousel {
     private companion object {
-        const val POWER = 0.5
+        const val POWER = 0.48
         const val MAX_POWER = 0.9
 
         const val WHEEL_DIAMETER_INCHES = 4.0

@@ -10,7 +10,21 @@ class RedCarousel : BaseAutonomous() {
 
         sleep(100)
         carousel.deliver(Alliance.RED)
-        drivetrain.move(-27, 51.5)
+        drivetrain.move(-25, 49.5)
+        lift.bonus()
+        sleep(1000)
+        drivetrain.move(
+            22 - if (camera.analysis ===
+                SkystonePosition.LEFT
+            ) 2 else 0
+            , 45
+        )
+
+        sleep(1000)
+        drivetrain.move(heading=10)
+        sleep(500)
+        scoring.right()
+        sleep(2500)
     }
 
     fun original() {
