@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
-@Autonomous
+//@Autonomous
 class RedFreight : BaseAutonomous() {
     override fun autonomous() {
         lift.bonus()

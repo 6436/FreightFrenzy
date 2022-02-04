@@ -129,7 +129,8 @@ class Mecanum {
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
         heading: Number = lastTargetHeading,
-        brake: Boolean = true
+        brake: Boolean = true,
+    powerx:Double = POWER
     ) {
         for (motor in motors) {
             motor.zeroPowerBehavior =
@@ -187,7 +188,7 @@ class Mecanum {
             val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
             powers.zip(motors) { power, motor ->
-                motor.power = power / maxPower * POWER
+                motor.power = power / maxPower * powerx
             }
         } while (!(maxPower == 0.0 || isStopRequested()))
 
