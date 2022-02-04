@@ -39,6 +39,8 @@ class RedAutonomous : BaseAutonomous() {
         drivetrain.move(y = 46, powerx = 0.4)
         sleep(1000)
         drivetrain.move(x = 30, powerx = 0.4)
+        sleep(100)
+        drivetrain.move(heading=170)
     }
 
     fun original() {

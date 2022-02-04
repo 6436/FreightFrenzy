@@ -34,5 +34,7 @@ class BlueAutonomous : BaseAutonomous() {
         drivetrain.move(y=22, powerx=0.25)
         sleep(1000)
         drivetrain.move(110, powerx=0.25)
+        sleep(1000)
+        drivetrain.move(heading=-170)
     }
 }
