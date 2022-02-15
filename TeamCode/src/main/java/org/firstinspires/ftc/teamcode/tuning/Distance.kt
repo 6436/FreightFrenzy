@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.tuning
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Mecanum
@@ -17,6 +19,8 @@ class Distance : OpMode() {
     private val drivetrain = Mecanum()
 
     override fun init() {
+        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+
         globalGamepad1 = gamepad1
         globalGamepad2 = gamepad2
         globalHardwareMap = hardwareMap
@@ -26,14 +30,13 @@ class Distance : OpMode() {
     }
 
     override fun loop() {
-        drivetrain.read()
+//        drivetrain.read()
         drivetrain.odometry()
 
         for (motor in drivetrain.motors) {
-            motor.power = if (gamepad1.x && drivetrain.location.magnitude < 120.0) POWER else 0.0
+            motor.power = if (gamepad1.x) POWER else 0.0
         }
 
         drivetrain.telemetry()
     }
 }
-

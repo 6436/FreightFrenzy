@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode
 
 import kotlin.math.*
 
+const val MILLIMETERS_PER_INCH = 25.4
 const val DEGREES_PER_ROTATION = 360.0
 
 fun Double.toRadians() = this * PI / 180.0
