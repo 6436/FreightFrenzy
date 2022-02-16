@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-
 //@Autonomous
 class RedFreight : BaseAutonomous() {
     override fun autonomous() {
@@ -12,12 +10,12 @@ class RedFreight : BaseAutonomous() {
             scoring.up()
             lift.down()
 
-            drivetrain.move(0, 0, brake = false)
+            drivetrain.move(0, 0, stop = false)
             intake.suck()
             drivetrain.move(x = 24)
             lift.top()
             intake.off()
-            drivetrain.move(x = 0, brake = false)
+            drivetrain.move(x = 0, stop = false)
         }
     }
 }

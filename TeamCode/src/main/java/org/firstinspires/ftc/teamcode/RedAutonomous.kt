@@ -36,9 +36,9 @@ class RedAutonomous : BaseAutonomous() {
         sleep(1000)
         drivetrain.move(heading = 87)
         sleep(1000)
-        drivetrain.move(y = 46, powerx = 0.4)
+        drivetrain.move(y = 46)
         sleep(1000)
-        drivetrain.move(x = 30, powerx = 0.4)
+        drivetrain.move(x = 30)
         sleep(100)
         drivetrain.move(heading=170)
     }
@@ -95,7 +95,7 @@ class RedAutonomous : BaseAutonomous() {
         sleep(100)
         carousel.deliver(Alliance.RED)
 
-        drivetrain.move(y = 41, brake = false)
+        drivetrain.move(y = 41, stop = false)
         lift.bonus()
         scoring.right()
         drivetrain.move(19.5, 46)
@@ -104,8 +104,8 @@ class RedAutonomous : BaseAutonomous() {
 
         intake.duckSuck()
         when (camera.analysis) {
-            SkystonePosition.LEFT -> drivetrain.move(x = 6, brake = false)
-            SkystonePosition.CENTER -> drivetrain.move(x = -6, brake = false)
+            SkystonePosition.LEFT -> drivetrain.move(x = 6, stop = false)
+            SkystonePosition.CENTER -> drivetrain.move(x = -6, stop = false)
             else -> {
             }
         }

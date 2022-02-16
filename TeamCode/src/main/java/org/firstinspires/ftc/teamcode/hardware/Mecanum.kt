@@ -112,11 +112,11 @@ class Mecanum {
         val translate = Vector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
-        ).rotatedAboutOrigin(heading)
+        ).rotatedAboutOrigin(-heading)
         val x = translate.x
         val y = translate.y
 
-        val turn = -gamepad1.right_stick_x.toDouble()
+        val turn = gamepad1.right_stick_x.toDouble()
 
         val flPower = y + x + turn
         val frPower = y - x - turn
@@ -137,14 +137,8 @@ class Mecanum {
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
         heading: Number = lastTargetHeading,
-        brake: Boolean = true,
-        powerx: Double = POWER
+        stop: Boolean = true
     ) {
-        for (motor in motors) {
-            motor.zeroPowerBehavior =
-                if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
-        }
-
         val targetLocation = Point(x, y)
 
         val differenceAngle = heading.toDouble() - this.heading
@@ -152,10 +146,7 @@ class Mecanum {
         val targetHeading = this.heading + displacementAngle
 
         do {
-            var remainingLocationDisplacement = targetLocation - this.location
-
-            remainingLocationDisplacement =
-                remainingLocationDisplacement.rotatedAboutOrigin(-this.heading)
+            val remainingLocationDisplacement = (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
 
             val aRemainingDisplacement =
                 remainingLocationDisplacement.x + remainingLocationDisplacement.y
@@ -165,12 +156,12 @@ class Mecanum {
             val maxRemainingDisplacement =
                 max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-            val aPower = aRemainingDisplacement / maxRemainingDisplacement
-            val bPower = bRemainingDisplacement / maxRemainingDisplacement
+            val aPower = aRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+            val bPower = bRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
 
             val remainingAngleDisplacement = targetHeading - this.heading
 
-            val rightPower = sign(remainingAngleDisplacement)
+            val rightPower = sign(remainingAngleDisplacement) * (remainingAngleDisplacement * Y_ODOMETRY_INCHES_PER_DEGREE)
             val leftPower = -rightPower
 
             val flPower = aPower + leftPower
@@ -182,9 +173,9 @@ class Mecanum {
             val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
             powers.zip(motors) { power, motor ->
-                motor.power = power / maxPower * powerx
+                motor.power = power / maxPower
             }
-        } while (!(maxPower == 0.0 || isStopRequested()))
+        } while ((remainingLocationDisplacement.magnitude > 1.0 || remainingAngleDisplacement > 3.0) && !isStopRequested())
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading
