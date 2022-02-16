@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.*
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.sign
+import kotlin.math.*
 
 class Mecanum {
     private companion object {
         const val POWER = 0.9
+        const val TARGET_LOCATION_TOLERANCE = 1.0
+        const val TARGET_HEADING_TOLERANCE = 3.0
 
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 81411.14764756098
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
+        const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3
 
         const val MOTOR_COUNTS_PER_ROTATION = 8192.0
         const val WHEEL_DIAMETER_MILLIMETERS = 96.0
@@ -77,6 +77,10 @@ class Mecanum {
     private var backLastPosition = 0
     fun odometry() {
         for (hub in hubs) hub.clearBulkCache()
+
+        fl.currentPosition
+        fr.currentPosition
+        bl.currentPosition
 
         val leftCurrentPosition = -fl.currentPosition
         val rightCurrentPosition = fr.currentPosition
@@ -141,12 +145,22 @@ class Mecanum {
     ) {
         val targetLocation = Point(x, y)
 
-        val differenceAngle = heading.toDouble() - this.heading
-        val displacementAngle = (differenceAngle + 180.0) % 360.0 - 180.0
-        val targetHeading = this.heading + displacementAngle
+        // find shortest way to turn to requested heading
 
+        val headingDifference = heading.toDouble() - this.heading
+        val headingDisplacement =
+            (headingDifference + 180.0) % 360.0 - 180.0
+        val targetHeading = this.heading + headingDisplacement
+
+        // control loop
         do {
-            val remainingLocationDisplacement = (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
+            // find powers for translating
+
+            if (location.) {
+
+            }
+            val remainingLocationDisplacement =
+                (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
 
             val aRemainingDisplacement =
                 remainingLocationDisplacement.x + remainingLocationDisplacement.y
@@ -156,13 +170,20 @@ class Mecanum {
             val maxRemainingDisplacement =
                 max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-            val aPower = aRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
-            val bPower = bRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+            val aPower =
+                aRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+            val bPower =
+                bRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
 
-            val remainingAngleDisplacement = targetHeading - this.heading
+            // find power for turning
 
-            val rightPower = sign(remainingAngleDisplacement) * (remainingAngleDisplacement * Y_ODOMETRY_INCHES_PER_DEGREE)
+            val remainingHeadingDisplacement = targetHeading - this.heading
+
+            val rightPower =
+                sign(remainingHeadingDisplacement) * (remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE)
             val leftPower = -rightPower
+
+            // find and set aggregate powers
 
             val flPower = aPower + leftPower
             val frPower = bPower + rightPower
@@ -175,7 +196,7 @@ class Mecanum {
             powers.zip(motors) { power, motor ->
                 motor.power = power / maxPower
             }
-        } while ((remainingLocationDisplacement.magnitude > 1.0 || remainingAngleDisplacement > 3.0) && !isStopRequested())
+        } while ((remainingLocationDisplacement.magnitude > TARGET_LOCATION_TOLERANCE || remainingHeadingDisplacement.absoluteValue > TARGET_HEADING_TOLERANCE) && !isStopRequested())
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading

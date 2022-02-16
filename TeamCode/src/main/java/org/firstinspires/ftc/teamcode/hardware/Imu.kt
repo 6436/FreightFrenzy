@@ -18,8 +18,7 @@ class Imu {
         imu.initialize(parameterz)
     }
 
-    val angle
-        get() = imu.angularOrientation.firstAngle.toDouble()
+    val angle get() = imu.angularOrientation.firstAngle.toDouble()
 
     private var lastAngle = 0.0
     var heading = 0.0
