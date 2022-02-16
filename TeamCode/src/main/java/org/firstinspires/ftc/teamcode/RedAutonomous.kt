@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.hardware.Camera.SkystoneDeterminationPipeline.SkystonePosition
 
 @Autonomous(preselectTeleOp = "TeleOp")
-class RedCarousel : BaseAutonomous() {
+class RedAutonomous : BaseAutonomous() {
     override fun autonomous() {
         drivetrain.move(-33.5, 7.8)
 
@@ -14,17 +14,33 @@ class RedCarousel : BaseAutonomous() {
         lift.bonus()
         sleep(1000)
         drivetrain.move(
-            22 - if (camera.analysis ===
-                SkystonePosition.LEFT
-            ) 2 else 0
-            , 45
+            when (camera.analysis) {
+                SkystonePosition.LEFT -> 20
+                SkystonePosition.CENTER -> 22
+                else -> 23
+            }, 45
         )
 
         sleep(1000)
-        drivetrain.move(heading=10)
+        drivetrain.move(heading = 10)
         sleep(500)
         scoring.right()
         sleep(2500)
+        scoring.up()
+        lift.down()
+        drivetrain.move(y = 77)
+        sleep(1000)
+        drivetrain.move(x = 77)
+        sleep(1000)
+        drivetrain.move(y = 22)
+        sleep(1000)
+        drivetrain.move(heading = 87)
+        sleep(1000)
+        drivetrain.move(y = 46, powerx = 0.4)
+        sleep(1000)
+        drivetrain.move(x = 30, powerx = 0.4)
+        sleep(100)
+        drivetrain.move(heading=170)
     }
 
     fun original() {
@@ -54,7 +70,8 @@ class RedCarousel : BaseAutonomous() {
         when (camera.analysis) {
             SkystonePosition.LEFT -> drivetrain.move(x = -7.7)
             SkystonePosition.CENTER -> drivetrain.move(x = 2.5)
-            else -> {}
+            else -> {
+            }
         }
         intake.duckSuck()
         sleep(1000)
@@ -89,7 +106,8 @@ class RedCarousel : BaseAutonomous() {
         when (camera.analysis) {
             SkystonePosition.LEFT -> drivetrain.move(x = 6, brake = false)
             SkystonePosition.CENTER -> drivetrain.move(x = -6, brake = false)
-            else -> {}
+            else -> {
+            }
         }
         drivetrain.move(y = 35)
         intake.off()

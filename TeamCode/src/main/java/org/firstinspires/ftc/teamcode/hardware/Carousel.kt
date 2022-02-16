@@ -10,8 +10,9 @@ import java.lang.Thread.sleep
 
 class Carousel {
     private companion object {
-        const val POWER = 0.48
-        const val MAX_POWER = 0.9
+        const val POWER = 0.33
+        const val MAX_POWER = 0.5
+
 
         const val WHEEL_DIAMETER_INCHES = 4.0
         const val CAROUSEL_DIAMETER_INCHES = 15.0
@@ -38,8 +39,8 @@ class Carousel {
 
     fun update() {
         when {
-            gamepad1.dpad_left -> on(Alliance.RED)
-            gamepad1.dpad_right -> on(Alliance.BLUE)
+            gamepad1.dpad_left -> launch(Alliance.RED)
+            gamepad1.dpad_right -> launch(Alliance.BLUE)
             else -> off()
         }
     }
@@ -54,7 +55,7 @@ class Carousel {
 
     fun deliver(alliance: Alliance) {
         on(alliance)
-        sleep(2400)
+        sleep(3000)
         off()
     }
 

@@ -5,24 +5,32 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.*
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.sign
 
 class Mecanum {
     private companion object {
-        const val POWER = 0.95
-        const val DISTANCE_CONSTANT = 12.0 / 11.0 * 121.0 / 118.0
+        const val POWER = 0.9
 
-        const val ROBOT_CIRCUMFERENCE_COUNTS = 3553.38475408
+        const val X_ODOMETRY_COUNTS_PER_ROTATION = 81411.14764756098
+        const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
 
-        const val MILLIMETERS_PER_INCH = 25.4
-
-        const val COUNTS_PER_ROTATION = 537.6
+        const val MOTOR_COUNTS_PER_ROTATION = 8192.0
         const val WHEEL_DIAMETER_MILLIMETERS = 96.0
 
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
-        const val WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * PI
-        const val COUNTS_PER_INCH =
-            COUNTS_PER_ROTATION / WHEEL_CIRCUMFERENCE_INCHES * DISTANCE_CONSTANT
+        const val WHEEL_INCHES_PER_ROTATION = WHEEL_DIAMETER_INCHES * PI
+        const val WHEEL_COUNTS_PER_INCH =
+            MOTOR_COUNTS_PER_ROTATION / WHEEL_INCHES_PER_ROTATION
+
+        const val X_ODOMETRY_COUNTS_PER_DEGREE =
+            X_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
+        const val Y_ODOMETRY_COUNTS_PER_DEGREE =
+            Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
+        const val Y_ODOMETRY_INCHES_PER_DEGREE =
+            Y_ODOMETRY_COUNTS_PER_DEGREE / WHEEL_COUNTS_PER_INCH
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -43,10 +51,10 @@ class Mecanum {
         br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
         motors = arrayOf(fl, fr, bl, br)
 
-        fl.direction = DcMotorSimple.Direction.REVERSE
-
         for (motor in motors) {
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            motor.direction = DcMotorSimple.Direction.REVERSE
+
+            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
             motor.targetPosition = 0
 
@@ -54,61 +62,61 @@ class Mecanum {
 
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
-    }
-
-    fun read() {
-        for (hub in hubs) hub.clearBulkCache()
-
-        for (motor in motors) {
-            motor.currentPosition
-        }
+        fl.direction = DcMotorSimple.Direction.FORWARD
     }
 
     @Volatile
-    var location = Point()
+    private var location = Point()
 
     @Volatile
     private var heading = 0.0
 
-    private var lastAPosition = 0.0
-    private var lastBPosition = 0.0
+    private var lastHeading = heading
+    private var leftLastPosition = 0
+    private var rightLastPosition = 0
+    private var backLastPosition = 0
     fun odometry() {
-        heading = intArrayOf(
-            -fl.currentPosition,
-            fr.currentPosition,
-            -bl.currentPosition,
-            br.currentPosition
-        ).average() / ROBOT_CIRCUMFERENCE_COUNTS * DEGREES_PER_ROTATION
+        for (hub in hubs) hub.clearBulkCache()
 
-        val aPosition = intArrayOf(fl.currentPosition, br.currentPosition).average()
-        val bPosition = intArrayOf(fr.currentPosition, bl.currentPosition).average()
-        val aPositionChange = aPosition - lastAPosition
-        val bPositionChange = bPosition - lastBPosition
+        val leftCurrentPosition = -fl.currentPosition
+        val rightCurrentPosition = fr.currentPosition
+        val backCurrentPosition = bl.currentPosition
 
-        var changePosition = Vector(
-            aPositionChange - bPositionChange,
-            aPositionChange + bPositionChange
-        ) / sqrt(2.0)
-        changePosition = changePosition.rotatedAboutOrigin(heading)
+        val leftPositionChange = leftCurrentPosition - leftLastPosition
+        val rightPositionChange = rightCurrentPosition - rightLastPosition
+        val backPositionChange = backCurrentPosition - backLastPosition
 
-        location += changePosition / COUNTS_PER_INCH
+        heading =
+            (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
 
-        lastAPosition = aPosition
-        lastBPosition = bPosition
+        val headingChange = heading - lastHeading
+        val locationChange = Vector(
+            backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
+            (leftPositionChange + rightPositionChange) / 2.0
+        ).rotatedAboutOrigin(lastHeading) / WHEEL_COUNTS_PER_INCH
+
+        location += locationChange
+
+        lastHeading = heading
+        leftLastPosition = leftCurrentPosition
+        rightLastPosition = rightCurrentPosition
+        backLastPosition = backCurrentPosition
+
+        telemetry.addData("heading", heading)
+        telemetry.addData("headingChange", headingChange)
+        telemetry.addData("x", location.x)
+        telemetry.addData("y", location.y)
     }
 
     fun update() {
-//        val translate = Vector(
-//            -gamepad1.left_stick_x.toDouble(),
-//            gamepad1.left_stick_y.toDouble()
-//        ).rotatedAboutOrigin(heading)
-//        val x = translate.x
-//        val y = translate.y
+        val translate = Vector(
+            gamepad1.left_stick_x,
+            -gamepad1.left_stick_y
+        ).rotatedAboutOrigin(heading)
+        val x = translate.x
+        val y = translate.y
 
-        val x = -gamepad1.left_stick_x.toDouble() * 0.9
-        val y = gamepad1.left_stick_y.toDouble() * 0.9
-
-        val turn = -gamepad1.right_stick_x.toDouble() * 0.8
+        val turn = -gamepad1.right_stick_x.toDouble()
 
         val flPower = y + x + turn
         val frPower = y - x - turn
@@ -129,7 +137,8 @@ class Mecanum {
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
         heading: Number = lastTargetHeading,
-        brake: Boolean = true
+        brake: Boolean = true,
+        powerx: Double = POWER
     ) {
         for (motor in motors) {
             motor.zeroPowerBehavior =
@@ -145,38 +154,24 @@ class Mecanum {
         do {
             var remainingLocationDisplacement = targetLocation - this.location
 
-            val aPower: Double
-            val bPower: Double
-            if (remainingLocationDisplacement.magnitude < 6.0) {
-                aPower = 0.0
-                bPower = 0.0
-            } else {
-                remainingLocationDisplacement =
-                    remainingLocationDisplacement.rotatedAboutOrigin(-this.heading)
+            remainingLocationDisplacement =
+                remainingLocationDisplacement.rotatedAboutOrigin(-this.heading)
 
-                val aRemainingDisplacement =
-                    remainingLocationDisplacement.x + remainingLocationDisplacement.y
-                val bRemainingDisplacement =
-                    -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+            val aRemainingDisplacement =
+                remainingLocationDisplacement.x + remainingLocationDisplacement.y
+            val bRemainingDisplacement =
+                -remainingLocationDisplacement.x + remainingLocationDisplacement.y
 
-                val maxRemainingDisplacement =
-                    max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+            val maxRemainingDisplacement =
+                max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                aPower = aRemainingDisplacement / maxRemainingDisplacement
-                bPower = bRemainingDisplacement / maxRemainingDisplacement
-            }
+            val aPower = aRemainingDisplacement / maxRemainingDisplacement
+            val bPower = bRemainingDisplacement / maxRemainingDisplacement
 
             val remainingAngleDisplacement = targetHeading - this.heading
 
-            val leftPower: Double
-            val rightPower: Double
-            if (remainingAngleDisplacement.absoluteValue < 5.0) {
-                leftPower = 0.0
-                rightPower = 0.0
-            } else {
-                rightPower = sign(remainingAngleDisplacement)
-                leftPower = -rightPower
-            }
+            val rightPower = sign(remainingAngleDisplacement)
+            val leftPower = -rightPower
 
             val flPower = aPower + leftPower
             val frPower = bPower + rightPower
@@ -187,7 +182,7 @@ class Mecanum {
             val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
             powers.zip(motors) { power, motor ->
-                motor.power = power / maxPower * POWER
+                motor.power = power / maxPower * powerx
             }
         } while (!(maxPower == 0.0 || isStopRequested()))
 
@@ -196,15 +191,13 @@ class Mecanum {
     }
 
     fun telemetry() {
-        telemetry.addLine("drivetrain current position\n")
-            .addData("fl", fl.currentPosition)
-            .addData("fr", fr.currentPosition)
-            .addData("\nbl", bl.currentPosition)
-            .addData("br", br.currentPosition)
+        telemetry.addData("fl", fl.currentPosition)
+        telemetry.addData("fr", fr.currentPosition)
+        telemetry.addData("bl", bl.currentPosition)
 
-        telemetry.addLine("drivetrain location\n")
-            .addFormattedData("x", location.x)
-            .addFormattedData("y", location.y)
-        telemetry.addFormattedData("drivetrain heading", heading)
+//        telemetry.addLine("drivetrain location\n")
+//            .addFormattedData("x", location.x)
+//            .addFormattedData("y", location.y)
+//        telemetry.addFormattedData("drivetrain heading", heading)
     }
 }
