@@ -65,5 +65,6 @@ class Carousel {
 
     fun telemetry() {
         telemetry.addData("carousel power", carousel.power)
+        telemetry.addData("carousel position", carousel.currentPosition)
     }
 }

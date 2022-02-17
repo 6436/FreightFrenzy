@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode
 
 import kotlin.math.*
 
+const val MILLISECONDS_PER_SECOND = 1.0e3
+const val NANOSECONDS_PER_SECOND = 1.0e9
 const val MILLIMETERS_PER_INCH = 25.4
 const val DEGREES_PER_ROTATION = 360.0
 
+fun Double.squared() = this * this
 fun Double.toRadians() = this * PI / 180.0
 
 typealias Point = Vector

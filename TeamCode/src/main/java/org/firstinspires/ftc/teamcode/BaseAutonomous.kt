@@ -34,7 +34,7 @@ abstract class BaseAutonomous : LinearOpMode() {
             while (!isStopRequested) {
                 drivetrain.odometry()
 
-                drivetrain.telemetry()
+//                drivetrain.telemetry()
                 intake.telemetry()
                 lift.telemetry()
                 scoring.telemetry()

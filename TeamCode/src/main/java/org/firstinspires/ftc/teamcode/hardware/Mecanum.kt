@@ -65,17 +65,29 @@ class Mecanum {
         fl.direction = DcMotorSimple.Direction.FORWARD
     }
 
+    private var timeChange = 0.0
+
     @Volatile
     private var location = Point()
 
     @Volatile
+    private var locationSpeed = 0.0
+
+    @Volatile
     private var heading = 0.0
 
-    private var lastHeading = heading
-    private var leftLastPosition = 0
-    private var rightLastPosition = 0
-    private var backLastPosition = 0
+    @Volatile
+    private var headingSpeed = 0.0
+
+    private var lastTime = 0.0
+    private var lastHeading = 0.0
+    private var lastLeftPosition = 0
+    private var lastRightPosition = 0
+    private var lastBackPosition = 0
     fun odometry() {
+        val time = System.nanoTime() / NANOSECONDS_PER_SECOND
+        timeChange = time - lastTime
+
         for (hub in hubs) hub.clearBulkCache()
 
         fl.currentPosition
@@ -86,9 +98,9 @@ class Mecanum {
         val rightCurrentPosition = fr.currentPosition
         val backCurrentPosition = bl.currentPosition
 
-        val leftPositionChange = leftCurrentPosition - leftLastPosition
-        val rightPositionChange = rightCurrentPosition - rightLastPosition
-        val backPositionChange = backCurrentPosition - backLastPosition
+        val leftPositionChange = leftCurrentPosition - lastLeftPosition
+        val rightPositionChange = rightCurrentPosition - lastRightPosition
+        val backPositionChange = backCurrentPosition - lastBackPosition
 
         heading =
             (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
@@ -101,15 +113,23 @@ class Mecanum {
 
         location += locationChange
 
-        lastHeading = heading
-        leftLastPosition = leftCurrentPosition
-        rightLastPosition = rightCurrentPosition
-        backLastPosition = backCurrentPosition
+        headingSpeed = headingChange / timeChange
+        locationSpeed = locationChange.magnitude / timeChange
 
-        telemetry.addData("heading", heading)
-        telemetry.addData("headingChange", headingChange)
+        lastTime = time
+        lastHeading = heading
+        lastLeftPosition = leftCurrentPosition
+        lastRightPosition = rightCurrentPosition
+        lastBackPosition = backCurrentPosition
+
+        telemetry()
+    }
+
+    private fun telemetry() {
+        telemetry.addData("loop time", timeChange * MILLISECONDS_PER_SECOND)
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
+        telemetry.addData("heading", heading)
     }
 
     fun update() {
@@ -154,34 +174,42 @@ class Mecanum {
 
         // control loop
         do {
-            // find powers for translating
-
-            if (location.) {
-
-            }
             val remainingLocationDisplacement =
                 (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
 
-            val aRemainingDisplacement =
-                remainingLocationDisplacement.x + remainingLocationDisplacement.y
-            val bRemainingDisplacement =
-                -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+            fun findTranslationalPowers(): Pair<Double, Double> =
+                if (stop && (locationSpeed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
+                    0.0 to 0.0
+                } else {
+                    val aRemainingDisplacement =
+                        remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                    val bRemainingDisplacement =
+                        -remainingLocationDisplacement.x + remainingLocationDisplacement.y
 
-            val maxRemainingDisplacement =
-                max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+                    val maxRemainingDisplacement =
+                        max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-            val aPower =
-                aRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
-            val bPower =
-                bRemainingDisplacement / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+                    (aRemainingDisplacement  to bRemainingDisplacement) / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+                }
 
-            // find power for turning
+            val (aPower, bPower) = findTranslationalPowers()
+
+            // find powers for turning
 
             val remainingHeadingDisplacement = targetHeading - this.heading
 
-            val rightPower =
-                sign(remainingHeadingDisplacement) * (remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE)
-            val leftPower = -rightPower
+            fun findRotationalPowers():Pair<Double,Double> =
+                if (stop && ((headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE).squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
+                    0.0 to 0.0
+                } else {
+                    rightPower =
+                        sign(remainingHeadingDisplacement) * (remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE)
+                    leftPower = -rightPower
+                }
+
+            var leftPower: Double
+            var rightPower: Double
+
 
             // find and set aggregate powers
 
@@ -200,16 +228,5 @@ class Mecanum {
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading
-    }
-
-    fun telemetry() {
-        telemetry.addData("fl", fl.currentPosition)
-        telemetry.addData("fr", fr.currentPosition)
-        telemetry.addData("bl", bl.currentPosition)
-
-//        telemetry.addLine("drivetrain location\n")
-//            .addFormattedData("x", location.x)
-//            .addFormattedData("y", location.y)
-//        telemetry.addFormattedData("drivetrain heading", heading)
     }
 }

@@ -37,6 +37,6 @@ class Distance : OpMode() {
             motor.power = if (gamepad1.x) POWER else 0.0
         }
 
-        drivetrain.telemetry()
+//        drivetrain.telemetry()
     }
 }
