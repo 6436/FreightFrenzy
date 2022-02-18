@@ -83,7 +83,7 @@ class Mecanum {
     private var lastLeftPosition = 0
     private var lastRightPosition = 0
     private var lastBackPosition = 0
-    fun odometry() {
+    fun odometry() { // TODO: change to not last- variables and instead use local variables; write to volatile variables simultaneously; add telemetry needed for tuning (locationChange, headingChange, locationAcceleration)
         val time = System.nanoTime() / NANOSECONDS_PER_SECOND
         timeChange = time - lastTime
 
@@ -125,7 +125,7 @@ class Mecanum {
     }
 
     private fun telemetry() {
-        telemetry.addData("loop time", timeChange * MILLISECONDS_PER_SECOND)
+        telemetry.addData("loop time milliseconds", timeChange * MILLISECONDS_PER_SECOND)
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)
@@ -163,22 +163,36 @@ class Mecanum {
         heading: Number = lastTargetHeading,
         stop: Boolean = true
     ) {
+        fun speedIsEnoughToReachTarget(speed: Double, remainingDisplacement: Double) =
+            speed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingDisplacement.absoluteValue
+
+        val startingHeading = this.heading
+
         val targetLocation = Point(x, y)
 
         val targetHeading = run {
-            val headingDifference = heading.toDouble() - this.heading
+            val headingDifference = heading.toDouble() - startingHeading
             val headingDisplacement =
                 (headingDifference + 180.0) % 360.0 - 180.0
 
-            this.heading + headingDisplacement
+            startingHeading + headingDisplacement
         }
 
         do {
-            val remainingLocationDisplacement =
-                (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
+            // read
+            val (currentLocation, currentHeading) = this.location to this.heading
 
+            // adjusted by current heading to be relative to robot
+            val remainingLocationDisplacement =
+                (targetLocation - currentLocation).rotatedAboutOrigin(-currentHeading)
+
+            // find translational powers
             val (aPower, bPower) =
-                if (stop && (locationSpeed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
+                if (stop && speedIsEnoughToReachTarget(
+                        locationSpeed,
+                        remainingLocationDisplacement.magnitude
+                    )
+                ) {
                     Vector()
                 } else {
                     val aRemainingDisplacement =
@@ -195,17 +209,24 @@ class Mecanum {
                     ) / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
                 }
 
-            val remainingHeadingDisplacement = targetHeading - this.heading
+            val remainingHeadingDisplacement = targetHeading - currentHeading
 
-            val (leftPower, rightPower) = if (stop && ((headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE).squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
-                Vector()
-            } else {
-                Vector(
-                    -sign(remainingHeadingDisplacement),
-                    sign(remainingHeadingDisplacement)
-                ) * remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE
-            }
+            // find rotational powers
+            val (leftPower, rightPower) =
+                if (stop && speedIsEnoughToReachTarget(
+                        headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE,
+                        remainingHeadingDisplacement * Y_ODOMETRY_INCHES_PER_DEGREE
+                    )
+                ) {
+                    Vector()
+                } else {
+                    Vector(
+                        -sign(remainingHeadingDisplacement),
+                        sign(remainingHeadingDisplacement)
+                    ) * remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE
+                }
 
+            // find aggregate powers
             val powers = run {
                 val flPower = aPower + leftPower
                 val frPower = bPower + rightPower
