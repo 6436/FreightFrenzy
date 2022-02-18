@@ -65,8 +65,6 @@ class Mecanum {
         fl.direction = DcMotorSimple.Direction.FORWARD
     }
 
-    private var timeChange = 0.0
-
     @Volatile
     private var location = Point()
 
@@ -79,6 +77,7 @@ class Mecanum {
     @Volatile
     private var headingSpeed = 0.0
 
+    private var timeChange = 0.0
     private var lastTime = 0.0
     private var lastHeading = 0.0
     private var lastLeftPosition = 0
@@ -133,25 +132,26 @@ class Mecanum {
     }
 
     fun update() {
-        val translate = Vector(
+        val (x, y) = Vector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
         ).rotatedAboutOrigin(-heading)
-        val x = translate.x
-        val y = translate.y
 
         val turn = gamepad1.right_stick_x.toDouble()
 
-        val flPower = y + x + turn
-        val frPower = y - x - turn
-        val blPower = y - x + turn
-        val brPower = y + x - turn
-        val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
+        val powers = run {
+            val flPower = y + x + turn
+            val frPower = y - x - turn
+            val blPower = y - x + turn
+            val brPower = y + x - turn
 
-        val max = (powers.map { abs(it) } + 1.0).maxOrNull()!!
+            doubleArrayOf(flPower, frPower, blPower, brPower)
+        }
+
+        val maxPower = (powers.map { abs(it) } + 1.0).maxOrNull()!!
 
         powers.zip(motors) { power, motor ->
-            motor.power = power / max * POWER
+            motor.power = power / maxPower * POWER
         }
     }
 
@@ -165,21 +165,21 @@ class Mecanum {
     ) {
         val targetLocation = Point(x, y)
 
-        // find shortest way to turn to requested heading
+        val targetHeading = run {
+            val headingDifference = heading.toDouble() - this.heading
+            val headingDisplacement =
+                (headingDifference + 180.0) % 360.0 - 180.0
 
-        val headingDifference = heading.toDouble() - this.heading
-        val headingDisplacement =
-            (headingDifference + 180.0) % 360.0 - 180.0
-        val targetHeading = this.heading + headingDisplacement
+            this.heading + headingDisplacement
+        }
 
-        // control loop
         do {
             val remainingLocationDisplacement =
                 (targetLocation - this.location).rotatedAboutOrigin(-this.heading)
 
-            fun findTranslationalPowers(): Pair<Double, Double> =
+            val (aPower, bPower) =
                 if (stop && (locationSpeed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
-                    0.0 to 0.0
+                    Vector()
                 } else {
                     val aRemainingDisplacement =
                         remainingLocationDisplacement.x + remainingLocationDisplacement.y
@@ -189,35 +189,31 @@ class Mecanum {
                     val maxRemainingDisplacement =
                         max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                    (aRemainingDisplacement  to bRemainingDisplacement) / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+                    Vector(
+                        aRemainingDisplacement,
+                        bRemainingDisplacement
+                    ) / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
                 }
-
-            val (aPower, bPower) = findTranslationalPowers()
-
-            // find powers for turning
 
             val remainingHeadingDisplacement = targetHeading - this.heading
 
-            fun findRotationalPowers():Pair<Double,Double> =
-                if (stop && ((headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE).squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
-                    0.0 to 0.0
-                } else {
-                    rightPower =
-                        sign(remainingHeadingDisplacement) * (remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE)
-                    leftPower = -rightPower
-                }
+            val (leftPower, rightPower) = if (stop && ((headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE).squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingLocationDisplacement.magnitude)) {
+                Vector()
+            } else {
+                Vector(
+                    -sign(remainingHeadingDisplacement),
+                    sign(remainingHeadingDisplacement)
+                ) * remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE
+            }
 
-            var leftPower: Double
-            var rightPower: Double
+            val powers = run {
+                val flPower = aPower + leftPower
+                val frPower = bPower + rightPower
+                val blPower = bPower + leftPower
+                val brPower = aPower + rightPower
 
-
-            // find and set aggregate powers
-
-            val flPower = aPower + leftPower
-            val frPower = bPower + rightPower
-            val blPower = bPower + leftPower
-            val brPower = aPower + rightPower
-            val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
+                doubleArrayOf(flPower, frPower, blPower, brPower)
+            }
 
             val maxPower = powers.map { abs(it) }.maxOrNull()!!
 
