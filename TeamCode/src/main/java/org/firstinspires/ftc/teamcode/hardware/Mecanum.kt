@@ -69,26 +69,24 @@ class Mecanum {
     private var location = Point()
 
     @Volatile
-    private var locationSpeed = 0.0
-
-    @Volatile
     private var heading = 0.0
 
     @Volatile
-    private var headingSpeed = 0.0
+    private var locationChangeSpeed = 0.0
 
-    private var timeChange = 0.0
+    @Volatile
+    private var headingChangeSpeed = 0.0
+
     private var lastTime = 0.0
-    private var lastHeading = 0.0
     private var lastLeftPosition = 0
     private var lastRightPosition = 0
     private var lastBackPosition = 0
-    fun odometry() { // TODO: change to not last- variables and instead use local variables; write to volatile variables simultaneously; add telemetry needed for tuning (locationChange, headingChange, locationAcceleration)
+    fun odometry() {
         val time = System.nanoTime() / NANOSECONDS_PER_SECOND
-        timeChange = time - lastTime
+        val timeChange = time - lastTime
 
+        // bulk read
         for (hub in hubs) hub.clearBulkCache()
-
         fl.currentPosition
         fr.currentPosition
         bl.currentPosition
@@ -97,38 +95,46 @@ class Mecanum {
         val rightCurrentPosition = fr.currentPosition
         val backCurrentPosition = bl.currentPosition
 
-        val leftPositionChange = leftCurrentPosition - lastLeftPosition
-        val rightPositionChange = rightCurrentPosition - lastRightPosition
-        val backPositionChange = backCurrentPosition - lastBackPosition
-
-        heading =
+        val newHeading =
             (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
 
-        val headingChange = heading - lastHeading
-        val locationChange = Vector(
-            backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
-            (leftPositionChange + rightPositionChange) / 2.0
-        ).rotatedAboutOrigin(lastHeading) / WHEEL_COUNTS_PER_INCH
+        val headingChange = newHeading - heading
 
+        val locationChange = run {
+            val leftPositionChange = leftCurrentPosition - lastLeftPosition
+            val rightPositionChange = rightCurrentPosition - lastRightPosition
+            val backPositionChange = backCurrentPosition - lastBackPosition
+
+            Vector(
+                backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
+                (leftPositionChange + rightPositionChange) / 2.0
+            ).rotatedAboutOrigin(heading) / WHEEL_COUNTS_PER_INCH
+        }
+
+        // update
         location += locationChange
-
-        headingSpeed = headingChange / timeChange
-        locationSpeed = locationChange.magnitude / timeChange
+        heading = newHeading
+        locationChangeSpeed = run {
+            val newLocationChangeSpeed = locationChange.magnitude / timeChange
+            telemetry.addData(
+                "location change speed change velocity",
+                (newLocationChangeSpeed - locationChangeSpeed) / timeChange
+            )
+            newLocationChangeSpeed
+        }
+        headingChangeSpeed = headingChange / timeChange
 
         lastTime = time
-        lastHeading = heading
         lastLeftPosition = leftCurrentPosition
         lastRightPosition = rightCurrentPosition
         lastBackPosition = backCurrentPosition
 
-        telemetry()
-    }
-
-    private fun telemetry() {
         telemetry.addData("loop time milliseconds", timeChange * MILLISECONDS_PER_SECOND)
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)
+        telemetry.addData("location change magnitude", locationChange.magnitude)
+        telemetry.addData("heading change absolute value", headingChange.absoluteValue)
     }
 
     fun update() {
@@ -189,7 +195,7 @@ class Mecanum {
             // find translational powers
             val (aPower, bPower) =
                 if (stop && speedIsEnoughToReachTarget(
-                        locationSpeed,
+                        locationChangeSpeed,
                         remainingLocationDisplacement.magnitude
                     )
                 ) {
@@ -214,7 +220,7 @@ class Mecanum {
             // find rotational powers
             val (leftPower, rightPower) =
                 if (stop && speedIsEnoughToReachTarget(
-                        headingSpeed * Y_ODOMETRY_INCHES_PER_DEGREE,
+                        headingChangeSpeed * Y_ODOMETRY_INCHES_PER_DEGREE,
                         remainingHeadingDisplacement * Y_ODOMETRY_INCHES_PER_DEGREE
                     )
                 ) {
