@@ -9,16 +9,24 @@ import kotlin.math.*
 
 class Mecanum {
     private companion object {
+        // chosen
+
         const val POWER = 0.9
+
+        // tuned
+
         const val TARGET_LOCATION_TOLERANCE = 1.0
         const val TARGET_HEADING_TOLERANCE = 3.0
-
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 81411.14764756098
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
-        const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3
+        const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3.0
+
+        // constant
 
         const val MOTOR_COUNTS_PER_ROTATION = 8192.0
         const val WHEEL_DIAMETER_MILLIMETERS = 96.0
+
+        // derived
 
         const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val WHEEL_INCHES_PER_ROTATION = WHEEL_DIAMETER_INCHES * PI
@@ -29,6 +37,7 @@ class Mecanum {
             X_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
         const val Y_ODOMETRY_COUNTS_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
+
         const val APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_DEGREE / WHEEL_COUNTS_PER_INCH
     }
