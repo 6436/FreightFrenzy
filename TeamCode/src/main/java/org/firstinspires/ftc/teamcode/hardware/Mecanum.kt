@@ -29,7 +29,7 @@ class Mecanum {
             X_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
         const val Y_ODOMETRY_COUNTS_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
-        const val Y_ODOMETRY_INCHES_PER_DEGREE =
+        const val APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_DEGREE / WHEEL_COUNTS_PER_INCH
     }
 
@@ -134,7 +134,7 @@ class Mecanum {
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)
         telemetry.addData("location change magnitude", locationChange.magnitude)
-        telemetry.addData("heading change absolute value", headingChange.absoluteValue)
+        telemetry.addData("heading change magnitude", headingChange.absoluteValue)
     }
 
     fun update() {
@@ -169,8 +169,8 @@ class Mecanum {
         heading: Number = lastTargetHeading,
         stop: Boolean = true
     ) {
-        fun speedIsEnoughToReachTarget(speed: Double, remainingDisplacement: Double) =
-            speed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingDisplacement.absoluteValue
+        fun speedIsEnoughToReachTarget(speed: Double, remainingDistance: Double) =
+            speed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingDistance.absoluteValue
 
         val startingHeading = this.heading
 
@@ -188,15 +188,17 @@ class Mecanum {
             // read
             val (currentLocation, currentHeading) = this.location to this.heading
 
-            // adjusted by current heading to be relative to robot
             val remainingLocationDisplacement =
-                (targetLocation - currentLocation).rotatedAboutOrigin(-currentHeading)
+                (targetLocation - currentLocation)
+                    // adjust to be relative to current robot position
+                    .rotatedAboutOrigin(-currentHeading)
 
             // find translational powers
-            val (aPower, bPower) =
+            val (aPower, bPower) = run {
+                val remainingTranslationalDistance = remainingLocationDisplacement.magnitude
                 if (stop && speedIsEnoughToReachTarget(
                         locationChangeSpeed,
-                        remainingLocationDisplacement.magnitude
+                        remainingTranslationalDistance
                     )
                 ) {
                     Vector()
@@ -212,16 +214,21 @@ class Mecanum {
                     Vector(
                         aRemainingDisplacement,
                         bRemainingDisplacement
-                    ) / maxRemainingDisplacement * remainingLocationDisplacement.magnitude
+                    ) / maxRemainingDisplacement *
+                            // weight of translational powers
+                            remainingTranslationalDistance
                 }
+            }
 
             val remainingHeadingDisplacement = targetHeading - currentHeading
 
             // find rotational powers
-            val (leftPower, rightPower) =
+            val (leftPower, rightPower) = run {
+                val remainingRotationalDistance =
+                    remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
                 if (stop && speedIsEnoughToReachTarget(
-                        headingChangeSpeed * Y_ODOMETRY_INCHES_PER_DEGREE,
-                        remainingHeadingDisplacement * Y_ODOMETRY_INCHES_PER_DEGREE
+                        headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
+                        remainingRotationalDistance
                     )
                 ) {
                     Vector()
@@ -229,8 +236,11 @@ class Mecanum {
                     Vector(
                         -sign(remainingHeadingDisplacement),
                         sign(remainingHeadingDisplacement)
-                    ) * remainingHeadingDisplacement.absoluteValue * Y_ODOMETRY_INCHES_PER_DEGREE
+                    ) *
+                            // weight of rotational powers
+                            remainingRotationalDistance
                 }
+            }
 
             // find aggregate powers
             val powers = run {
