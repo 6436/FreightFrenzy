@@ -109,6 +109,12 @@ class Mecanum {
                 backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
                 (leftPositionChange + rightPositionChange) / 2.0
             ).rotatedAboutOrigin(heading) / WHEEL_COUNTS_PER_INCH
+            /* assumes robot follows straight path between updates
+               (as opposed to using "pose exponential" to correct for curvature), because
+               loop time vs. error tradeoff is untested,
+               it is simpler to implement,
+               our loop time is short (improving curve approximation), and
+               robot only needs to follow straight paths (for now) */
         }
 
         // update
