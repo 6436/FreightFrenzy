@@ -21,7 +21,7 @@ class Mecanum {
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
         const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3.0
 
-        // constant
+        // measured
 
         const val MOTOR_COUNTS_PER_ROTATION = 8192.0
         const val WHEEL_DIAMETER_MILLIMETERS = 96.0
@@ -38,6 +38,12 @@ class Mecanum {
         const val Y_ODOMETRY_COUNTS_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
 
+        /** derived from [Y_ODOMETRY_COUNTS_PER_ROTATION]
+         * (as opposed to a tuned constant DRIVETRAIN_COUNTS_PER_ROTATION), because
+         * we can't add encoders to our drivetrain wheels to tune,
+         * y-odometry wheel track is bigger than drivetrain (which should cause no errors but slows turning), and
+         * y-odometry wheel track is similar in size to drivetrain wheel track
+         */
         const val APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE =
             Y_ODOMETRY_COUNTS_PER_DEGREE / WHEEL_COUNTS_PER_INCH
     }
@@ -48,7 +54,7 @@ class Mecanum {
     private lateinit var fr: DcMotorEx
     private lateinit var bl: DcMotorEx
     private lateinit var br: DcMotorEx
-    lateinit var motors: Array<DcMotorEx>
+    private lateinit var motors: Array<DcMotorEx>
 
     fun initialize() {
         hubs = hardwareMap.getAll(LynxModule::class.java)
@@ -109,6 +115,12 @@ class Mecanum {
 
         val headingChange = newHeading - heading
 
+        /* assumes robot follows straight path between updates
+           (as opposed to using "pose exponential" to correct for curvature), because
+           loop time vs. error tradeoff is untested,
+           it is simpler to implement,
+           our loop time is short (improving curve approximation), and
+           robot only needs to follow straight paths (for now) */
         val locationChange = run {
             val leftPositionChange = leftCurrentPosition - lastLeftPosition
             val rightPositionChange = rightCurrentPosition - lastRightPosition
@@ -118,12 +130,6 @@ class Mecanum {
                 backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
                 (leftPositionChange + rightPositionChange) / 2.0
             ).rotatedAboutOrigin(heading) / WHEEL_COUNTS_PER_INCH
-            /* assumes robot follows straight path between updates
-               (as opposed to using "pose exponential" to correct for curvature), because
-               loop time vs. error tradeoff is untested,
-               it is simpler to implement,
-               our loop time is short (improving curve approximation), and
-               robot only needs to follow straight paths (for now) */
         }
 
         // update
@@ -153,27 +159,19 @@ class Mecanum {
     }
 
     fun update() {
-        val (x, y) = Vector(
+        val (xPower, yPower) = Vector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
         ).rotatedAboutOrigin(-heading)
 
-        val turn = gamepad1.right_stick_x.toDouble()
+        val rotationalPower = gamepad1.right_stick_x.toDouble()
 
-        val powers = run {
-            val flPower = y + x + turn
-            val frPower = y - x - turn
-            val blPower = y - x + turn
-            val brPower = y + x - turn
-
-            doubleArrayOf(flPower, frPower, blPower, brPower)
-        }
-
-        val maxPower = (powers.map { abs(it) } + 1.0).maxOrNull()!!
-
-        powers.zip(motors) { power, motor ->
-            motor.power = power / maxPower * POWER
-        }
+        setPowers(
+            yPower + xPower + rotationalPower,
+            yPower - xPower - rotationalPower,
+            yPower - xPower + rotationalPower,
+            yPower + xPower - rotationalPower
+        )
     }
 
     private var lastTargetLocation = Point()
@@ -226,19 +224,20 @@ class Mecanum {
                     val maxRemainingDisplacement =
                         max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                    Vector(
+                    (Vector(
                         aRemainingDisplacement,
                         bRemainingDisplacement
-                    ) / maxRemainingDisplacement *
+                    ) / maxRemainingDisplacement
                             // weight of translational powers
-                            remainingTranslationalDistance
+                            * remainingTranslationalDistance
+                            )
                 }
             }
 
             val remainingHeadingDisplacement = targetHeading - currentHeading
 
-            // find rotational powers
-            val (leftPower, rightPower) = run {
+            // find rotational power
+            val rotationalPower = run {
                 val remainingRotationalDistance =
                     remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
                 if (stop && speedIsEnoughToReachTarget(
@@ -246,35 +245,48 @@ class Mecanum {
                         remainingRotationalDistance
                     )
                 ) {
-                    Vector()
+                    0.0
                 } else {
-                    Vector(
-                        -sign(remainingHeadingDisplacement),
-                        sign(remainingHeadingDisplacement)
-                    ) *
+                    (-sign(remainingHeadingDisplacement)
                             // weight of rotational powers
-                            remainingRotationalDistance
+                            * remainingRotationalDistance
+                            )
                 }
             }
 
-            // find aggregate powers
-            val powers = run {
-                val flPower = aPower + leftPower
-                val frPower = bPower + rightPower
-                val blPower = bPower + leftPower
-                val brPower = aPower + rightPower
-
-                doubleArrayOf(flPower, frPower, blPower, brPower)
-            }
-
-            val maxPower = powers.map { abs(it) }.maxOrNull()!!
-
-            powers.zip(motors) { power, motor ->
-                motor.power = power / maxPower
-            }
+            setPowers(
+                aPower + rotationalPower,
+                bPower - rotationalPower,
+                bPower + rotationalPower,
+                aPower - rotationalPower,
+                true
+            )
         } while ((remainingLocationDisplacement.magnitude > TARGET_LOCATION_TOLERANCE || remainingHeadingDisplacement.absoluteValue > TARGET_HEADING_TOLERANCE) && !isStopRequested())
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading
+    }
+
+    fun setPowers(
+        power: Double
+    ) {
+        setPowers(power, power, power, power, false)
+    }
+
+    private fun setPowers(
+        flPower: Double,
+        frPower: Double,
+        blPower: Double,
+        brPower: Double,
+        maximize: Boolean = false
+    ) {
+        val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
+
+        val maxPower =
+            powers.map { abs(it) }.run { if (!maximize) plus(1.0) else this }.maxOrNull()!!
+
+        powers.zip(motors) { power, motor ->
+            motor.power = power / maxPower
+        }
     }
 }
