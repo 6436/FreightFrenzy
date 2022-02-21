@@ -21,8 +21,6 @@ class Distance : OpMode() {
     override fun init() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        globalGamepad1 = gamepad1
-        globalGamepad2 = gamepad2
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
 

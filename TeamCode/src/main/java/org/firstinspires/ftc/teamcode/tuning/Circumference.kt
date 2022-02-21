@@ -36,11 +36,12 @@ class Circumference : Drivetrain() {
             flag = true
         }
         telemetry.addData(
-            "x odometry calculated heading",
+            "x-odometry calculated heading",
             bl.currentPosition / 81411.14764756098 * DEGREES_PER_ROTATION
         )
+        // constant for y-odometry should be 0.5 of what it is because there are 2 motors, but it's easier to have 1 number
         telemetry.addData(
-            "y odometry calculated heading",
+            "y-odometry calculated heading",
             (-(-fl.currentPosition) + fr.currentPosition) / 133794.1723051728 * DEGREES_PER_ROTATION
         )
         telemetry.addData("angle", angle)

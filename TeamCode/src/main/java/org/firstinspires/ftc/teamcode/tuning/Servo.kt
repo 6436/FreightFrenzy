@@ -17,10 +17,10 @@ class Servo : OpMode() {
     override fun loop() {
 
         when {
-            gamepad1.dpad_up -> {
+            gamepad1.x -> {
                 servo.position += 0.001
             }
-            gamepad1.dpad_down -> {
+            gamepad1.y -> {
                 servo.position -= 0.001
             }
         }

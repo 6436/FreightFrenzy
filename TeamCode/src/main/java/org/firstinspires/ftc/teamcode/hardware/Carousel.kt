@@ -6,21 +6,33 @@ import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
+import org.firstinspires.ftc.teamcode.isStopRequested
 import java.lang.Thread.sleep
+import kotlin.concurrent.thread
 
 class Carousel {
     private companion object {
-        const val POWER = 0.33
-        const val MAX_POWER = 0.5
+        // chosen
+        const val SLOW_POWER = 0.6
+        const val FAST_POWER = 0.9
+        const val SLOW_CAROUSEL_ROTATIONS = 1.0
+        const val FAST_CAROUSEL_ROTATIONS = 1.0
 
+        // measured
+
+        const val COUNTS_PER_WHEEL_ROTATION = 537.6
 
         const val WHEEL_DIAMETER_INCHES = 4.0
         const val CAROUSEL_DIAMETER_INCHES = 15.0
 
-        const val COUNTS_PER_WHEEL_ROTATION = 537.6
+        // derived
 
         const val COUNTS_PER_CAROUSEL_ROTATION =
             COUNTS_PER_WHEEL_ROTATION / WHEEL_DIAMETER_INCHES * CAROUSEL_DIAMETER_INCHES
+
+        const val SLOW_CAROUSEL_COUNTS = SLOW_CAROUSEL_ROTATIONS * COUNTS_PER_CAROUSEL_ROTATION
+        const val FAST_CAROUSEL_COUNTS =
+            (SLOW_CAROUSEL_ROTATIONS + FAST_CAROUSEL_ROTATIONS) * COUNTS_PER_CAROUSEL_ROTATION
     }
 
     private lateinit var carousel: DcMotorEx
@@ -37,29 +49,41 @@ class Carousel {
         carousel.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
+    private var flag = true
     fun update() {
         when {
-            gamepad1.dpad_left -> launch(Alliance.RED)
-            gamepad1.dpad_right -> launch(Alliance.BLUE)
-            else -> off()
+            gamepad1.dpad_left ->
+                if (flag) {
+                    deliver(Alliance.RED)
+                    flag = false
+                }
+            gamepad1.dpad_right ->
+                if (flag) {
+                    deliver(Alliance.BLUE)
+                    flag = false
+                }
+            else -> flag = false
         }
     }
 
-    private fun on(alliance: Alliance) {
-        carousel.power = alliance.value * POWER
-    }
-
-    private fun launch(alliance: Alliance) {
-        carousel.power = alliance.value * MAX_POWER
-    }
-
     fun deliver(alliance: Alliance) {
-        on(alliance)
-        sleep(3000)
+        val carouselStartingPosition = carousel.currentPosition
+        slow(alliance)
+        while (carousel.currentPosition < carouselStartingPosition + SLOW_CAROUSEL_COUNTS);
+        fast(alliance)
+        while (carousel.currentPosition < carouselStartingPosition + FAST_CAROUSEL_COUNTS);
         off()
     }
 
-    fun off() {
+    private fun slow(alliance: Alliance) {
+        carousel.power = alliance.value * SLOW_POWER
+    }
+
+    private fun fast(alliance: Alliance) {
+        carousel.power = alliance.value * FAST_POWER
+    }
+
+    private fun off() {
         carousel.power = 0.0
     }
 
