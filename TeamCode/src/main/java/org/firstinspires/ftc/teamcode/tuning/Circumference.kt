@@ -35,6 +35,7 @@ class Circumference : Drivetrain() {
         } else {
             flag = true
         }
+
         telemetry.addData(
             "x-odometry calculated heading",
             bl.currentPosition / 81411.14764756098 * DEGREES_PER_ROTATION

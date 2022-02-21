@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Lift {
     private companion object {
         const val POWER = 0.85
+        const val TOP_POSITION = 2100
+        const val MIDDLE_POSITION = 1456
+        const val BOTTOM_POSITION = 812
     }
 
     private lateinit var lift: DcMotorEx
@@ -32,22 +35,22 @@ class Lift {
 
     fun update() {
         when {
-            gamepad2.x -> down()
-            gamepad2.y -> bottom()
-            gamepad2.right_bumper -> top()
+            gamepad2.x -> lift.targetPosition += 1
+            gamepad2.y -> lift.targetPosition -= 1
+//            gamepad2.right_bumper -> top()
         }
     }
 
-    fun bottom() {
-        lift.targetPosition = 812
+    fun top() {
+        lift.targetPosition = TOP_POSITION
     }
 
     fun middle() {
-        lift.targetPosition = 1456
+        lift.targetPosition = MIDDLE_POSITION
     }
 
-    fun top() {
-        lift.targetPosition = 2100
+    fun bottom() {
+        lift.targetPosition = BOTTOM_POSITION
     }
 
     fun down() {

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import kotlin.math.abs
 
 @TeleOp
-class TwoWheelTeleOp : OpMode() {
+class TwoWheelDrivetrain : OpMode() {
     private companion object {
         const val POWER = 0.9
     }

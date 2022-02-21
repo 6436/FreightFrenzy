@@ -6,9 +6,6 @@ import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
-import org.firstinspires.ftc.teamcode.isStopRequested
-import java.lang.Thread.sleep
-import kotlin.concurrent.thread
 
 class Carousel {
     private companion object {
@@ -62,7 +59,7 @@ class Carousel {
                     deliver(Alliance.BLUE)
                     flag = false
                 }
-            else -> flag = false
+            else -> flag = true
         }
     }
 

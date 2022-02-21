@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Intake {
     private companion object {
         const val POWER = 0.9
-        const val DUCK_POWER = 0.35
+//        const val DUCK_POWER = 0.35
     }
 
     private lateinit var intake: DcMotorEx
@@ -32,7 +32,7 @@ class Intake {
     fun update() {
         when {
             gamepad1.right_trigger > 0.0 -> suck()
-            gamepad1.left_bumper -> duckSuck()
+//            gamepad1.left_bumper -> duckSuck()
             gamepad1.left_trigger > 0.0 -> spit()
             else -> off()
         }
@@ -42,10 +42,10 @@ class Intake {
         intake.power = POWER
     }
 
-    fun duckSuck() {
-        intake.power = DUCK_POWER
-    }
-
+    //    fun duckSuck() {
+//        intake.power = DUCK_POWER
+//    }
+//
     fun spit() {
         intake.power = -POWER
     }

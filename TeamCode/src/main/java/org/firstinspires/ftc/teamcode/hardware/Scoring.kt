@@ -1,35 +1,37 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.*
+import org.firstinspires.ftc.teamcode.gamepad2
+import org.firstinspires.ftc.teamcode.hardwareMap
+import org.firstinspires.ftc.teamcode.telemetry
 
-class Scoring() {
+class Scoring {
+    private companion object {
+        const val CLOSE_POSITION = 0.0
+        const val OPEN_POSITION = 0.0
+    }
+
     private lateinit var scoring: Servo
 
     fun initialize() {
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
-
-        up()
     }
 
     fun update() {
         when {
-            gamepad2.dpad_up || gamepad2.x -> up()
-            gamepad2.a -> left()
-            gamepad2.b -> right()
+            gamepad2.a -> scoring.position += 0.01
+            gamepad2.b -> scoring.position -= 0.01
+//            gamepad2.a -> close()
+//            gamepad2.b -> open()
         }
     }
 
-    fun up() {
-        scoring.position = 0.56
+    fun close() {
+        scoring.position = CLOSE_POSITION
     }
 
-    fun left() {
-        scoring.position = 0.1
-    }
-
-    fun right() {
-        scoring.position = 0.98
+    fun open() {
+        scoring.position = OPEN_POSITION
     }
 
     fun telemetry() {
