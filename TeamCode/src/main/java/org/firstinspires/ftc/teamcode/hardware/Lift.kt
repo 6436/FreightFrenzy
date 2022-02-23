@@ -35,8 +35,8 @@ class Lift {
 
     fun update() {
         when {
-            gamepad2.x -> lift.targetPosition += 1
-            gamepad2.y -> lift.targetPosition -= 1
+            gamepad2.x -> lift.targetPosition += 10
+            gamepad2.y -> lift.targetPosition -= 10
 //            gamepad2.right_bumper -> top()
         }
     }

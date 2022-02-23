@@ -7,14 +7,17 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Scoring {
     private companion object {
-        const val CLOSE_POSITION = 0.0
-        const val OPEN_POSITION = 0.0
+        const val DEFAULT_POSITION = .3188888
+        const val CLOSE_POSITION = .02944
+        const val OPEN_POSITION = 0.645
     }
 
     private lateinit var scoring: Servo
 
     fun initialize() {
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
+
+        scoring.position = DEFAULT_POSITION
     }
 
     fun update() {

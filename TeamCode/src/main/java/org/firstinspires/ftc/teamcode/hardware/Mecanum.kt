@@ -102,13 +102,13 @@ class Mecanum {
 
         // bulk read
         for (hub in hubs) hub.clearBulkCache()
-        fl.currentPosition
-        fr.currentPosition
         bl.currentPosition
+        br.currentPosition
+        fr.currentPosition
 
-        val leftCurrentPosition = -fl.currentPosition
-        val rightCurrentPosition = fr.currentPosition
-        val backCurrentPosition = bl.currentPosition
+        val leftCurrentPosition = bl.currentPosition
+        val rightCurrentPosition = br.currentPosition
+        val backCurrentPosition = -fr.currentPosition
 
         val newHeading =
             (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
@@ -286,7 +286,7 @@ class Mecanum {
             powers.map { abs(it) }.run { if (!maximize) plus(1.0) else this }.maxOrNull()!!
 
         powers.zip(motors) { power, motor ->
-            motor.power = power / maxPower
+            motor.power = power / maxPower * POWER
         }
     }
 }

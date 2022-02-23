@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.hardware.*
 import kotlin.concurrent.thread
@@ -16,7 +18,7 @@ abstract class BaseAutonomous : LinearOpMode() {
     protected val camera = Camera()
 
     override fun runOpMode() {
-//        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         globalTelemetry = telemetry
         globalHardwareMap = hardwareMap
