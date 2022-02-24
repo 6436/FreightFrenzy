@@ -35,11 +35,12 @@ class Lift {
 
     fun update() {
         when {
+            gamepad2.a -> down()
+            gamepad2.x -> bottom()
+            gamepad2.y -> middle()
+            gamepad2.right_bumper -> top()
             gamepad2.dpad_up -> lift.targetPosition += 10
             gamepad2.dpad_down -> lift.targetPosition -= 10
-            gamepad2.right_bumper -> top()
-            gamepad2.y -> middle()
-            gamepad2.x -> down()
         }
     }
 

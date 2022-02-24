@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Spin {
     private companion object {
-        const val POWER = 0.85
+        const val POWER = 0.7
         const val UP_POSITION = 560
     }
 
@@ -33,10 +33,10 @@ class Spin {
 
     fun update() {
         when {
-            gamepad2.dpad_left -> spin.targetPosition += 10
-            gamepad2.dpad_right -> spin.targetPosition -= 10
-//            gamepad2.x -> down()
-//            gamepad2.y || gamepad2.right_bumper -> up()
+            gamepad2.a -> down()
+            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> up()
+//            gamepad2.dpad_left -> spin.targetPosition += 10
+//            gamepad2.dpad_right -> spin.targetPosition -= 10
         }
     }
 

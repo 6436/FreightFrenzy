@@ -27,8 +27,8 @@ class Carousel {
         const val COUNTS_PER_CAROUSEL_ROTATION =
             COUNTS_PER_WHEEL_ROTATION / WHEEL_DIAMETER_INCHES * CAROUSEL_DIAMETER_INCHES
 
-        const val SLOW_CAROUSEL_COUNTS = SLOW_CAROUSEL_ROTATIONS * COUNTS_PER_CAROUSEL_ROTATION
-        const val FAST_CAROUSEL_COUNTS =
+        const val SLOW_COUNTS = SLOW_CAROUSEL_ROTATIONS * COUNTS_PER_CAROUSEL_ROTATION
+        const val FAST_COUNTS =
             (SLOW_CAROUSEL_ROTATIONS + FAST_CAROUSEL_ROTATIONS) * COUNTS_PER_CAROUSEL_ROTATION
     }
 
@@ -66,9 +66,9 @@ class Carousel {
     fun deliver(alliance: Alliance) {
         val carouselStartingPosition = carousel.currentPosition
         slow(alliance)
-        while (carousel.currentPosition < carouselStartingPosition + SLOW_CAROUSEL_COUNTS);
+        while (carousel.currentPosition < carouselStartingPosition + SLOW_COUNTS);
         fast(alliance)
-        while (carousel.currentPosition < carouselStartingPosition + FAST_CAROUSEL_COUNTS);
+        while (carousel.currentPosition < carouselStartingPosition + FAST_COUNTS);
         off()
     }
 
