@@ -11,7 +11,7 @@ class Mecanum {
     private companion object {
         // chosen
 
-        const val POWER = 0.9
+        const val POWER = 0.8
 
         // tuned
 
@@ -102,13 +102,10 @@ class Mecanum {
 
         // bulk read
         for (hub in hubs) hub.clearBulkCache()
-        bl.currentPosition
-        br.currentPosition
-        fr.currentPosition
 
-        val leftCurrentPosition = bl.currentPosition
-        val rightCurrentPosition = br.currentPosition
-        val backCurrentPosition = -fr.currentPosition
+        val leftCurrentPosition = br.currentPosition
+        val rightCurrentPosition = bl.currentPosition
+        val backCurrentPosition = fl.currentPosition
 
         val newHeading =
             (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
@@ -162,7 +159,8 @@ class Mecanum {
         val (xPower, yPower) = Vector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
-        ).rotatedAboutOrigin(-heading)
+        )
+//            .rotatedAboutOrigin(-heading)
 
         val rotationalPower = gamepad1.right_stick_x.toDouble()
 

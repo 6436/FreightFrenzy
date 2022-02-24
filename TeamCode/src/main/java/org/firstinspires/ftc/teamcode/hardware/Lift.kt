@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Lift {
     private companion object {
         const val POWER = 0.85
-        const val TOP_POSITION = 2100
+        const val TOP_POSITION = 3111
         const val MIDDLE_POSITION = 1456
         const val BOTTOM_POSITION = 812
     }
@@ -20,7 +20,7 @@ class Lift {
     fun initialize() {
         lift = hardwareMap.get(DcMotorEx::class.java, ::lift.name)
 
-        lift.direction = DcMotorSimple.Direction.REVERSE
+        lift.direction = DcMotorSimple.Direction.FORWARD
 
         lift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
@@ -35,9 +35,11 @@ class Lift {
 
     fun update() {
         when {
-            gamepad2.x -> lift.targetPosition += 10
-            gamepad2.y -> lift.targetPosition -= 10
-//            gamepad2.right_bumper -> top()
+            gamepad2.dpad_up -> lift.targetPosition += 10
+            gamepad2.dpad_down -> lift.targetPosition -= 10
+            gamepad2.right_bumper -> top()
+            gamepad2.y -> middle()
+            gamepad2.x -> down()
         }
     }
 

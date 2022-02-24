@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Scoring {
     private companion object {
-        const val DEFAULT_POSITION = .3188888
-        const val CLOSE_POSITION = .02944
+        const val CLOSE_POSITION = 0.02944
+        const val DEFAULT_POSITION = 0.3188888
         const val OPEN_POSITION = 0.645
     }
 
@@ -17,13 +17,15 @@ class Scoring {
     fun initialize() {
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
 
-        scoring.position = DEFAULT_POSITION
+        default()
     }
 
     fun update() {
         when {
             gamepad2.a -> scoring.position += 0.01
             gamepad2.b -> scoring.position -= 0.01
+//            gamepad2.x -> default()
+//            gamepad2.y || gamepad2.right_bumper -> close()
 //            gamepad2.a -> close()
 //            gamepad2.b -> open()
         }
@@ -31,6 +33,10 @@ class Scoring {
 
     fun close() {
         scoring.position = CLOSE_POSITION
+    }
+
+    fun default() {
+        scoring.position = DEFAULT_POSITION
     }
 
     fun open() {

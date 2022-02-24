@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Spin {
     private companion object {
         const val POWER = 0.85
-        const val UP_POSITION = 2100
+        const val UP_POSITION = 560
     }
 
     private lateinit var spin: DcMotorEx
@@ -18,7 +18,7 @@ class Spin {
     fun initialize() {
         spin = hardwareMap.get(DcMotorEx::class.java, ::spin.name)
 
-        spin.direction = DcMotorSimple.Direction.REVERSE
+        spin.direction = DcMotorSimple.Direction.FORWARD
 
         spin.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
@@ -33,9 +33,10 @@ class Spin {
 
     fun update() {
         when {
-            gamepad2.left_bumper -> spin.targetPosition += 10
-            gamepad2.right_bumper -> spin.targetPosition -= 10
-//            gamepad2.right_bumper -> top()
+            gamepad2.dpad_left -> spin.targetPosition += 10
+            gamepad2.dpad_right -> spin.targetPosition -= 10
+//            gamepad2.x -> down()
+//            gamepad2.y || gamepad2.right_bumper -> up()
         }
     }
 
@@ -43,7 +44,7 @@ class Spin {
         spin.targetPosition = UP_POSITION
     }
 
-    fun bottom() {
+    fun down() {
         spin.targetPosition = 0
     }
 
