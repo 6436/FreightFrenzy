@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Scoring {
     private companion object {
         const val OPEN_POSITION = 0.645
-        const val DEFAULT_POSITION = 0.3188888
-        const val CLOSE_POSITION = 0.02944
+        const val DEFAULT_POSITION = 0.4
+        const val CLOSE_POSITION = 0.023
     }
 
     private lateinit var scoring: Servo

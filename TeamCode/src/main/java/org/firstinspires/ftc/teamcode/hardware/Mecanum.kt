@@ -24,14 +24,14 @@ class Mecanum {
         // measured
 
         const val MOTOR_COUNTS_PER_ROTATION = 8192.0
-        const val WHEEL_DIAMETER_MILLIMETERS = 96.0
+        const val ODOMETRY_WHEEL_DIAMETER_MILLIMETERS = 35.0
 
         // derived
 
-        const val WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
-        const val WHEEL_INCHES_PER_ROTATION = WHEEL_DIAMETER_INCHES * PI
-        const val WHEEL_COUNTS_PER_INCH =
-            MOTOR_COUNTS_PER_ROTATION / WHEEL_INCHES_PER_ROTATION
+        const val ODOMETRY_WHEEL_DIAMETER_INCHES = ODOMETRY_WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
+        const val ODOMETRY_WHEEL_INCHES_PER_ROTATION = ODOMETRY_WHEEL_DIAMETER_INCHES * PI
+        const val ODOMETRY_WHEEL_COUNTS_PER_INCH =
+            MOTOR_COUNTS_PER_ROTATION / ODOMETRY_WHEEL_INCHES_PER_ROTATION
 
         const val X_ODOMETRY_COUNTS_PER_DEGREE =
             X_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
@@ -45,7 +45,7 @@ class Mecanum {
          * y-odometry wheel track is similar in size to drivetrain wheel track
          */
         const val APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE =
-            Y_ODOMETRY_COUNTS_PER_DEGREE / WHEEL_COUNTS_PER_INCH
+            Y_ODOMETRY_COUNTS_PER_DEGREE / ODOMETRY_WHEEL_COUNTS_PER_INCH
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -126,7 +126,7 @@ class Mecanum {
             Vector(
                 backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
                 (leftPositionChange + rightPositionChange) / 2.0
-            ).rotatedAboutOrigin(heading) / WHEEL_COUNTS_PER_INCH
+            ).rotatedAboutOrigin(heading) / ODOMETRY_WHEEL_COUNTS_PER_INCH
         }
 
         // update

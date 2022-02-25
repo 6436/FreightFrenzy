@@ -3,52 +3,47 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.gamepad2
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 
 class Spin {
     private companion object {
-        const val POWER = 0.7
-        const val UP_POSITION = 560
+        const val UP_POSITION = 0.5
+        const val DUMP_POSITION = 0.5
+        const val DOWN_POSITION = 0.5
     }
 
-    private lateinit var spin: DcMotorEx
+    private lateinit var spin: Servo
 
     fun initialize() {
-        spin = hardwareMap.get(DcMotorEx::class.java, ::spin.name)
-
-        spin.direction = DcMotorSimple.Direction.FORWARD
-
-        spin.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-
-        spin.targetPosition = 0
-
-        spin.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-        spin.mode = DcMotor.RunMode.RUN_TO_POSITION
-
-        spin.power = POWER
+        spin = hardwareMap.get(Servo::class.java, ::spin.name)
     }
 
     fun update() {
         when {
-            gamepad2.a -> down()
-            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> up()
-//            gamepad2.dpad_left -> spin.targetPosition += 10
-//            gamepad2.dpad_right -> spin.targetPosition -= 10
+//            gamepad2.a -> down()
+//            gamepad2.x -> dump()
+//            gamepad2.y || gamepad2.right_bumper -> up()
+            gamepad2.dpad_left -> spin.position += 0.01
+            gamepad2.dpad_right -> spin.position -= 0.01
         }
     }
 
     fun up() {
-        spin.targetPosition = UP_POSITION
+        spin.position = UP_POSITION
+    }
+
+    fun dump() {
+        spin.position = DUMP_POSITION
     }
 
     fun down() {
-        spin.targetPosition = 0
+        spin.position = DOWN_POSITION
     }
 
     fun telemetry() {
-        telemetry.addData("spin currentPosition", spin.currentPosition)
+        telemetry.addData("spin currentPosition", spin.position)
     }
 }
