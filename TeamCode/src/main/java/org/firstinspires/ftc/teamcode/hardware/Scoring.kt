@@ -22,11 +22,11 @@ class Scoring {
 
     fun update() {
         when {
-            gamepad2.b -> open()
-            gamepad2.a -> default()
-            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> close()
-//            gamepad2.a -> scoring.position += 0.01
-//            gamepad2.b -> scoring.position -= 0.01
+//            gamepad2.b -> open()
+//            gamepad2.a -> default()
+//            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> close()
+            gamepad2.a -> scoring.position += 0.01
+            gamepad2.b -> scoring.position -= 0.01
         }
     }
 

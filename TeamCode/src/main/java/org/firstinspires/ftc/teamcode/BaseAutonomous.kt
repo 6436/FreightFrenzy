@@ -16,6 +16,7 @@ abstract class BaseAutonomous : LinearOpMode() {
     protected val scoring = Scoring()
     protected val carousel = Carousel()
     protected val camera = Camera()
+    protected val spin = Spin()
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -30,6 +31,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         scoring.initialize()
         carousel.initialize()
         camera.initialize()
+        spin.initialize()
 
         thread {
             while (!isStopRequested) {
@@ -40,6 +42,7 @@ abstract class BaseAutonomous : LinearOpMode() {
                 scoring.telemetry()
                 carousel.telemetry()
                 camera.telemetry()
+                spin.telemetry()
 
                 telemetry.update()
             }
