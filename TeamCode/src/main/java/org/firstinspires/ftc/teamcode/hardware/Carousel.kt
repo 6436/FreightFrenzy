@@ -46,31 +46,35 @@ class Carousel {
         carousel.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
-    private var flag = true
+//    private var flag = true
     fun update() {
         when {
             gamepad1.dpad_left ->
-                if (flag) {
-                    deliver(Alliance.RED)
-                    flag = false
-                }
+                slow(Alliance.RED)
+//                if (flag) {
+//                    deliver(Alliance.RED)
+//                    flag = false
+//                }
             gamepad1.dpad_right ->
-                if (flag) {
-                    deliver(Alliance.BLUE)
-                    flag = false
-                }
-            else -> flag = true
+            slow(Alliance.BLUE)
+//                if (flag) {
+//                    deliver(Alliance.BLUE)
+//                    flag = false
+//                }
+            else ->
+                off()
+//                flag = true
         }
     }
-
-    fun deliver(alliance: Alliance) {
-        val carouselStartingPosition = carousel.currentPosition
-        slow(alliance)
-        while (carousel.currentPosition < carouselStartingPosition + SLOW_COUNTS);
-        fast(alliance)
-        while (carousel.currentPosition < carouselStartingPosition + FAST_COUNTS);
-        off()
-    }
+//
+//    fun deliver(alliance: Alliance) {
+//        val carouselStartingPosition = carousel.currentPosition
+//        slow(alliance)
+//        while (carousel.currentPosition < carouselStartingPosition + SLOW_COUNTS);
+//        fast(alliance)
+//        while (carousel.currentPosition < carouselStartingPosition + FAST_COUNTS);
+//        off()
+//    }
 
     private fun slow(alliance: Alliance) {
         carousel.power = alliance.value * SLOW_POWER
@@ -87,5 +91,6 @@ class Carousel {
     fun telemetry() {
         telemetry.addData("carousel power", carousel.power)
         telemetry.addData("carousel position", carousel.currentPosition)
+        telemetry.addData("counts", SLOW_COUNTS)
     }
 }

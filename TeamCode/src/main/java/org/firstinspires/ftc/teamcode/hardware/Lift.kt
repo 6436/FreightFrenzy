@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Lift {
     private companion object {
         const val POWER = 0.85
-        const val TOP_POSITION = 2332
-        const val MIDDLE_POSITION = 1550
-        const val BOTTOM_POSITION = 1245
+        const val TOP_POSITION = 2500
+        const val MIDDLE_POSITION = 1400
+        const val BOTTOM_POSITION = 590
     }
 
     private lateinit var lift: DcMotorEx

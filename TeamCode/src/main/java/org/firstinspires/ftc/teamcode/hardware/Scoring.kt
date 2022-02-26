@@ -7,9 +7,9 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Scoring {
     private companion object {
-        const val OPEN_POSITION = 0.645
-        const val DEFAULT_POSITION = 0.4
-        const val CLOSE_POSITION = 0.023
+        const val OPEN_POSITION = 0.91
+        const val DEFAULT_POSITION = 0.7572222222
+        const val CLOSE_POSITION = 0.6077777777
     }
 
     private lateinit var scoring: Servo
@@ -22,11 +22,11 @@ class Scoring {
 
     fun update() {
         when {
-//            gamepad2.b -> open()
-//            gamepad2.a -> default()
-//            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> close()
-            gamepad2.a -> scoring.position += 0.01
-            gamepad2.b -> scoring.position -= 0.01
+            gamepad2.b -> open()
+            gamepad2.a -> default()
+            gamepad2.x || gamepad2.y || gamepad2.right_bumper -> close()
+//            gamepad2.dpad_down -> scoring.position += 0.01
+//            gamepad2.b -> scoring.position -= 0.01
         }
     }
 

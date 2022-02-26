@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Intake {
     private companion object {
-        const val POWER = 0.6
+        const val POWER = 0.8
     }
 
     private lateinit var intake: DcMotorEx

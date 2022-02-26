@@ -16,7 +16,7 @@ open class TeleOp : OpMode() {
     private val intake = Intake()
     private val lift = Lift()
     private val scoring = Scoring()
-//    private val carousel = Carousel()
+    private val carousel = Carousel()
     private val spin = Spin()
 
     override fun init() {
@@ -31,7 +31,7 @@ open class TeleOp : OpMode() {
         intake.initialize()
         lift.initialize()
         scoring.initialize()
-//        carousel.initialize()
+        carousel.initialize()
         spin.initialize()
     }
 
@@ -42,13 +42,13 @@ open class TeleOp : OpMode() {
         intake.update()
         lift.update()
         scoring.update()
-//        carousel.update()
+        carousel.update()
         spin.update()
-
-        intake.telemetry()
-        lift.telemetry()
-        scoring.telemetry()
-//        carousel.telemetry()
-        spin.telemetry()
+//
+//        intake.telemetry()
+//        lift.telemetry()
+//        scoring.telemetry()
+        carousel.telemetry()
+//        spin.telemetry()
     }
 }

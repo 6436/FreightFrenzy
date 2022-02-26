@@ -7,7 +7,7 @@ class FreightAutonomous : BaseAutonomous() {
     override fun autonomous() {
         lift.bonus()
         spin.up()
-        drivetrain.move(y=-20)
+        drivetrain.move(24, -20)
         scoring.open()
     }
 }

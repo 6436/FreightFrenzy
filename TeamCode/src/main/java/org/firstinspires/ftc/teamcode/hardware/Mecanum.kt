@@ -11,12 +11,12 @@ class Mecanum {
     private companion object {
         // chosen
 
-        const val POWER = 0.8
+        const val POWER = 0.9
 
         // tuned
 
-        const val TARGET_LOCATION_TOLERANCE = 1.0
-        const val TARGET_HEADING_TOLERANCE = 3.0
+        const val TARGET_LOCATION_TOLERANCE = 0.25
+        const val TARGET_HEADING_TOLERANCE = 1.5
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 81411.14764756098
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
         const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3.0
@@ -153,6 +153,7 @@ class Mecanum {
         telemetry.addData("heading", heading)
         telemetry.addData("location change magnitude", locationChange.magnitude)
         telemetry.addData("heading change magnitude", headingChange.absoluteValue)
+        telemetry.addData("location change speed", locationChangeSpeed)
     }
 
     fun update() {
