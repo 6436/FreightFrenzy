@@ -55,8 +55,8 @@ abstract class Drivetrain : OpMode() {
     override fun loop() {
         for (hub in hubs) hub.clearBulkCache()
 
-        telemetry.addData("fl current position", fl.currentPosition)
-        telemetry.addData("fr current position", fr.currentPosition)
-        telemetry.addData("bl current position", bl.currentPosition)
+        telemetry.addData("left current position", br.currentPosition)
+        telemetry.addData("right current position", bl.currentPosition)
+        telemetry.addData("back current position", fl.currentPosition)
     }
 }
