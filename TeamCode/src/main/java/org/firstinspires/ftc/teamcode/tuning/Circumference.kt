@@ -14,8 +14,10 @@ class Circumference : Drivetrain() {
         imu.initialize()
     }
 
-    private var angle = 0.0
-    private var flag = true
+    private var firstAngle = 0.0
+    private var firstAngleFlag = true
+    private var allAngles = Triple(0.0, 0.0, 0.0)
+    private var allAnglesFlag = true
     override fun loop() {
         super.loop()
 
@@ -27,24 +29,34 @@ class Circumference : Drivetrain() {
             }
         }
 
-        if (gamepad1.b) {
-            if (flag) {
-                angle = imu.angle
-                flag = false
+        if (gamepad1.a) {
+            if (firstAngleFlag) {
+                firstAngle = imu.firstAngle
+                firstAngleFlag = false
             }
         } else {
-            flag = true
+            firstAngleFlag = true
+        }
+
+        if (gamepad1.b) {
+            if (allAnglesFlag) {
+                allAngles = imu.allAngles
+                allAnglesFlag = false
+            }
+        } else {
+            allAnglesFlag = true
         }
 
         telemetry.addData(
             "x-odometry calculated heading",
-            fl.currentPosition / 81411.14764756098 * DEGREES_PER_ROTATION
+            fl.currentPosition / 74198.33941731641 * DEGREES_PER_ROTATION
         )
         // constant for y-odometry should be 0.5 of what it is because there are 2 motors, but it's easier to have 1 number
         telemetry.addData(
             "y-odometry calculated heading",
             (-bl.currentPosition + br.currentPosition) / 133794.1723051728 * DEGREES_PER_ROTATION
         )
-        telemetry.addData("angle", angle)
+        telemetry.addData("first angle", firstAngle)
+        telemetry.addData("all angles", allAngles)
     }
 }

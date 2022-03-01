@@ -18,18 +18,19 @@ class Imu {
         imu.initialize(parameterz)
     }
 
-    val angle get() = imu.angularOrientation.firstAngle.toDouble()
+    val firstAngle get() = imu.angularOrientation.firstAngle.toDouble()
+    val allAngles get() = Triple(imu.angularOrientation.firstAngle.toDouble(),imu.angularOrientation.secondAngle.toDouble(), imu.angularOrientation.thirdAngle.toDouble())
 
     private var lastAngle = 0.0
     var heading = 0.0
         get() {
-            var changeHeading = angle - lastAngle
+            var changeHeading = firstAngle - lastAngle
 
             if (abs(changeHeading) > 180.0) changeHeading -= sign(changeHeading) * 360.0
 
             field += changeHeading
 
-            lastAngle = angle
+            lastAngle = firstAngle
             return field
         }
 }
