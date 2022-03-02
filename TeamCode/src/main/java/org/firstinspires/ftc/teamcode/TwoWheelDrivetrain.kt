@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import kotlin.math.abs
 
 @TeleOp
-class TwoWheelDrivetrain : OpMode() {
+class TwoWheelDrivetrain : BaseTeleOp() {
     private companion object {
         const val POWER = 0.9
     }
@@ -16,7 +15,7 @@ class TwoWheelDrivetrain : OpMode() {
     private lateinit var right: DcMotorEx
     private lateinit var motors: Array<DcMotorEx>
 
-    override fun init() {
+    override fun initialize() {
         left = hardwareMap.get(DcMotorEx::class.java, ::left.name)
         right = hardwareMap.get(DcMotorEx::class.java, ::right.name)
         motors = arrayOf(left, right)
@@ -32,7 +31,7 @@ class TwoWheelDrivetrain : OpMode() {
         }
     }
 
-    override fun loop() {
+    override fun update() {
         val y = -gamepad1.left_stick_y
 
         val turn = gamepad1.right_stick_x.toDouble()

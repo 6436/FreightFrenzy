@@ -70,9 +70,12 @@ abstract class BaseAutonomous : LinearOpMode() {
     abstract fun autonomous()
 
     private fun reset() {
+        sleep(2500)
+
         lift.down()
         spin.down()
         scoring.default()
-        sleep(15000)
+
+        sleep(5000)
     }
 }

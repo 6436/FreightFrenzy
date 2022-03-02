@@ -27,10 +27,7 @@ class Mecanum {
         var TARGET_HEADING_TOLERANCE = 4.0
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
-
-        @JvmField
-        @Volatile
-        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 36.0
+        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 47.8833548
 
         // measured
 
@@ -153,16 +150,6 @@ class Mecanum {
         lastBackPosition = backCurrentPosition
     }
 
-    fun telemetry() {
-        telemetry.addData("x", location.x)
-        telemetry.addData("y", location.y)
-        telemetry.addData("heading", heading)
-        telemetry.addData("fl power", fl.power)
-        telemetry.addData("fr power", fr.power)
-        telemetry.addData("bl power", bl.power)
-        telemetry.addData("br power", br.power)
-    }
-
     fun update() {
         val (xPower, yPower) = Vector(
             gamepad1.left_stick_x,
@@ -217,7 +204,7 @@ class Mecanum {
                 val remainingTranslationalDistance = remainingLocationDisplacement.magnitude
                 if (stop && speedIsEnoughToReachTarget(
                         locationChangeSpeed,
-                        remainingTranslationalDistance
+                        remainingTranslationalDistance - TARGET_LOCATION_TOLERANCE
                     )
                 ) {
                     Vector()
@@ -248,7 +235,7 @@ class Mecanum {
                     remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
                 if (stop && speedIsEnoughToReachTarget(
                         headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
-                        remainingRotationalDistance
+                        remainingRotationalDistance - TARGET_HEADING_TOLERANCE
                     )
                 ) {
                     0.0
@@ -296,5 +283,15 @@ class Mecanum {
         powers.zip(motors) { power, motor ->
             motor.power = power / maxPower * POWER
         }
+    }
+
+    fun telemetry() {
+        telemetry.addData("x", location.x)
+        telemetry.addData("y", location.y)
+        telemetry.addData("heading", heading)
+        telemetry.addData("fl power", fl.power)
+        telemetry.addData("fr power", fr.power)
+        telemetry.addData("bl power", bl.power)
+        telemetry.addData("br power", br.power)
     }
 }
