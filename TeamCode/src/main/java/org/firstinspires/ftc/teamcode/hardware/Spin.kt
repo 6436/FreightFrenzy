@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Spin {
     private companion object {
         const val UP_POSITION = 0.38777777777
-//        const val DUMP_POSITION = 0.42
+
+        //        const val DUMP_POSITION = 0.42
         const val DOWN_POSITION = 0.268888888
     }
 
@@ -16,6 +17,8 @@ class Spin {
 
     fun initialize() {
         spin = hardwareMap.get(Servo::class.java, ::spin.name)
+
+        down()
     }
 
     fun update() {

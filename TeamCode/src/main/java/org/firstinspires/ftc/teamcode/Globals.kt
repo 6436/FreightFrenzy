@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -25,5 +26,3 @@ fun Telemetry.Item.addFormattedData(caption: String, value: Any) =
 lateinit var hardwareMap: HardwareMap
 
 lateinit var isStopRequested: () -> Boolean
-
-lateinit var liftIsUp: () -> Boolean

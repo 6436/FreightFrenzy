@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
 
 @TeleOp
 class OneDriverTeleOp : TwoDriverTeleOp() {
-    override fun init() {
+    override fun initialize() {
         super.init()
 
         globalGamepad2 = gamepad1

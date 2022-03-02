@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Mecanum
 
 @TeleOp
-class DrivetrainOnly : OpMode() {
+class DrivetrainOnly : LinearOpMode() {
     private val drivetrain = Mecanum()
 
-    override fun init() {
+    fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         org.firstinspires.ftc.teamcode.gamepad1 = gamepad1
@@ -21,9 +22,19 @@ class DrivetrainOnly : OpMode() {
         drivetrain.initialize()
     }
 
-    override fun loop() {
-        drivetrain.odometry()
+    @Throws(InterruptedException::class)
+    override fun runOpMode() {
+        initialize()
 
-        drivetrain.update()
+        waitForStart()
+
+        while (opModeIsActive()) {
+
+            drivetrain.odometry()
+
+//            telemetry.update()
+
+            drivetrain.update()
+        }
     }
 }

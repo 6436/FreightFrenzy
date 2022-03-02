@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.*
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 @TeleOp
-open class TeleOp : OpMode() {
+open class TeleOp : LinearOpMode() {
     private val drivetrain = Mecanum()
     private val intake = Intake()
     private val lift = Lift()
@@ -19,7 +20,7 @@ open class TeleOp : OpMode() {
     private val carousel = Carousel()
     private val spin = Spin()
 
-    override fun init() {
+    open fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         globalGamepad1 = gamepad1
@@ -35,20 +36,27 @@ open class TeleOp : OpMode() {
         spin.initialize()
     }
 
-    override fun loop() {
-        drivetrain.odometry()
+    @Throws(InterruptedException::class)
+    override fun runOpMode() {
+        initialize()
 
-        drivetrain.update()
-        intake.update()
-        lift.update()
-        scoring.update()
-        carousel.update()
-        spin.update()
+        waitForStart()
+        while (opModeIsActive()) {
+            drivetrain.odometry()
+
+            drivetrain.update()
+            intake.update()
+            lift.update()
+            scoring.update()
+            carousel.update()
+            spin.update()
 //
 //        intake.telemetry()
 //        lift.telemetry()
 //        scoring.telemetry()
-        carousel.telemetry()
+//        carousel.telemetry()
 //        spin.telemetry()
+            telemetry.update()
+        }
     }
 }

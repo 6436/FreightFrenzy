@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 @Autonomous
 class FreightAutonomous : BaseAutonomous() {
     override fun autonomous() {
-        lift.bonus()
+        lift.top()
         spin.up()
-        drivetrain.move(24, -20)
+        drivetrain.move(24, -22)
         scoring.open()
     }
 }

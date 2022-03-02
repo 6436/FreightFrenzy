@@ -18,6 +18,7 @@ abstract class BaseAutonomous : LinearOpMode() {
     protected val camera = Camera()
     protected val spin = Spin()
 
+    @Throws(InterruptedException::class)
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -29,6 +30,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         intake.initialize()
         lift.initialize()
         scoring.initialize()
+        scoring.close()
         carousel.initialize()
         camera.initialize()
         spin.initialize()
@@ -37,14 +39,14 @@ abstract class BaseAutonomous : LinearOpMode() {
             while (!isStopRequested) {
                 drivetrain.odometry()
 
-                intake.telemetry()
-                lift.telemetry()
-                scoring.telemetry()
-                carousel.telemetry()
-                camera.telemetry()
-                spin.telemetry()
+//                intake.telemetry()
+//                lift.telemetry()
+//                scoring.telemetry()
+//                carousel.telemetry()
+//                camera.telemetry()
+//                spin.telemetry()
 
-                telemetry.update()
+//                telemetry.update()
             }
         }
 
@@ -69,6 +71,8 @@ abstract class BaseAutonomous : LinearOpMode() {
 
     private fun reset() {
         lift.down()
-        sleep(1500)
+        spin.down()
+        scoring.default()
+        sleep(15000)
     }
 }

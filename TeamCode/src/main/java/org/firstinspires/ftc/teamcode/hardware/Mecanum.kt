@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -7,19 +8,29 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.*
 import kotlin.math.*
 
+@Config
 class Mecanum {
-    private companion object {
+
+    companion object {
         // chosen
 
         const val POWER = 0.9
 
         // tuned
 
-        const val TARGET_LOCATION_TOLERANCE = 0.15
-        const val TARGET_HEADING_TOLERANCE = 1.0/3.0
+        @JvmField
+        @Volatile
+        var TARGET_LOCATION_TOLERANCE = 2.0
+
+        @JvmField
+        @Volatile
+        var TARGET_HEADING_TOLERANCE = 4.0
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
-        const val FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 3.0
+
+        @JvmField
+        @Volatile
+        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 36.0
 
         // measured
 
@@ -28,7 +39,8 @@ class Mecanum {
 
         // derived
 
-        const val ODOMETRY_WHEEL_DIAMETER_INCHES = ODOMETRY_WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
+        const val ODOMETRY_WHEEL_DIAMETER_INCHES =
+            ODOMETRY_WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val ODOMETRY_WHEEL_INCHES_PER_ROTATION = ODOMETRY_WHEEL_DIAMETER_INCHES * PI
         const val ODOMETRY_WHEEL_COUNTS_PER_INCH =
             MOTOR_COUNTS_PER_ROTATION / ODOMETRY_WHEEL_INCHES_PER_ROTATION
@@ -132,28 +144,23 @@ class Mecanum {
         // update
         location += locationChange
         heading = newHeading
-        locationChangeSpeed = run {
-            val newLocationChangeSpeed = locationChange.magnitude / timeChange
-            telemetry.addData(
-                "location change speed change velocity",
-                (newLocationChangeSpeed - locationChangeSpeed) / timeChange
-            )
-            newLocationChangeSpeed
-        }
+        locationChangeSpeed = locationChange.magnitude / timeChange
         headingChangeSpeed = headingChange / timeChange
 
         lastTime = time
         lastLeftPosition = leftCurrentPosition
         lastRightPosition = rightCurrentPosition
         lastBackPosition = backCurrentPosition
+    }
 
-        telemetry.addData("loop time milliseconds", timeChange * MILLISECONDS_PER_SECOND)
+    fun telemetry() {
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)
-        telemetry.addData("location change magnitude", locationChange.magnitude)
-        telemetry.addData("heading change magnitude", headingChange.absoluteValue)
-        telemetry.addData("location change speed", locationChangeSpeed)
+        telemetry.addData("fl power", fl.power)
+        telemetry.addData("fr power", fr.power)
+        telemetry.addData("bl power", bl.power)
+        telemetry.addData("br power", br.power)
     }
 
     fun update() {
@@ -261,6 +268,8 @@ class Mecanum {
                 true
             )
         } while ((remainingLocationDisplacement.magnitude > TARGET_LOCATION_TOLERANCE || remainingHeadingDisplacement.absoluteValue > TARGET_HEADING_TOLERANCE) && !isStopRequested())
+
+        setPowers(0.0)
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading

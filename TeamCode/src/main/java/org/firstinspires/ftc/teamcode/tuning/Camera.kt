@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 class Camera : LinearOpMode() {
     private val camera = Camera()
 
+    @Throws(InterruptedException::class)
     override fun runOpMode() {
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
