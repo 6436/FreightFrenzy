@@ -20,18 +20,21 @@ class Mecanum {
 
         @JvmField
         @Volatile
-        var TARGET_LOCATION_TOLERANCE = 2.0
+        var TARGET_LOCATION_TOLERANCE = 1.0
 
         @JvmField
         @Volatile
-        var TARGET_HEADING_TOLERANCE = 4.0
+        var TARGET_HEADING_TOLERANCE = 3.0
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
-        const val Y_ODOMETRY_COUNTS_PER_ROTATION = 133794.1723051728
-        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 45.0
+        const val Y_ODOMETRY_COUNTS_PER_ROTATION = 66897.0861526
+
+        @JvmField
+        @Volatile
+        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 46.0
 
         // measured
 
-        const val MOTOR_COUNTS_PER_ROTATION = 8192.0
+        const val ODOMETRY_WHEEL_COUNTS_PER_ROTATION = 8192.0
         const val ODOMETRY_WHEEL_DIAMETER_MILLIMETERS = 35.0
 
         // derived
@@ -40,7 +43,7 @@ class Mecanum {
             ODOMETRY_WHEEL_DIAMETER_MILLIMETERS / MILLIMETERS_PER_INCH
         const val ODOMETRY_WHEEL_INCHES_PER_ROTATION = ODOMETRY_WHEEL_DIAMETER_INCHES * PI
         const val ODOMETRY_WHEEL_COUNTS_PER_INCH =
-            MOTOR_COUNTS_PER_ROTATION / ODOMETRY_WHEEL_INCHES_PER_ROTATION
+            ODOMETRY_WHEEL_COUNTS_PER_ROTATION / ODOMETRY_WHEEL_INCHES_PER_ROTATION
 
         const val X_ODOMETRY_COUNTS_PER_DEGREE =
             X_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
@@ -117,7 +120,7 @@ class Mecanum {
         val backCurrentPosition = fl.currentPosition
 
         val newHeading =
-            (-leftCurrentPosition + rightCurrentPosition) / Y_ODOMETRY_COUNTS_PER_DEGREE
+            (-leftCurrentPosition + rightCurrentPosition) / 2 / Y_ODOMETRY_COUNTS_PER_DEGREE
 
         val headingChange = newHeading - heading
 
@@ -235,7 +238,7 @@ class Mecanum {
                     remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
                 if (stop && speedIsEnoughToReachTarget(
                         headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
-                        remainingRotationalDistance - TARGET_HEADING_TOLERANCE
+                        remainingRotationalDistance - TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
                     )
                 ) {
                     0.0

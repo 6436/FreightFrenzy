@@ -33,7 +33,7 @@ class DrivetrainOnly : LinearOpMode() {
 
             drivetrain.odometry()
 
-//            telemetry.update()
+            telemetry.update()
 
             drivetrain.update()
         }

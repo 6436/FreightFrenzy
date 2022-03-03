@@ -15,7 +15,7 @@ abstract class BaseAutonomous : LinearOpMode() {
     protected val lift = Lift()
     protected val scoring = Scoring()
     protected val carousel = Carousel()
-    protected val camera = Camera()
+//    protected val camera = Camera()
     protected val spin = Spin()
 
     @Throws(InterruptedException::class)
@@ -32,7 +32,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         scoring.initialize()
         scoring.close()
         carousel.initialize()
-        camera.initialize()
+//        camera.initialize()
         spin.initialize()
 
         thread {
@@ -52,20 +52,20 @@ abstract class BaseAutonomous : LinearOpMode() {
 
         waitForStart()
 
-        camera.off()
+//        camera.off()
 
         autonomous()
 
         reset()
     }
 
-    fun Lift.bonus() {
-        when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-            else -> lift.top()
-        }
-    }
+//    fun Lift.bonus() {
+//        when (camera.analysis) {
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
+//            else -> lift.top()
+//        }
+//    }
 
     abstract fun autonomous()
 
