@@ -17,6 +17,7 @@ open class TeleOp : BaseTeleOp() {
     private val scoring = Scoring()
     private val carousel = Carousel()
     private val spin = Spin()
+    private val cap = Cap()
 
     override fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -32,6 +33,7 @@ open class TeleOp : BaseTeleOp() {
         scoring.initialize()
         carousel.initialize()
         spin.initialize()
+        cap.initialize()
     }
 
     override fun update() {
@@ -50,7 +52,8 @@ open class TeleOp : BaseTeleOp() {
 //        scoring.telemetry()
 //        carousel.telemetry()
 //        spin.telemetry()
+        cap.telemetry()
 
-//        telemetry.update()
+        telemetry.update()
     }
 }

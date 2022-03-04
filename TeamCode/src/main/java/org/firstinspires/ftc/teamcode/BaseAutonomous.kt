@@ -59,13 +59,14 @@ abstract class BaseAutonomous : LinearOpMode() {
         reset()
     }
 
-//    fun Lift.bonus() {
+    fun Lift.bonus() {
 //        when (camera.analysis) {
 //            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
 //            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-//            else -> lift.top()
+//            else ->
+        lift.top()
 //        }
-//    }
+    }
 
     abstract fun autonomous()
 

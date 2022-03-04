@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.BaseAutonomous
 
 @Autonomous
-class Turn180Degrees2 : BaseAutonomous() {
+class Turn90Degrees : BaseAutonomous() {
     override fun autonomous() {
-        drivetrain.move2(heading = 180)
+        drivetrain.move(heading = 90)
     }
 }
