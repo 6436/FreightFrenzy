@@ -20,17 +20,21 @@ class Mecanum {
 
         @JvmField
         @Volatile
-        var TARGET_LOCATION_TOLERANCE = 1.0
+        var PRO = 0.05
 
         @JvmField
         @Volatile
-        var TARGET_HEADING_TOLERANCE = 3.0
+        var TARGET_LOCATION_TOLERANCE = 2.5
+
+        @JvmField
+        @Volatile
+        var TARGET_HEADING_TOLERANCE = 4.0
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 66897.0861526
 
         @JvmField
         @Volatile
-        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 46.0
+        var FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 42.0
 
         // measured
 
@@ -175,8 +179,7 @@ class Mecanum {
     fun move(
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
-        heading: Number = lastTargetHeading,
-        stop: Boolean = true
+        heading: Number = lastTargetHeading
     ) {
         fun speedIsEnoughToReachTarget(speed: Double, remainingDistance: Double) =
             speed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingDistance.absoluteValue
@@ -205,28 +208,35 @@ class Mecanum {
             // find translational powers
             val (aPower, bPower) = run {
                 val remainingTranslationalDistance = remainingLocationDisplacement.magnitude
-                if (stop && speedIsEnoughToReachTarget(
+                when {
+                    (remainingTranslationalDistance - TARGET_LOCATION_TOLERANCE < 0.0 ||
+//                        (Vector(remainingTranslationalDistance, remainingTranslationalDistance) / TARGET_LOCATION_TOLERANCE * 0.15 * remainingTranslationalDistance
+//                            )
+
+                    speedIsEnoughToReachTarget(
                         locationChangeSpeed,
                         remainingTranslationalDistance - TARGET_LOCATION_TOLERANCE
-                    )
-                ) {
-                    Vector()
-                } else {
-                    val aRemainingDisplacement =
-                        remainingLocationDisplacement.x + remainingLocationDisplacement.y
-                    val bRemainingDisplacement =
-                        -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                    )) -> {
+            //
+                        Vector()
+                    }
+                    else -> {
+                        val aRemainingDisplacement =
+                            remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                        val bRemainingDisplacement =
+                            -remainingLocationDisplacement.x + remainingLocationDisplacement.y
 
-                    val maxRemainingDisplacement =
-                        max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+                        val maxRemainingDisplacement =
+                            max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                    (Vector(
-                        aRemainingDisplacement,
-                        bRemainingDisplacement
-                    ) / maxRemainingDisplacement
-                            // weight of translational powers
-                            * remainingTranslationalDistance
-                            )
+                        (Vector(
+                            aRemainingDisplacement,
+                            bRemainingDisplacement
+                        ) / maxRemainingDisplacement
+                                // weight of translational powers
+                                * remainingTranslationalDistance
+                                )
+                    }
                 }
             }
 
@@ -236,17 +246,22 @@ class Mecanum {
             val rotationalPower = run {
                 val remainingRotationalDistance =
                     remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
-                if (stop && speedIsEnoughToReachTarget(
+                when {
+                    (remainingRotationalDistance - (TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE) < 0.0 ||
+            //                    remainingRotationalDistance / (TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE) * 0.15
+
+                    speedIsEnoughToReachTarget(
                         headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
                         remainingRotationalDistance - TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
-                    )
-                ) {
-                    0.0
-                } else {
-                    (-sign(remainingHeadingDisplacement)
-                            // weight of rotational powers
-                            * remainingRotationalDistance
-                            )
+                    )) -> {
+                        0.0
+                    }
+                    else -> {
+                        (-sign(remainingHeadingDisplacement)
+                                // weight of rotational powers
+                                * remainingRotationalDistance
+                                )
+                    }
                 }
             }
 
@@ -265,6 +280,114 @@ class Mecanum {
         lastTargetHeading = targetHeading
     }
 
+    fun move2(
+        x: Number = lastTargetLocation.x,
+        y: Number = lastTargetLocation.y,
+        heading: Number = lastTargetHeading
+    ) {
+        fun speedIsEnoughToReachTarget(speed: Double, remainingDistance: Double) =
+            speed.squared() / (2.0 * FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND) > remainingDistance.absoluteValue
+
+        val startingHeading = this.heading
+
+        val targetLocation = Point(x, y)
+
+        val targetHeading = run {
+            val headingDifference = heading.toDouble() - startingHeading
+            val headingDisplacement =
+                (headingDifference + 180.0) % 360.0 - 180.0
+
+            startingHeading + headingDisplacement
+        }
+
+        do {
+            // read
+            val (currentLocation, currentHeading) = this.location to this.heading
+
+            val remainingLocationDisplacement =
+                (targetLocation - currentLocation)
+                    // adjust to be relative to current robot position
+                    .rotatedAboutOrigin(-currentHeading)
+
+            val remainingTranslationalDistance = remainingLocationDisplacement.magnitude
+            val remainingHeadingDisplacement = targetHeading - currentHeading
+            val remainingRotationalDistance =
+                remainingHeadingDisplacement.absoluteValue * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
+            // find translational powers
+            var bsdf = 0.0
+            val (aPower, bPower) = run {
+
+                when {
+                    (remainingTranslationalDistance - TARGET_LOCATION_TOLERANCE < 0.0) ||
+                            speedIsEnoughToReachTarget(
+                                locationChangeSpeed,
+                                remainingTranslationalDistance - TARGET_LOCATION_TOLERANCE
+                            ) -> {
+                        //
+                        Vector()
+                    }
+                    else -> {
+                        val aRemainingDisplacement =
+                            remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                        val bRemainingDisplacement =
+                            -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+
+                        val maxRemainingDisplacement =
+                            max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+
+                        (Vector(
+                            aRemainingDisplacement,
+                            bRemainingDisplacement
+                        ) / maxRemainingDisplacement
+                                // weight of translational powers
+                                * remainingTranslationalDistance
+                                )
+                    }
+                }
+            }
+
+
+
+            // find rotational power
+            val rotationalPower = run {
+                if (remainingRotationalDistance - (TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE)<0.0) {
+                    bsdf=remainingRotationalDistance / (TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE) * PRO
+                }
+                when {
+                    remainingRotationalDistance - (TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE) < 0.0 ||
+
+
+                            speedIsEnoughToReachTarget(
+                                headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
+                                remainingRotationalDistance - TARGET_HEADING_TOLERANCE * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
+                            ) -> {
+                        0.0
+                    }
+                    else -> {
+                        (-sign(remainingHeadingDisplacement)
+                                // weight of rotational powers
+                                * remainingRotationalDistance
+                                )
+                    }
+                }
+            }
+
+            setPowers(
+                aPower + rotationalPower,
+                bPower - rotationalPower,
+                bPower + rotationalPower,
+                aPower - rotationalPower,
+
+                true,bsdf,
+            )
+        } while ((remainingTranslationalDistance > TARGET_LOCATION_TOLERANCE || remainingHeadingDisplacement.absoluteValue > TARGET_HEADING_TOLERANCE) && !isStopRequested())
+
+        setPowers(0.0)
+
+        lastTargetLocation = targetLocation
+        lastTargetHeading = targetHeading
+    }
+
     fun setPowers(
         power: Double
     ) {
@@ -276,15 +399,26 @@ class Mecanum {
         frPower: Double,
         blPower: Double,
         brPower: Double,
-        maximize: Boolean = false
+        maximize: Boolean = false,bsdf:Double = 0.0,
     ) {
         val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
 
         val maxPower =
             powers.map { abs(it) }.run { if (!maximize) plus(1.0) else this }.maxOrNull()!!
 
-        powers.zip(motors) { power, motor ->
-            motor.power = power / maxPower * POWER
+        val lpowers = powers.map{it/maxPower}.toMutableList()
+
+        lpowers[0] += bsdf
+        lpowers[1] -= bsdf
+        lpowers[2] += bsdf
+        lpowers[3] -= bsdf
+
+        val lmaxPower =
+            lpowers.map { abs(it) }.run { if (!maximize) plus(1.0) else this }.maxOrNull()!!
+
+
+        lpowers.zip(motors) { power, motor ->
+            motor.power = power / lmaxPower * POWER
         }
     }
 
