@@ -20,11 +20,14 @@ class Mecanum {
 
         @JvmField
         @Volatile
-        var TARGET_LOCATION_TOLERANCE = 2.5
+        var TARGET_LOCATION_TOLERANCE = 8.0
+//        var TARGET_LOCATION_TOLERANCE = 2.5
 
         @JvmField
         @Volatile
-        var TARGET_HEADING_TOLERANCE = 4.0
+        var TARGET_HEADING_TOLERANCE = 16.0
+
+        //        var TARGET_HEADING_TOLERANCE = 4.0
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 66897.0861526
 
@@ -85,7 +88,8 @@ class Mecanum {
         for (motor in motors) {
             motor.direction = DcMotorSimple.Direction.REVERSE
 
-            motor.zeroPowerBehavior = if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
+            motor.zeroPowerBehavior =
+                if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
 
             motor.targetPosition = 0
 
@@ -200,6 +204,8 @@ class Mecanum {
             startingHeading + headingDisplacement
         }
 
+        var translationalFlag = true
+        var rotationalFlag = true
         do {
             // read
             val (currentLocation, currentHeading) = this.location to this.heading
@@ -210,56 +216,58 @@ class Mecanum {
                     .rotatedAboutOrigin(-currentHeading)
 
             val remainingTranslationalDistance =
-                remainingLocationDisplacement.magnitude - TARGET_LOCATION_TOLERANCE
+                remainingLocationDisplacement.magnitude
 
             // find translational powers
-            val (aPower, bPower) = run {
+            val (aPower, bPower) = if (!translationalFlag || speedIsEnoughToReachTarget(
+                    locationChangeSpeed,
+                    TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
+                    remainingTranslationalDistance
+                )
+            ) {
+                translationalFlag = false
 
-                when {
-                    (remainingTranslationalDistance < 0.0) || speedIsEnoughToReachTarget(
-                        locationChangeSpeed,
-                        TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
-                        remainingTranslationalDistance
-                    ) -> Vector()
-                    else -> {
-                        val aRemainingDisplacement =
-                            remainingLocationDisplacement.x + remainingLocationDisplacement.y
-                        val bRemainingDisplacement =
-                            -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                Vector()
+            } else {
+                val aRemainingDisplacement =
+                    remainingLocationDisplacement.x + remainingLocationDisplacement.y
+                val bRemainingDisplacement =
+                    -remainingLocationDisplacement.x + remainingLocationDisplacement.y
 
-                        val maxRemainingDisplacement =
-                            max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+                val maxRemainingDisplacement =
+                    max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                        (Vector(
-                            aRemainingDisplacement,
-                            bRemainingDisplacement
-                        ) / maxRemainingDisplacement
-                                // weight of translational powers
-                                * remainingTranslationalDistance
-                                )
-                    }
-                }
+                (Vector(
+                    aRemainingDisplacement,
+                    bRemainingDisplacement
+                ) / maxRemainingDisplacement
+                        // weight of translational powers
+                        * remainingTranslationalDistance
+                        )
             }
 
             val remainingHeadingDisplacement = targetHeading - currentHeading
 
             val remainingRotationalDistance =
-                (remainingHeadingDisplacement.absoluteValue - TARGET_HEADING_TOLERANCE) * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
+                (remainingHeadingDisplacement.absoluteValue) * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
 
             // find rotational power
-            val rotationalPower = run {
-                when {
-                    remainingRotationalDistance < 0.0 || speedIsEnoughToReachTarget(
+            val rotationalPower =
+                if (!rotationalFlag || speedIsEnoughToReachTarget(
                         headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
                         ROTATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
                         remainingRotationalDistance
-                    ) -> 0.0
-                    else -> (-sign(remainingHeadingDisplacement)
+                    )
+                ) {
+                    rotationalFlag = false
+
+                    0.0
+                } else {
+                    (-sign(remainingHeadingDisplacement)
                             // weight of rotational powers
                             * remainingRotationalDistance
                             )
                 }
-            }
 
             setPowers(
                 aPower + rotationalPower,
@@ -268,13 +276,116 @@ class Mecanum {
                 aPower - rotationalPower,
                 true
             )
-        } while ((remainingTranslationalDistance > 0.0 || remainingRotationalDistance > 0.0) && !isStopRequested())
+        } while (!(locationChangeSpeed == 0.0 && headingChangeSpeed == 0.0 && remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE && remainingRotationalDistance < TARGET_HEADING_TOLERANCE) && !isStopRequested())
 
         setPowers(0.0)
 
         lastTargetLocation = targetLocation
         lastTargetHeading = targetHeading
     }
+
+//
+//    private var lastTargetLocation = Point()
+//    private var lastTargetHeading = 0.0
+//    fun move(
+//        x: Number = lastTargetLocation.x,
+//        y: Number = lastTargetLocation.y,
+//        heading: Number = lastTargetHeading
+//    ) {
+//        fun speedIsEnoughToReachTarget(
+//            speed: Double,
+//            deceleration: Double,
+//            remainingDistance: Double
+//        ) =
+//            speed.squared() / (2.0 * deceleration) > remainingDistance.absoluteValue
+//
+//        val startingHeading = this.heading
+//
+//        val targetLocation = Point(x, y)
+//
+//        val targetHeading = run {
+//            val headingDifference = heading.toDouble() - startingHeading
+//            val headingDisplacement =
+//                (headingDifference + 180.0) % 360.0 - 180.0
+//
+//            startingHeading + headingDisplacement
+//        }
+//
+//        do {
+//            // read
+//            val (currentLocation, currentHeading) = this.location to this.heading
+//
+//            val remainingLocationDisplacement =
+//                (targetLocation - currentLocation)
+//                    // adjust to be relative to current robot position
+//                    .rotatedAboutOrigin(-currentHeading)
+//
+//            val remainingTranslationalDistance =
+//                remainingLocationDisplacement.magnitude - TARGET_LOCATION_TOLERANCE
+//
+//            // find translational powers
+//            val (aPower, bPower) = run {
+//
+//                when {
+//                    (remainingTranslationalDistance < 0.0) || speedIsEnoughToReachTarget(
+//                        locationChangeSpeed,
+//                        TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
+//                        remainingTranslationalDistance
+//                    ) -> Vector()
+//                    else -> {
+//                        val aRemainingDisplacement =
+//                            remainingLocationDisplacement.x + remainingLocationDisplacement.y
+//                        val bRemainingDisplacement =
+//                            -remainingLocationDisplacement.x + remainingLocationDisplacement.y
+//
+//                        val maxRemainingDisplacement =
+//                            max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
+//
+//                        (Vector(
+//                            aRemainingDisplacement,
+//                            bRemainingDisplacement
+//                        ) / maxRemainingDisplacement
+//                                // weight of translational powers
+//                                * remainingTranslationalDistance
+//                                )
+//                    }
+//                }
+//            }
+//
+//            val remainingHeadingDisplacement = targetHeading - currentHeading
+//
+//            val remainingRotationalDistance =
+//                (remainingHeadingDisplacement.absoluteValue - TARGET_HEADING_TOLERANCE) * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
+//
+//            // find rotational power
+//            val rotationalPower = run {
+//                when {
+//                    remainingRotationalDistance < 0.0 || speedIsEnoughToReachTarget(
+//                        headingChangeSpeed * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE,
+//                        ROTATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
+//                        remainingRotationalDistance
+//                    ) -> 0.0
+//                    else -> (-sign(remainingHeadingDisplacement)
+//                            // weight of rotational powers
+//                            * remainingRotationalDistance
+//                            )
+//                }
+//            }
+//
+//            setPowers(
+//                aPower + rotationalPower,
+//                bPower - rotationalPower,
+//                bPower + rotationalPower,
+//                aPower - rotationalPower,
+//                true
+//            )
+//        } while ((remainingTranslationalDistance > 0.0 || remainingRotationalDistance > 0.0) && !isStopRequested())
+//
+//        setPowers(0.0)
+//
+//        lastTargetLocation = targetLocation
+//        lastTargetHeading = targetHeading
+//    }
 
     fun setPowers(
         power: Double
