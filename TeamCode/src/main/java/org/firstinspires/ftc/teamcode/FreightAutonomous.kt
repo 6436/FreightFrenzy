@@ -13,14 +13,14 @@ class FreightAutonomous : BaseAutonomous() {
         lift.bonus()
         spin.up()
         drivetrain.move(24, -21)
-        for (i in 1..CYCLES) {
+        for (i in 0 until CYCLES) {
             scoring.open()
 
             sleep(500)
             spin.down()
             lift.down()
 
-            drivetrain.move(1, 4, 92)
+            drivetrain.move(1, 2, 90)
 
             scoring.default()
             intake.suck()

@@ -30,7 +30,6 @@ class DrivetrainOnly : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-
             drivetrain.odometry()
 
             drivetrain.update()

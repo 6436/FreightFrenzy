@@ -72,7 +72,7 @@ class Mecanum {
     private lateinit var br: DcMotorEx
     private lateinit var motors: Array<DcMotorEx>
 
-    fun initialize() {
+    fun initialize(brake: Boolean = false) {
         hubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
@@ -85,7 +85,7 @@ class Mecanum {
         for (motor in motors) {
             motor.direction = DcMotorSimple.Direction.REVERSE
 
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+            motor.zeroPowerBehavior = if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
 
             motor.targetPosition = 0
 
