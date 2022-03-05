@@ -14,7 +14,7 @@ class Mecanum {
     companion object {
         // chosen
 
-        const val POWER = 0.9
+        const val POWER = 0.95
 
         // tuned
 
@@ -33,11 +33,11 @@ class Mecanum {
 
         @JvmField
         @Volatile
-        var TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 42.0
+        var TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 48.0
 
         @JvmField
         @Volatile
-        var ROTATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 42.0
+        var ROTATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 48.0
 
         // measured
 
@@ -128,7 +128,7 @@ class Mecanum {
         val backCurrentPosition = fl.currentPosition
 
         val newHeading =
-            (-leftCurrentPosition + rightCurrentPosition) / 2 / Y_ODOMETRY_COUNTS_PER_DEGREE
+            (-leftCurrentPosition + rightCurrentPosition) / 2.0 / Y_ODOMETRY_COUNTS_PER_DEGREE
 
         val headingChange = newHeading - heading
 
@@ -153,7 +153,7 @@ class Mecanum {
         location += locationChange
         heading = newHeading
         locationChangeSpeed = locationChange.magnitude / timeChange
-        headingChangeSpeed = headingChange / timeChange
+        headingChangeSpeed = headingChange.absoluteValue / timeChange
 
         lastTime = time
         lastLeftPosition = leftCurrentPosition
@@ -284,7 +284,7 @@ class Mecanum {
         lastTargetHeading = targetHeading
     }
 
-//
+
 //    private var lastTargetLocation = Point()
 //    private var lastTargetHeading = 0.0
 //    fun move(
@@ -414,9 +414,9 @@ class Mecanum {
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)
-        telemetry.addData("fl power", fl.power)
-        telemetry.addData("fr power", fr.power)
-        telemetry.addData("bl power", bl.power)
-        telemetry.addData("br power", br.power)
+//        telemetry.addData("fl power", fl.power)
+//        telemetry.addData("fr power", fr.power)
+//        telemetry.addData("bl power", bl.power)
+//        telemetry.addData("br power", br.power)
     }
 }

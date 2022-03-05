@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Lift {
     private companion object {
-        const val POWER = 0.85
-        const val TOP_POSITION = 2600
+        const val POWER = 0.95
+        const val TOP_POSITION = 2700
         const val MIDDLE_POSITION = 1440
         const val BOTTOM_POSITION = 630
     }
@@ -40,7 +40,7 @@ class Lift {
             gamepad2.y -> middle()
             gamepad2.right_bumper -> top()
 //            gamepad2.dpad_up -> lift.targetPosition += 10
-//            gamepad2.dpad_down -> lift.targetPosition -= 10
+            gamepad2.dpad_down -> lift.targetPosition -= 10
         }
     }
 
