@@ -20,7 +20,7 @@ class FreightAutonomous : BaseAutonomous() {
             spin.down()
             lift.down()
 
-            drivetrain.move(1, 2, 90)
+            drivetrain.move(1, 1.5, 90)
 
             scoring.default()
             intake.suck()
@@ -39,7 +39,7 @@ class FreightAutonomous : BaseAutonomous() {
 
             intake.off()
 
-            drivetrain.move(6, -40)
+            drivetrain.move(6, -39)
         }
     }
 }
