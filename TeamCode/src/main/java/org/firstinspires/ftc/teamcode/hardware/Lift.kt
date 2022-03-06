@@ -40,7 +40,7 @@ class Lift {
             gamepad2.y -> middle()
             gamepad2.right_bumper -> top()
 //            gamepad2.dpad_up -> lift.targetPosition += 10
-            gamepad2.dpad_down -> lift.targetPosition -= 10
+            gamepad2.right_stick_button -> lift.targetPosition -= 10
         }
     }
 

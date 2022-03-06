@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.hardware.*
-import kotlin.concurrent.thread
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
@@ -34,22 +33,6 @@ abstract class BaseAutonomous : LinearOpMode() {
         carousel.initialize()
 //        camera.initialize()
         spin.initialize()
-
-        thread {
-            while (!isStopRequested) {
-                drivetrain.odometry()
-
-                drivetrain.telemetry()
-//                intake.telemetry()
-//                lift.telemetry()
-//                scoring.telemetry()
-//                carousel.telemetry()
-//                camera.telemetry()
-//                spin.telemetry()
-
-                telemetry.update()
-            }
-        }
 
         waitForStart()
 

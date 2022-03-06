@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 class Carousel {
     private companion object {
         // chosen
-        const val SLOW_POWER = 0.552
+        const val SLOW_POWER = 0.55
         const val FAST_POWER = 0.9
         const val SLOW_CAROUSEL_ROTATIONS = 1.0
         const val FAST_CAROUSEL_ROTATIONS = 1.0
