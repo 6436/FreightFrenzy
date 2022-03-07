@@ -22,7 +22,8 @@ class Circumference : Drivetrain() {
         super.loop()
 
         if (gamepad1.x) {
-            for (i in motors.indices) motors[i].power = POWER * if (i % 2 == 0) -1 else 1
+            for (index in motors.indices) motors[index].power =
+                POWER * if (index % 2 == 0) -1 else 1
         } else {
             for (motor in motors) {
                 motor.power = 0.0

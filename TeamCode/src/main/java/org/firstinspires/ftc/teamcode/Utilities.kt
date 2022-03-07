@@ -10,45 +10,50 @@ const val DEGREES_PER_ROTATION = 360.0
 fun Double.squared() = this * this
 fun Double.toRadians() = this * PI / 180.0
 
-typealias Point = Vector
-data class Vector(val x: Double = 0.0, val y: Double = 0.0) {
+typealias Point = TwoDimensionalVector
+
+data class TwoDimensionalVector(val x: Double = 0.0, val y: Double = 0.0) {
     constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 
     val magnitude = hypot(x, y)
 
     private val heading = atan2(y, x)
 
-    fun rotatedAboutOrigin(displacementAngle: Double): Vector {
+    fun rotatedAboutOrigin(displacementAngle: Double): TwoDimensionalVector {
         val heading = this.heading + displacementAngle.toRadians()
-        return Vector(
+        return TwoDimensionalVector(
             magnitude * cos(heading),
             magnitude * sin(heading)
         )
     }
 
-    operator fun plus(other: Vector): Vector {
-        return Vector(
+    infix fun dot(other: TwoDimensionalVector): Double {
+        return x * other.x + y * other.y
+    }
+
+    operator fun plus(other: TwoDimensionalVector): TwoDimensionalVector {
+        return TwoDimensionalVector(
             x + other.x,
             y + other.y
         )
     }
 
-    operator fun minus(other: Vector): Vector {
-        return Vector(
+    operator fun minus(other: TwoDimensionalVector): TwoDimensionalVector {
+        return TwoDimensionalVector(
             x - other.x,
             y - other.y
         )
     }
 
-    operator fun times(scalar: Double): Vector {
-        return Vector(
+    operator fun times(scalar: Double): TwoDimensionalVector {
+        return TwoDimensionalVector(
             x * scalar,
             y * scalar
         )
     }
 
-    operator fun div(scalar: Double): Vector {
-        return Vector(
+    operator fun div(scalar: Double): TwoDimensionalVector {
+        return TwoDimensionalVector(
             x / scalar,
             y / scalar
         )

@@ -14,7 +14,7 @@ class Mecanum {
     companion object {
         // chosen
 
-        const val POWER = 0.4
+        const val POWER = 0.95
 
         // tuned
 
@@ -23,13 +23,8 @@ class Mecanum {
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 66897.0861526
 
-        @JvmField
-        @Volatile
-        var TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 47.0
-
-        @JvmField
-        @Volatile
-        var ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 1.62
+        const val TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 80.75
+        const val ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 1306.25
 
         // measured
 
@@ -56,7 +51,7 @@ class Mecanum {
          * y-odometry wheel track is similar in size to drivetrain wheel track
          */
         const val APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE =
-            Y_ODOMETRY_COUNTS_PER_DEGREE / ODOMETRY_WHEEL_COUNTS_PER_INCH
+            Y_ODOMETRY_COUNTS_PER_DEGREE / ODOMETRY_WHEEL_COUNTS_PER_INCH * 1.2
     }
 
     private lateinit var hubs: List<LynxModule>
@@ -67,7 +62,7 @@ class Mecanum {
     private lateinit var br: DcMotorEx
     private lateinit var motors: Array<DcMotorEx>
 
-    fun initialize(brake: Boolean = false) {
+    fun initialize() {
         hubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
@@ -80,8 +75,7 @@ class Mecanum {
         for (motor in motors) {
             motor.direction = DcMotorSimple.Direction.REVERSE
 
-            motor.zeroPowerBehavior =
-                if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
+            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
             motor.targetPosition = 0
 
@@ -93,7 +87,7 @@ class Mecanum {
     }
 
     fun update() {
-        val (xPower, yPower) = Vector(
+        val (xPower, yPower) = TwoDimensionalVector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
         )
@@ -111,13 +105,16 @@ class Mecanum {
 
     private var location = Point()
     private var heading = 0.0
-    private var locationChangeSpeed = 0.0
-    private var headingChangeSpeed = 0.0
-
-    private var headingChangeSpeedmv = DoubleArray(20)
-    private var headingChangeSpeedidx = 0
+    private var locationChange = Point()
+    private var headingChange = 0.0
+    private var locationChangeSpeedAverage = 0.0
+    private var headingChangeSpeedAverage = 0.0
 
     private var lastTime = 0.0
+    private val locationChangeSpeeds = DoubleArray(13)
+    private var locationChangeSpeedsIndex = 0
+    private val headingChangeSpeeds = DoubleArray(13)
+    private var headingChangeSpeedsIndex = 0
     private var lastLeftPosition = 0
     private var lastRightPosition = 0
     private var lastBackPosition = 0
@@ -135,7 +132,7 @@ class Mecanum {
         val newHeading =
             (-leftCurrentPosition + rightCurrentPosition) / 2.0 / Y_ODOMETRY_COUNTS_PER_DEGREE
 
-        val headingChange = newHeading - heading
+        headingChange = newHeading - heading
 
         /* assumes robot follows straight path between updates
            (as opposed to using "pose exponential" to correct for curvature), because
@@ -143,12 +140,12 @@ class Mecanum {
            it is simpler to implement,
            our loop time is short (improving curve approximation), and
            robot only needs to follow straight paths (for now) */
-        val locationChange = run {
+        locationChange = run {
             val leftPositionChange = leftCurrentPosition - lastLeftPosition
             val rightPositionChange = rightCurrentPosition - lastRightPosition
             val backPositionChange = backCurrentPosition - lastBackPosition
 
-            Vector(
+            TwoDimensionalVector(
                 backPositionChange - (headingChange * X_ODOMETRY_COUNTS_PER_DEGREE),
                 (leftPositionChange + rightPositionChange) / 2.0
             ).rotatedAboutOrigin(heading) / ODOMETRY_WHEEL_COUNTS_PER_INCH
@@ -156,19 +153,35 @@ class Mecanum {
 
         // update
         lastTime = time
+
         location += locationChange
+
         heading = newHeading
-        locationChangeSpeed = locationChange.magnitude / timeChange
-        headingChangeSpeed = headingChange.absoluteValue / timeChange
-        headingChangeSpeedmv[(++headingChangeSpeedidx) % headingChangeSpeedmv.size] =
+
+        val locationChangeSpeed = locationChange.magnitude / timeChange
+        locationChangeSpeeds[++locationChangeSpeedsIndex % locationChangeSpeeds.size] =
+            locationChangeSpeed
+        locationChangeSpeedAverage = locationChangeSpeeds.average()
+
+        val headingChangeSpeed = headingChange / timeChange
+        headingChangeSpeeds[++headingChangeSpeedsIndex % headingChangeSpeeds.size] =
             headingChangeSpeed
+        headingChangeSpeedAverage = headingChangeSpeeds.average()
+
         lastLeftPosition = leftCurrentPosition
         lastRightPosition = rightCurrentPosition
         lastBackPosition = backCurrentPosition
 
-        telemetry.addData("headings", headingChangeSpeed)
-        telemetry.addData("time", timeChange)
-        telemetry.addData("avg headings ", headingChangeSpeedmv.average())
+        telemetry.addData("location change speed", locationChangeSpeed)
+        telemetry.addData("heading change speed", headingChangeSpeed)
+        telemetry.addData(
+            "location change speed average ${locationChangeSpeeds.size}",
+            locationChangeSpeedAverage
+        )
+        telemetry.addData(
+            "heading change speed average ${headingChangeSpeeds.size}",
+            headingChangeSpeedAverage
+        )
     }
 
     private fun speedIsEnoughToReachTarget(
@@ -194,6 +207,8 @@ class Mecanum {
             this.heading + headingDisplacement
         }
 
+        var translationalFlag = true
+        var rotationalFlag = true
         do {
             odometry()
 
@@ -207,15 +222,17 @@ class Mecanum {
 
             // find translational powers
             val (aPower, bPower) =
-                if (
-//                    remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
+                if (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
                     speedIsEnoughToReachTarget(
-                        locationChangeSpeed,
+                        locationChangeSpeedAverage,
                         TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
                         remainingTranslationalDistance
                     )
-                ) Vector()
-                else {
+                ) {
+                    translationalFlag = false
+
+                    TwoDimensionalVector()
+                } else {
                     val aRemainingDisplacement =
                         remainingLocationDisplacement.x + remainingLocationDisplacement.y
                     val bRemainingDisplacement =
@@ -224,12 +241,13 @@ class Mecanum {
                     val maxRemainingDisplacement =
                         max(abs(aRemainingDisplacement), abs(bRemainingDisplacement))
 
-                    (Vector(
+                    (TwoDimensionalVector(
                         aRemainingDisplacement,
                         bRemainingDisplacement
                     ) / maxRemainingDisplacement
                             // weight of translational powers
-                            * remainingTranslationalDistance
+//                            * remainingTranslationalDistance
+                            * if (translationalFlag) 1.0 else 0.2
                             )
                 }
 
@@ -240,32 +258,42 @@ class Mecanum {
             // find rotational power
             val rotationalPower =
                 if (
-//                    remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES ||
-                    speedIsEnoughToReachTarget(
-                        headingChangeSpeed,
+                    remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES ||
+                    (sign(headingChange) == sign(remainingHeadingDisplacement) && speedIsEnoughToReachTarget(
+                        headingChangeSpeedAverage,
                         ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND,
                         remainingRotationalDistance
-                    )
-                ) 0.0
-                else (-sign(remainingHeadingDisplacement)
-                        // weight of rotational powers
-                        * remainingRotationalDistance * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
-                        )
+                    ))
+                ) {
+                    rotationalFlag = false
 
+                    0.0
+                } else (-sign(remainingHeadingDisplacement)
+                        // weight of rotational powers
+//                        * remainingRotationalDistance * APPROXIMATE_DRIVETRAIN_INCHES_PER_DEGREE
+                        * if (rotationalFlag) 1.0 else 0.2
+                        )
 
             setPowers(
                 aPower + rotationalPower,
                 bPower - rotationalPower,
                 bPower + rotationalPower,
-                aPower - rotationalPower,
-                true
+                aPower - rotationalPower
             )
-
+            telemetry.addData(
+                "asdf",
+                this.location.magnitude + locationChangeSpeedAverage.squared() / (2.0 * TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND)
+            )
+            telemetry.addData("a power", aPower)
+            telemetry.addData("b power", bPower)
+            telemetry.addData("rotational power", rotationalPower)
             telemetry()
             telemetry.update()
         } while (
+            !(locationChangeSpeedAverage == 0.0 && headingChangeSpeedAverage == 0.0 && remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) &&
 //            (remainingTranslationalDistance > TARGET_LOCATION_TOLERANCE_INCHES || remainingRotationalDistance > TARGET_HEADING_TOLERANCE_DEGREES) &&
-            !isStopRequested())
+            !isStopRequested()
+        )
 
         setPowers(0.0)
 

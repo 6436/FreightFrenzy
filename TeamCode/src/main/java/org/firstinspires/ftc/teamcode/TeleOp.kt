@@ -27,7 +27,7 @@ open class TeleOp : BaseTeleOp() {
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
 
-        drivetrain.initialize(true)
+        drivetrain.initialize()
         intake.initialize()
         lift.initialize()
         scoring.initialize()
