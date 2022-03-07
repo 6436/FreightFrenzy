@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.gamepad1
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
+import kotlin.math.abs
 
 class Carousel {
     private companion object {
@@ -46,35 +47,42 @@ class Carousel {
         carousel.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
-//    private var flag = true
+    private var startPosition = 0
+    private var flag = true
     fun update() {
         when {
             gamepad1.dpad_left ->
-                slow(Alliance.RED)
-//                if (flag) {
-//                    deliver(Alliance.RED)
-//                    flag = false
-//                }
+                deliver(Alliance.RED)
             gamepad1.dpad_right ->
-            slow(Alliance.BLUE)
-//                if (flag) {
-//                    deliver(Alliance.BLUE)
-//                    flag = false
-//                }
-            else ->
+                deliver(Alliance.BLUE)
+            else -> {
                 off()
-//                flag = true
+
+                flag = true
+            }
         }
     }
-//
-//    fun deliver(alliance: Alliance) {
-//        val carouselStartingPosition = carousel.currentPosition
-//        slow(alliance)
-//        while (carousel.currentPosition < carouselStartingPosition + SLOW_COUNTS);
-//        fast(alliance)
-//        while (carousel.currentPosition < carouselStartingPosition + FAST_COUNTS);
-//        off()
-//    }
+
+    fun deliver(alliance: Alliance) {
+        if (flag) {
+            startPosition = carousel.currentPosition
+
+            flag = false
+        }
+
+        val position = abs(carousel.currentPosition - startPosition)
+        when {
+            position < SLOW_COUNTS -> {
+                slow(alliance)
+            }
+            position < FAST_COUNTS -> {
+                fast(alliance)
+            }
+            else -> {
+                slow(alliance)
+            }
+        }
+    }
 
     private fun slow(alliance: Alliance) {
         carousel.power = alliance.value * SLOW_POWER
@@ -91,6 +99,6 @@ class Carousel {
     fun telemetry() {
         telemetry.addData("carousel power", carousel.power)
         telemetry.addData("carousel position", carousel.currentPosition)
-        telemetry.addData("counts", SLOW_COUNTS)
+        telemetry.addData("slow counts", SLOW_COUNTS)
     }
 }

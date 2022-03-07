@@ -39,8 +39,8 @@ class Lift {
             gamepad2.x -> bottom()
             gamepad2.y -> middle()
             gamepad2.right_bumper -> top()
-//            gamepad2.dpad_up -> lift.targetPosition += 10
-            gamepad2.right_stick_button -> lift.targetPosition -= 10
+            gamepad2.left_stick_button -> lift.targetPosition -= 10
+            gamepad2.right_stick_button -> lift.targetPosition += 10
         }
     }
 
@@ -61,6 +61,6 @@ class Lift {
     }
 
     fun telemetry() {
-        telemetry.addData("lift currentPosition", lift.currentPosition)
+        telemetry.addData("lift current", lift.currentPosition)
     }
 }
