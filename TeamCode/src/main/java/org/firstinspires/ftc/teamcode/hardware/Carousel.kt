@@ -11,7 +11,7 @@ import kotlin.math.abs
 class Carousel {
     private companion object {
         // chosen
-        const val SLOW_POWER = 0.55
+        const val SLOW_POWER = 0.5
         const val FAST_POWER = 0.9
         const val SLOW_CAROUSEL_ROTATIONS = 1.0
         const val FAST_CAROUSEL_ROTATIONS = 1.0
