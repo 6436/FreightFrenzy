@@ -24,12 +24,12 @@ class FreightAutonomous : BaseAutonomous() {
             spin.down()
             lift.down()
 
-            drivetrain.move(1, 1.5, 90)
+            drivetrain.move(1, 2, 90)
 
             scoring.default()
             intake.suck()
 
-            drivetrain.move(-35 - (i - 1) * 2.5)
+            drivetrain.move(-28 - (i - 1) * 2.5, drivetrain.location.y)
             if (i == CYCLES) {
                 break
             }
@@ -43,7 +43,7 @@ class FreightAutonomous : BaseAutonomous() {
 
             intake.off()
 
-            drivetrain.move(12, -25, 25)
+            drivetrain.move(12, -24, 25)
         }
     }
 }
