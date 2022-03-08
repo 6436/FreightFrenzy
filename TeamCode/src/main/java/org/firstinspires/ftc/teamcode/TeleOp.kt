@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.*
 import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
 import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-@TeleOp
 open class TeleOp : BaseTeleOp() {
+    open val alliance = Alliance.RED
+
     private val drivetrain = Mecanum()
     private val intake = Intake()
     private val lift = Lift()
@@ -31,7 +31,7 @@ open class TeleOp : BaseTeleOp() {
         intake.initialize()
         lift.initialize()
         scoring.initialize()
-        carousel.initialize()
+        carousel.initialize(alliance)
         spin.initialize()
         cap.initialize()
     }
@@ -45,12 +45,13 @@ open class TeleOp : BaseTeleOp() {
         scoring.update()
         carousel.update()
         spin.update()
+        cap.update()
 
 //        drivetrain.telemetry()
 //        intake.telemetry()
 //        lift.telemetry()
 //        scoring.telemetry()
-//        carousel.telemetry()
+        carousel.telemetry()
 //        spin.telemetry()
         cap.telemetry()
 

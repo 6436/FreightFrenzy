@@ -9,13 +9,9 @@ import org.firstinspires.ftc.teamcode.*
 import kotlin.math.*
 
 @Config
-class Mecanum {
+class Mecanum(val POWER: Double = 0.95) {
 
     companion object {
-        // chosen
-
-        const val POWER = 0.95
-
         // tuned
 
         const val TARGET_LOCATION_TOLERANCE_INCHES = 2.5

@@ -8,13 +8,14 @@ import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 import kotlin.math.abs
 
-class Carousel {
+class Carousel() {
     private companion object {
         // chosen
-        const val SLOW_POWER = 0.5
+
+        const val SLOW_POWER = 0.52
         const val FAST_POWER = 0.9
-        const val SLOW_CAROUSEL_ROTATIONS = 1.0
-        const val FAST_CAROUSEL_ROTATIONS = 1.0
+        const val SLOW_CAROUSEL_ROTATIONS = 0.7
+        const val FAST_CAROUSEL_ROTATIONS = 0.4
 
         // measured
 
@@ -33,9 +34,13 @@ class Carousel {
             (SLOW_CAROUSEL_ROTATIONS + FAST_CAROUSEL_ROTATIONS) * COUNTS_PER_CAROUSEL_ROTATION
     }
 
+    private lateinit var alliance: Alliance
+
     private lateinit var carousel: DcMotorEx
 
-    fun initialize() {
+    fun initialize(alliance: Alliance) {
+        this.alliance = alliance
+
         carousel = hardwareMap.get(DcMotorEx::class.java, ::carousel.name)
 
         carousel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -47,14 +52,12 @@ class Carousel {
         carousel.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
-    private var startPosition = 0
-    private var flag = true
     fun update() {
         when {
             gamepad1.dpad_left ->
-                deliver(Alliance.RED)
+                deliver()
             gamepad1.dpad_right ->
-                deliver(Alliance.BLUE)
+                slow()
             else -> {
                 off()
 
@@ -63,7 +66,9 @@ class Carousel {
         }
     }
 
-    fun deliver(alliance: Alliance) {
+    private var startPosition = 0
+    private var flag = true
+    fun deliver() {
         if (flag) {
             startPosition = carousel.currentPosition
 
@@ -73,22 +78,22 @@ class Carousel {
         val position = abs(carousel.currentPosition - startPosition)
         when {
             position < SLOW_COUNTS -> {
-                slow(alliance)
+                slow()
             }
             position < FAST_COUNTS -> {
-                fast(alliance)
+                fast()
             }
             else -> {
-                slow(alliance)
+                off()
             }
         }
     }
 
-    private fun slow(alliance: Alliance) {
+    private fun slow() {
         carousel.power = alliance.value * SLOW_POWER
     }
 
-    private fun fast(alliance: Alliance) {
+    private fun fast() {
         carousel.power = alliance.value * FAST_POWER
     }
 

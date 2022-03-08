@@ -9,7 +9,9 @@ import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
 abstract class BaseAutonomous : LinearOpMode() {
-    protected val drivetrain = Mecanum()
+    open val alliance = Alliance.RED
+
+    protected val drivetrain = Mecanum(0.8)
     protected val intake = Intake()
     protected val lift = Lift()
     protected val scoring = Scoring()
@@ -30,7 +32,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         lift.initialize()
         scoring.initialize()
         scoring.close()
-        carousel.initialize()
+        carousel.initialize(alliance)
 //        camera.initialize()
         spin.initialize()
 

@@ -10,7 +10,7 @@ class Spin {
         const val UP_POSITION = 0.38777777777
 
         //        const val DUMP_POSITION = 0.42
-        const val DOWN_POSITION = 0.268888888
+        const val DOWN_POSITION = 0.274
     }
 
     private lateinit var spin: Servo

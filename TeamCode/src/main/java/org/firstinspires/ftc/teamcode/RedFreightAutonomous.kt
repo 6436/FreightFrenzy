@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
 @Autonomous
-class FreightAutonomous : BaseAutonomous() {
+class RedFreightAutonomous(override val alliance: Alliance = Alliance.RED) : BaseAutonomous() {
     private companion object {
         // number of times Freight is scored, including Pre-Load box
-        const val CYCLES = 1
+        const val CYCLES = 5
     }
 
     override fun autonomous() {
@@ -16,23 +16,30 @@ class FreightAutonomous : BaseAutonomous() {
         for (i in 1..CYCLES) {
             scoring.open()
 
-            val time = System.nanoTime()
-            while (System.nanoTime() - time < 0.5 * NANOSECONDS_PER_SECOND) {
+            var startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
 
             spin.down()
             lift.down()
 
-            drivetrain.move(1, 2, 90)
+            drivetrain.move(0.5, 2.25, 91)
 
             scoring.default()
             intake.suck()
 
-            drivetrain.move(-28 - (i - 1) * 2.5, drivetrain.location.y)
+            drivetrain.move(-34.0 - (i - 1) * 2.0, drivetrain.location.y)
+
             if (i == CYCLES) {
                 break
             }
+
+            startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+                drivetrain.odometry()
+            }
+
             scoring.close()
 
             intake.spit()
@@ -43,7 +50,7 @@ class FreightAutonomous : BaseAutonomous() {
 
             intake.off()
 
-            drivetrain.move(12, -24, 25)
+            drivetrain.move(14, -26, 33)
         }
     }
 }
