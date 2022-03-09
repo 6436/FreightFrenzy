@@ -21,12 +21,12 @@ abstract class FreightAutonomous() : Autonomous() {
             spin.down()
             lift.down()
 
-            drivetrain.move(0.5, 2.25, 91, brake = false)
+            drivetrain.move(0.5 - (i - 1) * 0.5, 2.25, 91, brake = false)
 
             scoring.default()
             intake.suck()
 
-            drivetrain.move(-34.0 - (i - 1) * 1.5, drivetrain.location.y, drivetrain.heading)
+            drivetrain.move(-34.0 - (i - 1) * 1.65, drivetrain.location.y, drivetrain.heading)
 
             if (i == CYCLES) {
                 break
