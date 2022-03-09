@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import org.firstinspires.ftc.teamcode.hardware.*
 import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
 import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
+import org.firstinspires.ftc.teamcode.gamepad3 as globalGamepad3
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
@@ -24,6 +25,7 @@ open class TeleOp : BaseTeleOp() {
 
         globalGamepad1 = gamepad1
         globalGamepad2 = gamepad2
+        globalGamepad3 = gamepad2
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
 

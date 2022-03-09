@@ -180,7 +180,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         val targetLocation = Point(alliance.value * x.toDouble(), y)
 
         val targetHeading = run {
-            val headingDifference = heading.toDouble() - this.heading
+            val headingDifference = alliance.value * heading.toDouble() - this.heading
             val headingDisplacement =
                 (headingDifference + 180.0) % 360.0 - 180.0
 
@@ -268,7 +268,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         setPowers(0.0)
 
         lastTargetLocation = targetLocation
-        lastTargetHeading = targetHeading
+        lastTargetHeading = heading.toDouble()
     }
 
     fun setPowers(

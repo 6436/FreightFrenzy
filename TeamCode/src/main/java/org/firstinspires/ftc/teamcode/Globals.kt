@@ -11,6 +11,7 @@ enum class Alliance(val value: Double) {
 
 lateinit var gamepad1: Gamepad
 lateinit var gamepad2: Gamepad
+lateinit var gamepad3: Gamepad
 
 lateinit var telemetry: Telemetry
 const val TELEMETRY_FORMAT = "%.2f"
