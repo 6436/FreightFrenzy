@@ -12,6 +12,8 @@ class Cap {
     fun initialize() {
         nissan = hardwareMap.get(Servo::class.java, ::nissan.name)
         maximus = hardwareMap.get(Servo::class.java, ::maximus.name)
+
+        maximus.position = 0.4422
     }
 
     fun update() {

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.tuning
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.BaseAutonomous
+import org.firstinspires.ftc.teamcode.Autonomous as NeutralAutonomous
 
 @Autonomous
-class MoveLeftFourFeet : BaseAutonomous() {
+class MoveLeftFourFeet : NeutralAutonomous() {
     override fun autonomous() {
         drivetrain.move(x = -48)
     }

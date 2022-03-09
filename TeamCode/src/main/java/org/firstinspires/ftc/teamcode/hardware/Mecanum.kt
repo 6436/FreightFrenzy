@@ -9,9 +9,8 @@ import org.firstinspires.ftc.teamcode.*
 import kotlin.math.*
 
 @Config
-class Mecanum(val POWER: Double = 0.95) {
-
-    companion object {
+class Mecanum(private val POWER: Double = 0.95) {
+    private companion object {
         // tuned
 
         const val TARGET_LOCATION_TOLERANCE_INCHES = 2.5
@@ -41,6 +40,8 @@ class Mecanum(val POWER: Double = 0.95) {
             Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
     }
 
+    private lateinit var alliance: Alliance
+
     private lateinit var hubs: List<LynxModule>
 
     private lateinit var fl: DcMotorEx
@@ -49,7 +50,9 @@ class Mecanum(val POWER: Double = 0.95) {
     private lateinit var br: DcMotorEx
     private lateinit var motors: Array<DcMotorEx>
 
-    fun initialize() {
+    fun initialize(alliance: Alliance = Alliance.RED) {
+        this.alliance = alliance
+
         hubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
@@ -171,9 +174,10 @@ class Mecanum(val POWER: Double = 0.95) {
     fun move(
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
-        heading: Number = lastTargetHeading
+        heading: Number = lastTargetHeading,
+        brake: Boolean = true
     ) {
-        val targetLocation = Point(x, y)
+        val targetLocation = Point(alliance.value * x.toDouble(), y)
 
         val targetHeading = run {
             val headingDifference = heading.toDouble() - this.heading
@@ -198,12 +202,12 @@ class Mecanum(val POWER: Double = 0.95) {
 
             // find translational powers
             val (aPower, bPower) =
-                if (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
+                if (brake && (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
                     speedIsEnoughToReachTarget(
                         locationChangeSpeedAverage,
                         TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
                         remainingTranslationalDistance
-                    )
+                    ))
                 ) {
                     translationalFlag = false
 

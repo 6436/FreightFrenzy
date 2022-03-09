@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-abstract class BaseAutonomous : LinearOpMode() {
+abstract class Autonomous : LinearOpMode() {
     open val alliance = Alliance.RED
 
     protected val drivetrain = Mecanum(0.8)
@@ -27,7 +27,7 @@ abstract class BaseAutonomous : LinearOpMode() {
         globalHardwareMap = hardwareMap
         globalIsStopRequested = ::isStopRequested
 
-        drivetrain.initialize()
+        drivetrain.initialize(alliance)
         intake.initialize()
         lift.initialize()
         scoring.initialize()
