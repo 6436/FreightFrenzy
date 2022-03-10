@@ -23,7 +23,7 @@ abstract class FreightAutonomous : Autonomous() {
             spin.down()
             lift.down()
 
-            drivetrain.move(0.5 - (i - 1) * 1.75, 1.0, 91, brake = false)
+            drivetrain.move(0.5 - (i - 1) * 2.0, 1.0, 91, brake = false)
 break
             val small = alliance.value * 0.2
             drivetrain.setPowers(small, -small, -small, small)
