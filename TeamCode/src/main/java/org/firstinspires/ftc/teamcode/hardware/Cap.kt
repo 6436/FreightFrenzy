@@ -14,6 +14,8 @@ class Cap {
         maximus = hardwareMap.get(Servo::class.java, ::maximus.name)
 
         maximus.direction = Servo.Direction.REVERSE
+
+        maximus.position = 0.5088888
     }
 
     fun update() {
