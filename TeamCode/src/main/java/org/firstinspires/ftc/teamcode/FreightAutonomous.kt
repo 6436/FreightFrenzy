@@ -16,14 +16,14 @@ abstract class FreightAutonomous : Autonomous() {
             scoring.open()
 
             var startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 1.5 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
 
             spin.down()
             lift.down()
 
-            drivetrain.move(0.5 - (i - 1) * 1.5, 1.0, 91, brake = false)
+            drivetrain.move(0.5 - (i - 1) * 1.75, 1.0, 91, brake = false)
 break
             val small = alliance.value * 0.2
             drivetrain.setPowers(small, -small, -small, small)
