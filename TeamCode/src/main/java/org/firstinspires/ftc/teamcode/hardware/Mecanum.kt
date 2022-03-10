@@ -18,8 +18,8 @@ class Mecanum(private val POWER: Double = 0.95) {
         const val X_ODOMETRY_COUNTS_PER_ROTATION = 74198.33941731641
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 66897.0861526
 
-        const val TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 80.75
-        const val ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 1278.75
+        const val TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 78.3275
+        const val ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 1240.3875
 
         // measured
 
@@ -175,7 +175,8 @@ class Mecanum(private val POWER: Double = 0.95) {
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
         heading: Number = lastTargetHeading,
-        brake: Boolean = true
+        power: Double = POWER,
+        brake: Boolean = true,
     ) {
         val targetLocation = Point(alliance.value * x.toDouble(), y)
 
@@ -254,7 +255,8 @@ class Mecanum(private val POWER: Double = 0.95) {
                 aPower + rotationalPower,
                 bPower - rotationalPower,
                 bPower + rotationalPower,
-                aPower - rotationalPower
+                aPower - rotationalPower,
+                power
             )
 
 //            telemetry.addData("a power", aPower)
@@ -274,23 +276,24 @@ class Mecanum(private val POWER: Double = 0.95) {
     fun setPowers(
         power: Double
     ) {
-        setPowers(power, power, power, power, false)
+        setPowers(power, power, power, power)
     }
 
-    private fun setPowers(
+    fun setPowers(
         flPower: Double,
         frPower: Double,
         blPower: Double,
         brPower: Double,
-        maximize: Boolean = false
+        maxPower: Double = POWER,
+        maximize: Boolean = false,
     ) {
         val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
 
-        val maxPower =
+        val highestPower =
             powers.map { abs(it) }.run { if (!maximize) plus(1.0) else this }.maxOrNull()!!
 
         powers.zip(motors) { power, motor ->
-            motor.power = power / maxPower * POWER
+            motor.power = power / highestPower * maxPower
         }
     }
 

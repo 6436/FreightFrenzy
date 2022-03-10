@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 abstract class Autonomous : LinearOpMode() {
     open val alliance = Alliance.RED
 
-    protected val drivetrain = Mecanum(0.78)
+    protected val drivetrain = Mecanum(0.9)
     protected val intake = Intake()
     protected val lift = Lift()
     protected val scoring = Scoring()

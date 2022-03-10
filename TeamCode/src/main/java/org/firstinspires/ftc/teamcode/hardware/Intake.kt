@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Intake {
     private companion object {
+        const val FAST_POWER = 0.75
         const val POWER = 0.6
     }
 
@@ -34,6 +35,10 @@ class Intake {
             gamepad1.left_trigger > 0.0 -> spit()
             else -> off()
         }
+    }
+
+    fun fastSuck() {
+        intake.power = FAST_POWER
     }
 
     fun suck() {
