@@ -50,7 +50,7 @@ class Mecanum(private val POWER: Double = 0.95) {
     private lateinit var br: DcMotorEx
     private lateinit var motors: Array<DcMotorEx>
 
-    fun initialize(alliance: Alliance = Alliance.RED) {
+    fun initialize(alliance: Alliance = Alliance.RED, brake: Boolean = true) {
         this.alliance = alliance
 
         hubs = hardwareMap.getAll(LynxModule::class.java)
@@ -65,7 +65,8 @@ class Mecanum(private val POWER: Double = 0.95) {
         for (motor in motors) {
             motor.direction = DcMotorSimple.Direction.REVERSE
 
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            motor.zeroPowerBehavior =
+                if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
 
             motor.targetPosition = 0
 
@@ -74,6 +75,30 @@ class Mecanum(private val POWER: Double = 0.95) {
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
         fl.direction = DcMotorSimple.Direction.FORWARD
+    }
+
+    fun reset() {
+        for (motor in motors) {
+            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        }
+
+        location = Point()
+        heading = 0.0
+        locationChange = Point()
+        headingChange = 0.0
+        locationChangeSpeedAverage = 0.0
+        headingChangeSpeedAverage = 0.0
+
+        lastTime = 0.0
+        locationChangeSpeeds = DoubleArray(13)
+        locationChangeSpeedsIndex = 0
+        headingChangeSpeeds = DoubleArray(13)
+        headingChangeSpeedsIndex = 0
+        lastLeftPosition = 0
+        lastRightPosition = 0
+        lastBackPosition = 0
     }
 
     fun update() {
@@ -101,9 +126,9 @@ class Mecanum(private val POWER: Double = 0.95) {
     private var headingChangeSpeedAverage = 0.0
 
     private var lastTime = 0.0
-    private val locationChangeSpeeds = DoubleArray(13)
+    private var locationChangeSpeeds = DoubleArray(13)
     private var locationChangeSpeedsIndex = 0
-    private val headingChangeSpeeds = DoubleArray(13)
+    private var headingChangeSpeeds = DoubleArray(13)
     private var headingChangeSpeedsIndex = 0
     private var lastLeftPosition = 0
     private var lastRightPosition = 0
@@ -204,11 +229,11 @@ class Mecanum(private val POWER: Double = 0.95) {
             // find translational powers
             val (aPower, bPower) =
                 if (brake && (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
-                    speedIsEnoughToReachTarget(
-                        locationChangeSpeedAverage,
-                        TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
-                        remainingTranslationalDistance
-                    ))
+                            speedIsEnoughToReachTarget(
+                                locationChangeSpeedAverage,
+                                TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
+                                remainingTranslationalDistance
+                            ))
                 ) {
                     translationalFlag = false
 

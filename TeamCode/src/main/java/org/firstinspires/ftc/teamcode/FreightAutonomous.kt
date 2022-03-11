@@ -11,33 +11,47 @@ abstract class FreightAutonomous : Autonomous() {
     override fun autonomous() {
         lift.bonus()
         spin.up()
-        drivetrain.move(24, -21)
+        drivetrain.move(23, -19)
         for (i in 1..CYCLES) {
             scoring.open()
 
             var startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.4 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
 
             spin.down()
             lift.down()
 
-            drivetrain.move(0.5 - (i - 1) * 2.0, 1.0, 91, brake = false)
-break
-            val small = alliance.value * 0.2
+            if (i == 1) {
+                drivetrain.move(0.5, 0.5, 91, brake = false)
+            } else {
+                drivetrain.move(-3.0 - (i - 1) * 1.5 ,-3.0 - (i - 1) * 2.0,0, brake = false)
+            }
+
+            var small = alliance.value * 0.2
             drivetrain.setPowers(small, -small, -small, small)
-            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+            startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 0.15 * NANOSECONDS_PER_SECOND) {
+                drivetrain.odometry()
+            }
+            drivetrain.setPowers(0.0)
+
+            drivetrain.reset()
+
+            startTime = System.nanoTime()
+
+            while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
 
             scoring.default()
-            intake.suck()
+            intake.fastSuck()
 
             drivetrain.move(
-                -34.0 - (i - 1) * 1.65,
-                drivetrain.location.y,
-                alliance.value * drivetrain.heading,
+                0,
+                24.0 + (i - 1) * 1.0,
+                0,
                 brake = false
             )
 
@@ -45,27 +59,28 @@ break
                 break
             }
 
+            small=0.01
             startTime = System.nanoTime()
-            drivetrain.setPowers(small, -small, -small, small)
-            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+            drivetrain.setPowers(small, small, small, small)
+            while (System.nanoTime() - startTime < 0.3 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
 
             scoring.close()
 
             thread {
-                Thread.sleep(200)
+                Thread.sleep(300)
 
                 intake.spit()
             }
 
-            drivetrain.move(2, brake = false)
-
+            drivetrain.move(y = 0, brake = false)
+//break
             intake.off()
             lift.top()
             spin.up()
 
-            drivetrain.move(14, -26, 33)
+            drivetrain.move(-24, -22, -60)
         }
     }
 }
