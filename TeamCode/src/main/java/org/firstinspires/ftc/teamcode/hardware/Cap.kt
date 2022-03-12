@@ -15,7 +15,7 @@ class Cap {
 
         maximus.direction = Servo.Direction.REVERSE
 
-        maximus.position = 0.5088888
+        maximus.position = 0.506
     }
 
     fun update() {

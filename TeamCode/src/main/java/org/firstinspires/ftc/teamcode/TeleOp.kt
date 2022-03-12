@@ -53,7 +53,7 @@ open class TeleOp : BaseTeleOp() {
 //        intake.telemetry()
 //        lift.telemetry()
 //        scoring.telemetry()
-        carousel.telemetry()
+//        carousel.telemetry()
 //        spin.telemetry()
         cap.telemetry()
 

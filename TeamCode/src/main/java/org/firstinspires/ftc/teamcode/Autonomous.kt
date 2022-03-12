@@ -45,12 +45,17 @@ abstract class Autonomous : LinearOpMode() {
 //        reset()
     }
 
-    fun Lift.bonus() {
+    fun bonus() {
         when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-            else ->
-        lift.top()
+            else ->lift.top()
+        }
+        spin.up()
+        when (camera.analysis) {
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
+            else -> drivetrain.move(24.5, -20)
         }
     }
 

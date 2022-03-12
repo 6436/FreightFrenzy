@@ -288,8 +288,8 @@ class Mecanum(private val POWER: Double = 0.95) {
 //            telemetry.addData("b power", bPower)
 //            telemetry.addData("rotational power", rotationalPower)
 
-            telemetry()
-            telemetry.update()
+//            telemetry()
+//            telemetry.update()
         } while (!(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) && !isStopRequested())
 
         setPowers(0.0)
