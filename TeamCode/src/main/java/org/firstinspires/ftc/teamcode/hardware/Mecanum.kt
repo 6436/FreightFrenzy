@@ -77,6 +77,30 @@ class Mecanum(private val POWER: Double = 0.95) {
         fl.direction = DcMotorSimple.Direction.FORWARD
     }
 
+    fun reset() {
+        for (motor in motors) {
+            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        }
+
+        location = Point()
+        heading = 0.0
+        locationChange = Point()
+        headingChange = 0.0
+        locationChangeSpeedAverage = 0.0
+        headingChangeSpeedAverage = 0.0
+
+        lastTime = 0.0
+        locationChangeSpeeds = DoubleArray(13)
+        locationChangeSpeedsIndex = 0
+        headingChangeSpeeds = DoubleArray(13)
+        headingChangeSpeedsIndex = 0
+        lastLeftPosition = 0
+        lastRightPosition = 0
+        lastBackPosition = 0
+    }
+
     fun update() {
         val (xPower, yPower) = TwoDimensionalVector(
             gamepad1.left_stick_x,
@@ -102,9 +126,9 @@ class Mecanum(private val POWER: Double = 0.95) {
     private var headingChangeSpeedAverage = 0.0
 
     private var lastTime = 0.0
-    private val locationChangeSpeeds = DoubleArray(13)
+    private var locationChangeSpeeds = DoubleArray(13)
     private var locationChangeSpeedsIndex = 0
-    private val headingChangeSpeeds = DoubleArray(13)
+    private var headingChangeSpeeds = DoubleArray(13)
     private var headingChangeSpeedsIndex = 0
     private var lastLeftPosition = 0
     private var lastRightPosition = 0
