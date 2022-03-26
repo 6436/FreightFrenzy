@@ -15,21 +15,27 @@ class Cap {
         horizontal = hardwareMap.get(Servo::class.java, ::horizontal.name)
         vertical = hardwareMap.get(Servo::class.java, ::vertical.name)
         extend = hardwareMap.get(CRServo::class.java, ::extend.name)
+
+        vertical.position = 0.296
+        horizontal.position = 1.0
     }
 
     fun update() {
         when {
-            gamepad3.dpad_up -> horizontal.position += 0.02
-            gamepad3.dpad_down -> horizontal.position -= 0.02
+            gamepad3.dpad_right -> horizontal.position += 0.0001
+            gamepad3.dpad_left -> horizontal.position -= 0.0001
         }
+        if (horizontal.position < 0.56) horizontal.position = 0.56
         when {
-            gamepad3.dpad_up -> vertical.position += 0.0002
-            gamepad3.dpad_down -> vertical.position -= 0.0002
+            gamepad3.dpad_up -> vertical.position -= 0.0001
+            gamepad3.dpad_down -> vertical.position += 0.0001
         }
+        if (vertical.position < 0.393) vertical.position = 0.393
+        if (vertical.position > 0.428) vertical.position = 0.393
         extend.power = when {
-            gamepad3.left_bumper -> 1.0
-            gamepad3.right_bumper -> 0.0
-            else -> 0.5
+            gamepad3.right_bumper -> 0.95
+            gamepad3.left_bumper -> -0.95
+            else -> 0.0
         }
     }
 

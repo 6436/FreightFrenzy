@@ -39,7 +39,7 @@ abstract class Drivetrain : OpMode() {
         motors = arrayOf(fl, fr, bl, br)
 
         for (motor in motors) {
-            motor.direction = DcMotorSimple.Direction.REVERSE
+            motor.direction = DcMotorSimple.Direction.FORWARD
 
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
@@ -49,7 +49,7 @@ abstract class Drivetrain : OpMode() {
 
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
-        fl.direction = DcMotorSimple.Direction.FORWARD
+        br.direction = DcMotorSimple.Direction.REVERSE
     }
 
     override fun loop() {
