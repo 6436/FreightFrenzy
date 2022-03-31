@@ -7,10 +7,10 @@ import org.firstinspires.ftc.teamcode.telemetry
 
 class Spin {
     private companion object {
-        const val UP_POSITION = 0.38777777777
+        const val UP_POSITION = 0.38777777777-0.001
 
         //        const val DUMP_POSITION = 0.42
-        const val DOWN_POSITION = 0.274
+        const val DOWN_POSITION = 0.274-0.001
     }
 
     private lateinit var spin: Servo
