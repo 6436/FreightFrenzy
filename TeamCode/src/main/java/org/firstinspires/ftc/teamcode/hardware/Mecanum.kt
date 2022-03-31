@@ -93,9 +93,9 @@ class Mecanum(private val POWER: Double = 0.95) {
         )
     }
 
-    var location = Point()
+    var location = TwoDimensionalPoint()
     var heading = 0.0
-    private var locationChange = Point()
+    private var locationChange = TwoDimensionalPoint()
     private var headingChange = 0.0
     private var locationChangeSpeedAverage = 0.0
     private var headingChangeSpeedAverage = 0.0
@@ -169,7 +169,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         remainingDistance: Double
     ) = speed.squared() / (2.0 * deceleration) >= remainingDistance.absoluteValue
 
-    private var lastTargetLocation = Point()
+    private var lastTargetLocation = TwoDimensionalPoint()
     private var lastTargetHeading = 0.0
     fun move(
         x: Number = lastTargetLocation.x,
@@ -178,7 +178,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         power: Double = POWER,
         brake: Boolean = true,
     ) {
-        val targetLocation = Point(alliance.value * x.toDouble(), y)
+        val targetLocation = TwoDimensionalPoint(alliance.value * x.toDouble(), y)
 
         val targetHeading = run {
             val headingDifference = alliance.value * heading.toDouble() - this.heading

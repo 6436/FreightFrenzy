@@ -10,7 +10,7 @@ const val DEGREES_PER_ROTATION = 360.0
 fun Double.squared() = this * this
 fun Double.toRadians() = this * PI / 180.0
 
-typealias Point = TwoDimensionalVector
+typealias TwoDimensionalPoint = TwoDimensionalVector
 
 data class TwoDimensionalVector(val x: Double = 0.0, val y: Double = 0.0) {
     constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
