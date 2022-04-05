@@ -13,11 +13,9 @@ abstract class Autonomous : LinearOpMode() {
 
     protected val drivetrain = Mecanum(0.9)
     protected val intake = Intake()
-    protected val lift = Lift()
     protected val scoring = Scoring()
     protected val carousel = Carousel()
     protected val camera = Camera()
-    protected val spin = Spin()
 
     @Throws(InterruptedException::class)
     override fun runOpMode() {
@@ -29,12 +27,9 @@ abstract class Autonomous : LinearOpMode() {
 
         drivetrain.initialize(alliance)
         intake.initialize()
-        lift.initialize()
         scoring.initialize()
-        scoring.close()
         carousel.initialize(alliance)
         camera.initialize()
-        spin.initialize()
 
         waitForStart()
 
@@ -47,11 +42,11 @@ abstract class Autonomous : LinearOpMode() {
 
     fun bonus() {
         when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-            else ->lift.top()
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
+//            else -> lift.top()
         }
-        spin.up()
+//        spin.up()
         when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
@@ -64,8 +59,8 @@ abstract class Autonomous : LinearOpMode() {
     private fun reset() {
         sleep(2500)
 
-        lift.down()
-        spin.down()
+//        lift.down()
+//        spin.down()
         scoring.default()
 
         sleep(5000)

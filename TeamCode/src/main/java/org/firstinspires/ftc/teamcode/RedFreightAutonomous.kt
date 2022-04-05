@@ -19,15 +19,14 @@ class RedFreightAutonomous : Autonomous() {
                 drivetrain.odometry()
             }
 
-            spin.down()
-            lift.down()
+//            spin.down()
+//            lift.down()
             intake.verySlowSpit()
 
             if (i == 1) {
                 drivetrain.move(0, -1, 91, brake = false)
             } else {
-                drivetrain.move(-3.0,-8.0+ (i-1)*1.75,0, brake = false)
-
+                drivetrain.move(-3.0, -8.0 + (i - 1) * 1.75, 0, brake = false)
             }
 
             var small = alliance.value * 0.1
@@ -73,10 +72,10 @@ class RedFreightAutonomous : Autonomous() {
 
             drivetrain.move(y = 0, brake = false)
 //break
-            scoring.close()
+//            scoring.close()
             intake.off()
-            lift.top()
-            spin.up()
+//            lift.top()
+//            spin.up()
 
             drivetrain.move(-24, -20, -60)
         }

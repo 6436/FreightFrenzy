@@ -14,10 +14,8 @@ open class TeleOp : BaseTeleOp() {
 
     private val drivetrain = Mecanum()
     private val intake = Intake()
-    private val lift = Lift()
     private val scoring = Scoring()
     private val carousel = Carousel()
-    private val spin = Spin()
     private val cap = Cap()
 
     override fun initialize() {
@@ -30,32 +28,28 @@ open class TeleOp : BaseTeleOp() {
         globalTelemetry = telemetry
 
         drivetrain.initialize()
-        intake.initialize()
-        lift.initialize()
+//        intake.initialize()
         scoring.initialize()
-        carousel.initialize(alliance)
-        spin.initialize()
-        cap.initialize()
+//        carousel.initialize(alliance)
+//        cap.initialize()
     }
 
     override fun update() {
         drivetrain.odometry()
 
         drivetrain.update()
-        intake.update()
-        lift.update()
+//        intake.update()
         scoring.update()
-        carousel.update()
-        spin.update()
-        cap.update()
+//        carousel.update()
+//        cap.update()
 
 //        drivetrain.telemetry()
 //        intake.telemetry()
 //        lift.telemetry()
-//        scoring.telemetry()
+        scoring.telemetry()
 //        carousel.telemetry()
 //        spin.telemetry()
-        cap.telemetry()
+//        cap.telemetry()
 
         telemetry.update()
     }

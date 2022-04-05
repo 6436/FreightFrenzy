@@ -5,6 +5,11 @@ import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 
 class Pods {
+    companion object {
+        const val DOWN_POSITION = 1.0
+        const val UP_POSITION = 0.0
+    }
+
     private lateinit var left: Servo
     private lateinit var right: Servo
     private lateinit var back: Servo
@@ -16,19 +21,19 @@ class Pods {
     }
 
     fun up() {
-        left.position = 0.0
-        right.position = 0.3005555555
-        back.position = 0.0
+        left.position = UP_POSITION
+        right.position = UP_POSITION
+        back.position = UP_POSITION
     }
 
     fun down() {
-        left.position = 0.0
-        right.position = 0.0
-        back.position = 0.0
+        left.position = DOWN_POSITION
+        right.position = DOWN_POSITION
+        back.position = DOWN_POSITION
     }
 
     fun telemetry() {
-        telemetry.addData("left currentPosition", left.position)
+        telemetry.addData("left position", left.position)
         telemetry.addData("right position", right.position)
         telemetry.addData("back position", back.position)
     }

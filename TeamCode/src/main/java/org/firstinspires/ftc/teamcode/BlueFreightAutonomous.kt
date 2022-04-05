@@ -20,13 +20,13 @@ class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : A
                 drivetrain.odometry()
             }
 
-            spin.down()
-            lift.down()
+//            spin.down()
+//            lift.down()
 
             if (i == 1) {
                 drivetrain.move(0, -1, 91, brake = false)
             } else {
-                drivetrain.move(-3.0,-8.0 + (i - 1) * 2.0,0, brake = false)
+                drivetrain.move(-3.0, -8.0 + (i - 1) * 2.0, 0, brake = false)
             }
 
             var small = alliance.value * 0.3
@@ -78,7 +78,7 @@ class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : A
                 intake.spit()
             }
 
-            small=-0.2
+            small = -0.2
             startTime = System.nanoTime()
             drivetrain.setPowers(small)
             while (System.nanoTime() - startTime < 0.8 * NANOSECONDS_PER_SECOND) {
@@ -87,13 +87,12 @@ class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : A
 
             drivetrain.move(0.15, 0, 0, 0.3, brake = false)
 //break
-            scoring.close()
-            lift.top()
-            spin.up()
+//            scoring.close()
+//            lift.top()
+//            spin.up()
 
             drivetrain.move(-24, -17, -60)
             intake.off()
-
         }
     }
 }

@@ -6,11 +6,11 @@ import org.firstinspires.ftc.teamcode.hardware.Camera
 class Ff : Autonomous() {
     override fun autonomous() {
         when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-            else ->lift.top()
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
+//            else ->lift.top()
         }
-        spin.up()
+//        spin.up()
         when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(-23, -19)
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(-24, -20)
@@ -30,8 +30,8 @@ class Ff : Autonomous() {
             drivetrain.odometry()
         }
 
-        spin.down()
-        lift.down()
-        drivetrain.move(drivetrain.location.x, y=-24)
+//        spin.down()
+//        lift.down()
+        drivetrain.move(drivetrain.location.x, y = -24)
     }
 }

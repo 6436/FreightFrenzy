@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 import kotlin.math.abs
 
-class Carousel() {
+class Carousel {
     private companion object {
         // chosen
 
@@ -68,7 +68,7 @@ class Carousel() {
 
     private var startPosition = 0
     private var flag = true
-    fun deliver() {
+    fun deliver(): Boolean {
         if (flag) {
             startPosition = carousel.currentPosition
 
@@ -85,8 +85,10 @@ class Carousel() {
             }
             else -> {
                 off()
+                return true
             }
         }
+        return false
     }
 
     private fun slow() {
