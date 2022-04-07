@@ -32,8 +32,8 @@ class Intake {
 
     fun update() {
         when {
-            gamepad1.right_trigger > 0.0 -> suck()
-            gamepad1.left_trigger > 0.0 -> spit()
+            gamepad1.right_bumper -> suck()
+            gamepad1.left_bumper -> spit()
             else -> off()
         }
     }

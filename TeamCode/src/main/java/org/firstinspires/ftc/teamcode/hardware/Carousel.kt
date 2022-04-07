@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 import kotlin.math.abs
 
-class Carousel {
+class  Carousel {
     private companion object {
         // chosen
 

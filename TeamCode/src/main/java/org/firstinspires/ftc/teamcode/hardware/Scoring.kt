@@ -28,28 +28,44 @@ class Scoring {
         private const val SCORING_CLOSE_POSITION = 0.6077777777
     }
 
-    private lateinit var lift: DcMotorEx
-    private lateinit var spin: Servo
+    private lateinit var leftLift: DcMotorEx
+    private lateinit var rightLift: DcMotorEx
+    private lateinit var leftSpin: Servo
+    private lateinit var rightSpin: Servo
     private lateinit var scoring: Servo
 
     fun initialize() {
-        lift = hardwareMap.get(DcMotorEx::class.java, ::lift.name)
+        leftLift = hardwareMap.get(DcMotorEx::class.java, ::leftLift.name)
+        rightLift = hardwareMap.get(DcMotorEx::class.java, ::rightLift.name)
 
-        spin = hardwareMap.get(Servo::class.java, ::spin.name)
+        leftSpin = hardwareMap.get(Servo::class.java, ::leftSpin.name)
+        rightSpin = hardwareMap.get(Servo::class.java, ::rightSpin.name)
 
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
 
-        lift.direction = DcMotorSimple.Direction.FORWARD
+        leftLift.direction = DcMotorSimple.Direction.FORWARD
 
-        lift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        leftLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        lift.targetPosition = 0
+        leftLift.targetPosition = 0
 
-        lift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-        lift.mode = DcMotor.RunMode.RUN_TO_POSITION
+        leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
-        lift.power = LIFT_POWER
+        leftLift.power = LIFT_POWER
+
+        rightLift.direction = DcMotorSimple.Direction.FORWARD
+
+        rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        rightLift.targetPosition = 0
+
+        rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+        rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
+
+        rightLift.power = LIFT_POWER
 
         default()
     }
@@ -60,18 +76,33 @@ class Scoring {
 //        if (gamepad2.y) up(LiftLevel.MIDDLE)
 //        if (gamepad2.b) up(LiftLevel.TOP)
 //        if (gamepad1.right_trigger > 0.0) open()
-        if (gamepad1.left_stick_button) lift.targetPosition -= 10
-        if (gamepad1.right_stick_button) lift.targetPosition += 10
-        if (gamepad2.x) spin.position += 0.0001
-        if (gamepad2.y) spin.position -= 0.0001
+        if (gamepad1.left_stick_button) {
+            leftLift.targetPosition -= 10
+            rightLift.targetPosition -= 10
+        }
+        if (gamepad1.right_stick_button) {
+            leftLift.targetPosition += 10
+            rightLift.targetPosition += 10
+        }
+        if (gamepad2.x) {
+            leftSpin.position += 0.001
+            rightSpin.position -= 0.001
+        }
+        if (gamepad2.y) {
+            leftSpin.position -= 0.001
+            rightSpin.position += 0.001
+        }
         if (gamepad2.a) scoring.position += 0.0001
         if (gamepad2.b) scoring.position -= 0.0001
     }
 
     fun up(liftLevel: LiftLevel) {
-        lift.targetPosition = liftLevel.position
-        spin.position =
-            if (lift.currentPosition > LiftLevel.OK.position) SPIN_UP_POSITION else SPIN_DOWN_POSITION
+        leftLift.targetPosition = liftLevel.position
+        rightLift.targetPosition = liftLevel.position
+        leftSpin.position =
+            if (leftLift.currentPosition > LiftLevel.OK.position) 1.0 - SPIN_UP_POSITION else 1.0 - SPIN_DOWN_POSITION
+        rightSpin.position =
+            if (leftLift.currentPosition > LiftLevel.OK.position) SPIN_UP_POSITION else SPIN_DOWN_POSITION
         scoring.position = SCORING_CLOSE_POSITION
     }
 
@@ -80,14 +111,18 @@ class Scoring {
     }
 
     fun default() {
-        lift.targetPosition = 0
-        spin.position = SPIN_DOWN_POSITION
+        leftLift.targetPosition = 0
+        rightLift.targetPosition = 0
+        leftSpin.position = 1.0 - SPIN_DOWN_POSITION
+        rightSpin.position = SPIN_DOWN_POSITION
         scoring.position = SCORING_DEFAULT_POSITION
     }
 
     fun telemetry() {
-        telemetry.addData("lift position", lift.currentPosition)
+        telemetry.addData("left lift position", leftLift.currentPosition)
+        telemetry.addData("right lift position", rightLift.currentPosition)
         telemetry.addData("scoring position", scoring.position)
-        telemetry.addData("spin position", spin.position)
+        telemetry.addData("left spin position", leftSpin.position)
+        telemetry.addData("right spin position", rightSpin.position)
     }
 }

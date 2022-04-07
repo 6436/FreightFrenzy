@@ -63,7 +63,6 @@ class Mecanum(private val POWER: Double = 0.95) {
         motors = arrayOf(fl, fr, bl, br)
 
         for (motor in motors) {
-            motor.direction = DcMotorSimple.Direction.FORWARD
 
             motor.zeroPowerBehavior =
                 if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
@@ -74,6 +73,10 @@ class Mecanum(private val POWER: Double = 0.95) {
 
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
+
+        fl.direction = DcMotorSimple.Direction.FORWARD
+        bl.direction = DcMotorSimple.Direction.FORWARD
+        fr.direction = DcMotorSimple.Direction.REVERSE
         br.direction = DcMotorSimple.Direction.REVERSE
     }
 

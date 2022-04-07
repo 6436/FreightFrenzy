@@ -9,6 +9,10 @@ class Pods : BaseTeleOp() {
     private val pods = Pods()
 
     override fun initialize() {
+        org.firstinspires.ftc.teamcode.gamepad1 = gamepad1
+        org.firstinspires.ftc.teamcode.hardwareMap = hardwareMap
+        org.firstinspires.ftc.teamcode.telemetry = telemetry
+
         pods.initialize()
     }
 

@@ -17,6 +17,7 @@ open class TeleOp : BaseTeleOp() {
     private val scoring = Scoring()
     private val carousel = Carousel()
     private val cap = Cap()
+    private val pods = Pods()
 
     override fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -28,27 +29,28 @@ open class TeleOp : BaseTeleOp() {
         globalTelemetry = telemetry
 
         drivetrain.initialize()
-//        intake.initialize()
+        intake.initialize()
         scoring.initialize()
-//        carousel.initialize(alliance)
+        carousel.initialize(alliance)
 //        cap.initialize()
+        pods.initialize()
+
+        pods.up()
     }
 
     override fun update() {
         drivetrain.odometry()
 
         drivetrain.update()
-//        intake.update()
+        intake.update()
         scoring.update()
-//        carousel.update()
+        carousel.update()
 //        cap.update()
 
-//        drivetrain.telemetry()
-//        intake.telemetry()
-//        lift.telemetry()
+        drivetrain.telemetry()
+        intake.telemetry()
         scoring.telemetry()
-//        carousel.telemetry()
-//        spin.telemetry()
+        carousel.telemetry()
 //        cap.telemetry()
 
         telemetry.update()
