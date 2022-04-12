@@ -11,7 +11,7 @@ class Intake {
     private companion object {
         const val VERY_SLOW_POWER = 0.1
         const val FAST_POWER = 0.75
-        const val POWER = 0.6
+        const val POWER = 0.8
     }
 
     private lateinit var intake: DcMotorEx

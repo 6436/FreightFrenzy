@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import org.firstinspires.ftc.teamcode.hardware.Scoring
 import kotlin.concurrent.thread
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -44,7 +45,7 @@ class RedFreightAutonomous : Autonomous() {
             }
             drivetrain.reset()
 
-            scoring.default()
+            scoring.up(Scoring.Companion.Level.DOWN)
             intake.fastSuck()
 
             drivetrain.move(

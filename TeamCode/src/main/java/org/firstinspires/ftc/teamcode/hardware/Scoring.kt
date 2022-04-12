@@ -4,34 +4,40 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.gamepad1
-import org.firstinspires.ftc.teamcode.gamepad2
-import org.firstinspires.ftc.teamcode.hardwareMap
-import org.firstinspires.ftc.teamcode.telemetry
+import org.firstinspires.ftc.teamcode.*
 
 class Scoring {
     companion object {
         private const val LIFT_POWER = 0.95
 
-        enum class LiftLevel(val position: Int) {
-            OK(200),
-            BOTTOM(630),
-            MIDDLE(1440),
-            TOP(2700)
+        enum class Level(val liftPosition: Int, val spinPosition: Double, val scoringPosition: Double) {
+            DOWN(LIFT_DOWN_POSITION, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
+            BOTTOM(LIFT_BOTTOM_POSITION, SPIN_BOTTOM_POSITION, SCORING_CLOSE_POSITION),
+            MIDDLE(LIFT_MIDDLE_POSITION, SPIN_MIDDLE_POSITION, SCORING_CLOSE_POSITION),
+            TOP(LIFT_TOP_POSITION, SPIN_TOP_POSITION, SCORING_CLOSE_POSITION)
         }
 
-        private const val SPIN_UP_POSITION = 0.38677777777
-        private const val SPIN_DOWN_POSITION = 0.273
+        private const val LIFT_OK_POSITION = 1570
+        private const val LIFT_DOWN_POSITION = 0
+        private const val LIFT_BOTTOM_POSITION = 10
+        private const val LIFT_MIDDLE_POSITION = 560
+        private const val LIFT_TOP_POSITION = 2040
 
-        private const val SCORING_OPEN_POSITION = 0.91
-        private const val SCORING_DEFAULT_POSITION = 0.7572222222
-        private const val SCORING_CLOSE_POSITION = 0.6077777777
+        private const val SPIN_DOWN_POSITION = 0.0503
+        private const val SPIN_BOTTOM_POSITION = 0.953888888
+        private const val SPIN_MIDDLE_POSITION = 0.8727777777
+        private const val SPIN_TOP_POSITION = 0.84777777777777
+
+        private const val SCORING_DEFAULT_POSITION = 0.57166666
+        private const val SCORING_CLOSE_POSITION = 0.35111111
+        private const val SCORING_OPEN_POSITION = 0.84777777
+        private const val SCORING_BOTTOM_POSITION = 0.471666666
     }
 
     private lateinit var leftLift: DcMotorEx
     private lateinit var rightLift: DcMotorEx
     private lateinit var leftSpin: Servo
-    private lateinit var rightSpin: Servo
+//    private lateinit var rightSpin: Servo
     private lateinit var scoring: Servo
 
     fun initialize() {
@@ -39,7 +45,7 @@ class Scoring {
         rightLift = hardwareMap.get(DcMotorEx::class.java, ::rightLift.name)
 
         leftSpin = hardwareMap.get(Servo::class.java, ::leftSpin.name)
-        rightSpin = hardwareMap.get(Servo::class.java, ::rightSpin.name)
+//        rightSpin = hardwareMap.get(Servo::class.java, ::rightSpin.name)
 
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
 
@@ -55,7 +61,7 @@ class Scoring {
 
         leftLift.power = LIFT_POWER
 
-        rightLift.direction = DcMotorSimple.Direction.FORWARD
+        rightLift.direction = DcMotorSimple.Direction.REVERSE
 
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
@@ -67,15 +73,21 @@ class Scoring {
 
         rightLift.power = LIFT_POWER
 
-        default()
+        up(Level.DOWN)
     }
 
+    private var state = Level.DOWN
+    private var state2 = "done"
     fun update() {
-//        if (gamepad2.a) default()
-//        if (gamepad2.x) up(LiftLevel.BOTTOM)
-//        if (gamepad2.y) up(LiftLevel.MIDDLE)
-//        if (gamepad2.b) up(LiftLevel.TOP)
-//        if (gamepad1.right_trigger > 0.0) open()
+        state = when {
+            gamepad2.a -> {state2 = "start";Level.DOWN}
+            gamepad2.x -> {state2 = "start";Level.BOTTOM}
+            gamepad2.y -> {state2 = "start";Level.MIDDLE}
+            gamepad2.b -> {state2 = "start";Level.TOP}
+            else -> state
+        }
+        up(state)
+        if (gamepad1.right_trigger > 0.0) open()
         if (gamepad1.left_stick_button) {
             leftLift.targetPosition -= 10
             rightLift.targetPosition -= 10
@@ -84,45 +96,56 @@ class Scoring {
             leftLift.targetPosition += 10
             rightLift.targetPosition += 10
         }
-        if (gamepad2.x) {
-            leftSpin.position += 0.001
-            rightSpin.position -= 0.001
-        }
-        if (gamepad2.y) {
-            leftSpin.position -= 0.001
-            rightSpin.position += 0.001
-        }
-        if (gamepad2.a) scoring.position += 0.0001
-        if (gamepad2.b) scoring.position -= 0.0001
+//        if (gamepad2.x) {
+//            leftSpin.position += 0.001
+////            rightSpin.position -= 0.001
+//        }
+//        if (gamepad2.y) {
+//            leftSpin.position -= 0.001
+////            rightSpin.position += 0.001
+//        }
+//        if (gamepad2.a) scoring.position += 0.0001
+//        if (gamepad2.b) scoring.position -= 0.0001
     }
 
-    fun up(liftLevel: LiftLevel) {
-        leftLift.targetPosition = liftLevel.position
-        rightLift.targetPosition = liftLevel.position
-        leftSpin.position =
-            if (leftLift.currentPosition > LiftLevel.OK.position) 1.0 - SPIN_UP_POSITION else 1.0 - SPIN_DOWN_POSITION
-        rightSpin.position =
-            if (leftLift.currentPosition > LiftLevel.OK.position) SPIN_UP_POSITION else SPIN_DOWN_POSITION
-        scoring.position = SCORING_CLOSE_POSITION
+    private var startTime = System.nanoTime()
+    private var flag = false
+    private var flag2 = false
+    fun up(level: Level) {
+        if (state2 == "start") {
+            leftLift.targetPosition = LIFT_OK_POSITION
+            rightLift.targetPosition = LIFT_OK_POSITION
+            state2= "next"
+        }
+        if (state2 == "next") {
+            if (!leftLift.isBusy) {
+                leftSpin.position = level.spinPosition
+                startTime = System.nanoTime()
+                state2 = "next2"
+            }
+        }
+        if (state2 == "next2") {if (System.nanoTime() - startTime > (if (level == Level.DOWN) 1.4 else 1.0) * NANOSECONDS_PER_SECOND) {
+            leftLift.targetPosition = level.liftPosition
+            rightLift.targetPosition = level.liftPosition
+            state2 = "done"
+        }}
+        if (state2 == "done") {
+
+        }
+
+
+
+        scoring.position = level.scoringPosition
     }
 
     fun open() {
         scoring.position = SCORING_OPEN_POSITION
     }
 
-    fun default() {
-        leftLift.targetPosition = 0
-        rightLift.targetPosition = 0
-        leftSpin.position = 1.0 - SPIN_DOWN_POSITION
-        rightSpin.position = SPIN_DOWN_POSITION
-        scoring.position = SCORING_DEFAULT_POSITION
-    }
-
     fun telemetry() {
         telemetry.addData("left lift position", leftLift.currentPosition)
         telemetry.addData("right lift position", rightLift.currentPosition)
-        telemetry.addData("scoring position", scoring.position)
-        telemetry.addData("left spin position", leftSpin.position)
-        telemetry.addData("right spin position", rightSpin.position)
+        telemetry.addData("stick position", scoring.position)
+        telemetry.addData("spin position", leftSpin.position)
     }
 }

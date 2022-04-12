@@ -61,7 +61,7 @@ abstract class Autonomous : LinearOpMode() {
 
 //        lift.down()
 //        spin.down()
-        scoring.default()
+        scoring.up(Scoring.Companion.Level.DOWN)
 
         sleep(5000)
     }
