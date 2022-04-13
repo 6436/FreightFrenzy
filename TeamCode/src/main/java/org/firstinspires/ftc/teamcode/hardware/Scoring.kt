@@ -23,12 +23,12 @@ class Scoring {
         private const val LIFT_MIDDLE_POSITION = 560
         private const val LIFT_TOP_POSITION = 2040
 
-        private const val SPIN_DOWN_POSITION = 0.0503
-        private const val SPIN_BOTTOM_POSITION = 0.953888888
-        private const val SPIN_MIDDLE_POSITION = 0.8727777777
-        private const val SPIN_TOP_POSITION = 0.84777777777777
+        private const val SPIN_DOWN_POSITION = 0.945
+        private const val SPIN_BOTTOM_POSITION = 0.025
+        private const val SPIN_MIDDLE_POSITION = 0.126111111
+        private const val SPIN_TOP_POSITION = 0.1177777777
 
-        private const val SCORING_DEFAULT_POSITION = 0.57166666
+        private const val SCORING_DEFAULT_POSITION = 0.5
         private const val SCORING_CLOSE_POSITION = 0.35111111
         private const val SCORING_OPEN_POSITION = 0.84777777
         private const val SCORING_BOTTOM_POSITION = 0.471666666
@@ -36,7 +36,7 @@ class Scoring {
 
     private lateinit var leftLift: DcMotorEx
     private lateinit var rightLift: DcMotorEx
-    private lateinit var leftSpin: Servo
+    private lateinit var spin: Servo
 //    private lateinit var rightSpin: Servo
     private lateinit var scoring: Servo
 
@@ -44,7 +44,7 @@ class Scoring {
         leftLift = hardwareMap.get(DcMotorEx::class.java, ::leftLift.name)
         rightLift = hardwareMap.get(DcMotorEx::class.java, ::rightLift.name)
 
-        leftSpin = hardwareMap.get(Servo::class.java, ::leftSpin.name)
+        spin = hardwareMap.get(Servo::class.java, ::spin.name)
 //        rightSpin = hardwareMap.get(Servo::class.java, ::rightSpin.name)
 
         scoring = hardwareMap.get(Servo::class.java, ::scoring.name)
@@ -97,15 +97,15 @@ class Scoring {
             rightLift.targetPosition += 10
         }
 //        if (gamepad2.x) {
-//            leftSpin.position += 0.001
+//            spin.position += 0.001
 ////            rightSpin.position -= 0.001
 //        }
 //        if (gamepad2.y) {
-//            leftSpin.position -= 0.001
+//            spin.position -= 0.001
 ////            rightSpin.position += 0.001
 //        }
-//        if (gamepad2.a) scoring.position += 0.0001
-//        if (gamepad2.b) scoring.position -= 0.0001
+//        if (gamepad2.a) scoring.position += 0.001
+//        if (gamepad2.b) scoring.position -= 0.001
     }
 
     private var startTime = System.nanoTime()
@@ -119,12 +119,12 @@ class Scoring {
         }
         if (state2 == "next") {
             if (!leftLift.isBusy) {
-                leftSpin.position = level.spinPosition
+                spin.position = level.spinPosition
                 startTime = System.nanoTime()
                 state2 = "next2"
             }
         }
-        if (state2 == "next2") {if (System.nanoTime() - startTime > (if (level == Level.DOWN) 1.4 else 1.0) * NANOSECONDS_PER_SECOND) {
+        if (state2 == "next2") {if (System.nanoTime() - startTime > (if (level == Level.DOWN) 1.4 else 0.6) * NANOSECONDS_PER_SECOND) {
             leftLift.targetPosition = level.liftPosition
             rightLift.targetPosition = level.liftPosition
             state2 = "done"
@@ -146,6 +146,6 @@ class Scoring {
         telemetry.addData("left lift position", leftLift.currentPosition)
         telemetry.addData("right lift position", rightLift.currentPosition)
         telemetry.addData("stick position", scoring.position)
-        telemetry.addData("spin position", leftSpin.position)
+        telemetry.addData("spin position", spin.position)
     }
 }
