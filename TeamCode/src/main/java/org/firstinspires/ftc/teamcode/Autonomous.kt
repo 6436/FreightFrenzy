@@ -15,7 +15,9 @@ abstract class Autonomous : LinearOpMode() {
     protected val intake = Intake()
     protected val scoring = Scoring()
     protected val carousel = Carousel()
-    protected val camera = Camera()
+    private val pods = Pods()
+//    protected val camera = Camera()
+
 
     @Throws(InterruptedException::class)
     override fun runOpMode() {
@@ -25,15 +27,18 @@ abstract class Autonomous : LinearOpMode() {
         globalHardwareMap = hardwareMap
         globalIsStopRequested = ::isStopRequested
 
-        drivetrain.initialize(alliance)
+        drivetrain.initialize(alliance, false)
         intake.initialize()
         scoring.initialize()
         carousel.initialize(alliance)
-        camera.initialize()
+        pods.initialize()
+//        camera.initialize()
+
+        pods.down()
 
         waitForStart()
 
-        camera.off()
+//        camera.off()
 
         autonomous()
 
@@ -41,17 +46,17 @@ abstract class Autonomous : LinearOpMode() {
     }
 
     fun bonus() {
-        when (camera.analysis) {
-//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
-//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
-//            else -> lift.top()
-        }
-//        spin.up()
-        when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
-            else -> drivetrain.move(24.5, -20)
-        }
+//        when (camera.analysis) {
+////            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
+////            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
+////            else -> lift.top()
+//        }
+////        spin.up()
+//        when (camera.analysis) {
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
+//            else -> drivetrain.move(24.5, -20)
+//        }
     }
 
     abstract fun autonomous()

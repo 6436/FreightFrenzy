@@ -6,6 +6,6 @@ import org.firstinspires.ftc.teamcode.Autonomous as NeutralAutonomous
 @Autonomous
 class MoveAndTurn : NeutralAutonomous() {
     override fun autonomous() {
-        drivetrain.move(24, 24, 180)
+        drivetrain.move(36, 36, 180)
     }
 }

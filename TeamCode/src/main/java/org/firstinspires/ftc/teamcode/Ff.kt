@@ -5,17 +5,17 @@ import org.firstinspires.ftc.teamcode.hardware.Camera
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 class Ff : Autonomous() {
     override fun autonomous() {
-        when (camera.analysis) {
+//        when (camera.analysis) {
 //            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> lift.bottom()
 //            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> lift.middle()
 //            else ->lift.top()
-        }
+//        }
 //        spin.up()
-        when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(-23, -19)
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(-24, -20)
-            else -> drivetrain.move(-24.5, -20)
-        }
+//        when (camera.analysis) {
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(-23, -19)
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(-24, -20)
+//            else -> drivetrain.move(-24.5, -20)
+//        }
         scoring.open()
 
         var startTime = System.nanoTime()

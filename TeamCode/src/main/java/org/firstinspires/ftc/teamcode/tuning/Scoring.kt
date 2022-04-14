@@ -1,12 +1,15 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.tuning
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.*
+import org.firstinspires.ftc.teamcode.BaseTeleOp
+import org.firstinspires.ftc.teamcode.NANOSECONDS_PER_SECOND
 
-class Scoring {
+@TeleOp
+class Scoring : BaseTeleOp()  {
     companion object {
         private const val LIFT_POWER = 0.95
 
@@ -23,7 +26,7 @@ class Scoring {
         private const val LIFT_MIDDLE_POSITION = 100
         private const val LIFT_TOP_POSITION = 2030
 
-        private const val SPIN_DOWN_POSITION = 0.9694
+        private const val SPIN_DOWN_POSITION = 0.9594
         private const val SPIN_BOTTOM_POSITION = 0.0694444
         private const val SPIN_MIDDLE_POSITION = 0.1572222
         private const val SPIN_TOP_POSITION = 0.17611111
@@ -37,10 +40,10 @@ class Scoring {
     private lateinit var leftLift: DcMotorEx
     private lateinit var rightLift: DcMotorEx
     private lateinit var spin: Servo
-//    private lateinit var rightSpin: Servo
+    //    private lateinit var rightSpin: Servo
     private lateinit var scoring: Servo
 
-    fun initialize() {
+    override fun initialize() {
         leftLift = hardwareMap.get(DcMotorEx::class.java, ::leftLift.name)
         rightLift = hardwareMap.get(DcMotorEx::class.java, ::rightLift.name)
 
@@ -73,24 +76,24 @@ class Scoring {
 
         rightLift.power = LIFT_POWER
 
-//        leftLift.targetPosition = Level.DOWN.liftPosition
-//        rightLift.targetPosition = Level.DOWN.liftPosition
+        leftLift.targetPosition = -300
+        rightLift.targetPosition = -300
         spin.position = Level.DOWN.spinPosition
         scoring.position = Level.DOWN.scoringPosition
     }
 
     private var state = Level.DOWN
     private var state2 = "done"
-    fun update() {
-        state = when {
-            gamepad2.a -> {state2 = "start";Level.DOWN}
-            gamepad2.x -> {state2 = "start";Level.BOTTOM}
-            gamepad2.y -> {state2 = "start";Level.MIDDLE}
-            gamepad2.b -> {state2 = "start";Level.TOP}
-            else -> state
-        }
-        up(state)
-        if (gamepad1.right_trigger > 0.0) open()
+    override fun update() {
+//        state = when {
+//            gamepad2.a -> {state2 = "start";Level.DOWN}
+//            gamepad2.x -> {state2 = "start";Level.BOTTOM}
+//            gamepad2.y -> {state2 = "start";Level.MIDDLE}
+//            gamepad2.b -> {state2 = "start";Level.TOP}
+//            else -> state
+//        }
+//        up(state)
+//        if (gamepad1.right_trigger > 0.0) open()
         if (gamepad1.left_stick_button) {
             leftLift.targetPosition -= 10
             rightLift.targetPosition -= 10
@@ -99,16 +102,16 @@ class Scoring {
             leftLift.targetPosition += 10
             rightLift.targetPosition += 10
         }
-//        if (gamepad2.x) {
-//            spin.position += 0.001
-////            rightSpin.position -= 0.001
-//        }
-//        if (gamepad2.y) {
-//            spin.position -= 0.001
-////            rightSpin.position += 0.001
-//        }
-//        if (gamepad2.a) scoring.position += 0.001
-//        if (gamepad2.b) scoring.position -= 0.001
+        if (gamepad2.x) {
+            spin.position += 0.001
+//            rightSpin.position -= 0.001
+        }
+        if (gamepad2.y) {
+            spin.position -= 0.001
+//            rightSpin.position += 0.001
+        }
+        if (gamepad2.a) scoring.position += 0.001
+        if (gamepad2.b) scoring.position -= 0.001
     }
 
     private var startTime = System.nanoTime()

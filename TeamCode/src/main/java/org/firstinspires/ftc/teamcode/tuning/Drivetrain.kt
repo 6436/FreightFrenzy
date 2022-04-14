@@ -39,7 +39,6 @@ abstract class Drivetrain : OpMode() {
         motors = arrayOf(fl, fr, bl, br)
 
         for (motor in motors) {
-            motor.direction = DcMotorSimple.Direction.FORWARD
 
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
@@ -49,14 +48,17 @@ abstract class Drivetrain : OpMode() {
 
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
+        fl.direction = DcMotorSimple.Direction.FORWARD
+        bl.direction = DcMotorSimple.Direction.FORWARD
+        fr.direction = DcMotorSimple.Direction.REVERSE
         br.direction = DcMotorSimple.Direction.REVERSE
     }
 
     override fun loop() {
         for (hub in hubs) hub.clearBulkCache()
 
-        telemetry.addData("left current position", fl.currentPosition)
-        telemetry.addData("right current position", fr.currentPosition)
-        telemetry.addData("back current position", br.currentPosition)
+        telemetry.addData("left current position", -fr.currentPosition)
+        telemetry.addData("right current position", fl.currentPosition)
+        telemetry.addData("back current position", -br.currentPosition)
     }
 }

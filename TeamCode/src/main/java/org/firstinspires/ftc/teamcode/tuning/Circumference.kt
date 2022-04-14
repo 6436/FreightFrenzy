@@ -50,12 +50,12 @@ class Circumference : Drivetrain() {
 
         telemetry.addData(
             "x-odometry calculated heading",
-            br.currentPosition / 38452.1803414 * DEGREES_PER_ROTATION
+            -br.currentPosition / 45004.1666 * DEGREES_PER_ROTATION
         )
         // constant for y-odometry is double what it is supposed to be because there are 2 motors, but it's easier to have 1 number
         telemetry.addData(
             "y-odometry calculated heading",
-            (-fl.currentPosition + fr.currentPosition) / 2.0 / 61017.5303405 * DEGREES_PER_ROTATION
+            (fl.currentPosition + fr.currentPosition) / 2.0 / 61288.8295 * DEGREES_PER_ROTATION
         )
         telemetry.addData("first angle", firstAngle)
         telemetry.addData("all angles", allAngles)

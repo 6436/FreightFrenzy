@@ -15,11 +15,13 @@ class Mecanum(private val POWER: Double = 0.95) {
 
         const val TARGET_LOCATION_TOLERANCE_INCHES = 2.5
         const val TARGET_HEADING_TOLERANCE_DEGREES = 4.0
-        const val X_ODOMETRY_COUNTS_PER_ROTATION = 38452.1803414
-        const val Y_ODOMETRY_COUNTS_PER_ROTATION = 61017.5303405
+        const val X_ODOMETRY_COUNTS_PER_ROTATION =  45004.1666
+        const val Y_ODOMETRY_COUNTS_PER_ROTATION = 61288.8295
 
-        const val TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 80.75
-        const val ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 1278.75
+        var TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 50.0
+        var ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 515.0
+        @JvmField
+        var DECELERATION_MULTIPLIER = 0.9
 
         // measured
 
@@ -143,9 +145,9 @@ class Mecanum(private val POWER: Double = 0.95) {
         // bulk read
         for (hub in hubs) hub.clearBulkCache()
 
-        val leftCurrentPosition = br.currentPosition
-        val rightCurrentPosition = bl.currentPosition
-        val backCurrentPosition = fl.currentPosition
+        val leftCurrentPosition = -fr.currentPosition
+        val rightCurrentPosition = fl.currentPosition
+        val backCurrentPosition = -br.currentPosition
 
         val newHeading =
             (-leftCurrentPosition + rightCurrentPosition) / 2.0 / Y_ODOMETRY_COUNTS_PER_DEGREE
@@ -234,7 +236,7 @@ class Mecanum(private val POWER: Double = 0.95) {
                 if (brake && (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
                             speedIsEnoughToReachTarget(
                                 locationChangeSpeedAverage,
-                                TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND,
+                                TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND * DECELERATION_MULTIPLIER,
                                 remainingTranslationalDistance
                             ))
                 ) {
@@ -268,7 +270,7 @@ class Mecanum(private val POWER: Double = 0.95) {
                     remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES ||
                     (sign(headingChange) == sign(remainingHeadingDisplacement) && speedIsEnoughToReachTarget(
                         headingChangeSpeedAverage,
-                        ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND,
+                        ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND * DECELERATION_MULTIPLIER,
                         remainingRotationalDistance
                     ))
                 ) {
@@ -287,13 +289,15 @@ class Mecanum(private val POWER: Double = 0.95) {
                 power
             )
 
-//            telemetry.addData("a power", aPower)
-//            telemetry.addData("b power", bPower)
-//            telemetry.addData("rotational power", rotationalPower)
+            telemetry.addData("a power", aPower)
+            telemetry.addData("b power", bPower)
+            telemetry.addData("rotational power", rotationalPower)
 
-//            telemetry()
-//            telemetry.update()
-        } while (!(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) && !isStopRequested())
+            telemetry()
+            telemetry.update()
+        } while (
+            !(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) &&
+            !isStopRequested())
 
         setPowers(0.0)
 
