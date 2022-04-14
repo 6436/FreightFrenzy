@@ -14,14 +14,15 @@ class Mecanum(private val POWER: Double = 0.95) {
         // tuned
 
         const val TARGET_LOCATION_TOLERANCE_INCHES = 2.5
-        const val TARGET_HEADING_TOLERANCE_DEGREES = 4.0
+        const val TARGET_HEADING_TOLERANCE_DEGREES = 3.0
+
         const val X_ODOMETRY_COUNTS_PER_ROTATION =  45004.1666
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 61288.8295
 
-        var TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 50.0
-        var ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 515.0
-        @JvmField
-        var DECELERATION_MULTIPLIER = 0.9
+        const val TRANSLATIONAL_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 50.0
+        const val ROTATIONAL_DECELERATION_DEGREES_PER_SECOND_PER_SECOND = 515.0
+        const val TRANSLATIONAL_DECELERATION_MULTIPLIER = 0.7
+        const val ROTATION_DECELERATION_MULTIPLIER = 1.0
 
         // measured
 
@@ -236,7 +237,7 @@ class Mecanum(private val POWER: Double = 0.95) {
                 if (brake && (remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES ||
                             speedIsEnoughToReachTarget(
                                 locationChangeSpeedAverage,
-                                TRANSLATIONAL_FRICTION_DECELERATION_INCHES_PER_SECOND_PER_SECOND * DECELERATION_MULTIPLIER,
+                                TRANSLATIONAL_DECELERATION_INCHES_PER_SECOND_PER_SECOND * TRANSLATIONAL_DECELERATION_MULTIPLIER,
                                 remainingTranslationalDistance
                             ))
                 ) {
@@ -270,7 +271,7 @@ class Mecanum(private val POWER: Double = 0.95) {
                     remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES ||
                     (sign(headingChange) == sign(remainingHeadingDisplacement) && speedIsEnoughToReachTarget(
                         headingChangeSpeedAverage,
-                        ROTATIONAL_FRICTION_DECELERATION_DEGREES_PER_SECOND_PER_SECOND * DECELERATION_MULTIPLIER,
+                        ROTATIONAL_DECELERATION_DEGREES_PER_SECOND_PER_SECOND * ROTATION_DECELERATION_MULTIPLIER,
                         remainingRotationalDistance
                     ))
                 ) {
