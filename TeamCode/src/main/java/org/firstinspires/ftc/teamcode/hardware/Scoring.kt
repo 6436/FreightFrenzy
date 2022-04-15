@@ -38,7 +38,7 @@ class Scoring {
     private lateinit var rightLift: DcMotorEx
     private lateinit var spin: Servo
 //    private lateinit var rightSpin: Servo
-    private lateinit var scoring: Servo
+    lateinit var scoring: Servo
 
     fun initialize() {
         leftLift = hardwareMap.get(DcMotorEx::class.java, ::leftLift.name)
@@ -73,14 +73,14 @@ class Scoring {
 
         rightLift.power = LIFT_POWER
 
-//        leftLift.targetPosition = Level.DOWN.liftPosition
-//        rightLift.targetPosition = Level.DOWN.liftPosition
+        leftLift.targetPosition = Level.DOWN.liftPosition
+        rightLift.targetPosition = Level.DOWN.liftPosition
         spin.position = Level.DOWN.spinPosition
         scoring.position = Level.DOWN.scoringPosition
     }
 
-    private var state = Level.DOWN
-    private var state2 = "done"
+    var state = Level.DOWN
+    var state2 = "done"
     fun update() {
         state = when {
             gamepad2.a -> {state2 = "start";Level.DOWN}

@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import org.firstinspires.ftc.teamcode.Alliance
-import org.firstinspires.ftc.teamcode.gamepad1
-import org.firstinspires.ftc.teamcode.hardwareMap
-import org.firstinspires.ftc.teamcode.telemetry
+import org.firstinspires.ftc.teamcode.*
 import kotlin.math.abs
 
 class  Carousel {
@@ -68,7 +65,7 @@ class  Carousel {
 
     private var startPosition = 0
     private var flag = true
-    fun deliver(): Boolean {
+    fun deliver(autonomous: Boolean = false): Boolean {
         if (flag) {
             startPosition = carousel.currentPosition
 
@@ -81,7 +78,8 @@ class  Carousel {
                 slow()
             }
             position < FAST_COUNTS -> {
-                fast()
+                if (autonomous) {slow()} else{
+                fast()}
             }
             else -> {
                 off()

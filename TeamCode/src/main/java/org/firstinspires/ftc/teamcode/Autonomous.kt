@@ -35,6 +35,7 @@ abstract class Autonomous : LinearOpMode() {
 //        camera.initialize()
 
         pods.down()
+        scoring.scoring.position = Scoring.Companion.Level.TOP.scoringPosition
 
         waitForStart()
 
