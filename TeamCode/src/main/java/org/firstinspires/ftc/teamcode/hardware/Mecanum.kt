@@ -77,10 +77,10 @@ class Mecanum(private val POWER: Double = 0.95) {
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
-        fl.direction = DcMotorSimple.Direction.FORWARD
-        bl.direction = DcMotorSimple.Direction.FORWARD
-        fr.direction = DcMotorSimple.Direction.REVERSE
-        br.direction = DcMotorSimple.Direction.REVERSE
+        fl.direction = DcMotorSimple.Direction.REVERSE
+        bl.direction = DcMotorSimple.Direction.REVERSE
+        fr.direction = DcMotorSimple.Direction.FORWARD
+        br.direction = DcMotorSimple.Direction.FORWARD
     }
 
     fun reset() {
@@ -208,6 +208,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         heading: Number = lastTargetHeading,
         power: Double = POWER,
         brake: Boolean = true,
+        slot: () -> Unit = {}
     ) {
         val targetLocation = TwoDimensionalPoint(alliance.value * x.toDouble(), y)
 
@@ -257,7 +258,7 @@ class Mecanum(private val POWER: Double = 0.95) {
                         aRemainingDisplacement,
                         bRemainingDisplacement
                     ) / maxRemainingDisplacement
-                            * if (translationalFlag) 1.0 else 0.2
+                            * if (translationalFlag) 1.0 else 0.3
                             )
                 }
 
@@ -279,7 +280,7 @@ class Mecanum(private val POWER: Double = 0.95) {
 
                     0.0
                 } else (-sign(remainingHeadingDisplacement)
-                        * if (rotationalFlag) 1.0 else 0.2
+                        * if (rotationalFlag) 1.0 else 0.3
                         )
 
             setPowers(
@@ -289,6 +290,8 @@ class Mecanum(private val POWER: Double = 0.95) {
                 aPower - rotationalPower,
                 power
             )
+
+            slot()
 
             telemetry.addData("a power", aPower)
             telemetry.addData("b power", bPower)

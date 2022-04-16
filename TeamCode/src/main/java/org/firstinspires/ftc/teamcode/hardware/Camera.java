@@ -34,6 +34,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -43,7 +44,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * the sample regions over the first 3 stones.
  */
 public class Camera {
-    OpenCvWebcam webcam;
+    OpenCvCamera webcam;
     SkystoneDeterminationPipeline pipeline;
 
     public void initialize() {
@@ -55,7 +56,7 @@ public class Camera {
          */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
 
@@ -67,7 +68,7 @@ public class Camera {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -110,9 +111,9 @@ public class Camera {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(5, 98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(142, 98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(288, 98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(5, 205);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(113, 205);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(216, 205);
         static final int REGION_WIDTH = 20;
         static final int REGION_HEIGHT = 20;
 

@@ -45,7 +45,6 @@ class RedFreightAutonomous : Autonomous() {
             }
             drivetrain.reset()
 
-            scoring.up(Scoring.Companion.Level.DOWN)
             intake.fastSuck()
 
             drivetrain.move(

@@ -16,7 +16,7 @@ abstract class Autonomous : LinearOpMode() {
     protected val scoring = Scoring()
     protected val carousel = Carousel()
     private val pods = Pods()
-//    protected val camera = Camera()
+    protected val camera = Camera()
 
 
     @Throws(InterruptedException::class)
@@ -32,14 +32,14 @@ abstract class Autonomous : LinearOpMode() {
         scoring.initialize()
         carousel.initialize(alliance)
         pods.initialize()
-//        camera.initialize()
+        camera.initialize()
 
         pods.down()
         scoring.scoring.position = Scoring.Companion.Level.TOP.scoringPosition
 
         waitForStart()
 
-//        camera.off()
+        camera.off()
 
         autonomous()
 
@@ -75,7 +75,7 @@ abstract class Autonomous : LinearOpMode() {
 
 //        lift.down()
 //        spin.down()
-        scoring.up(Scoring.Companion.Level.DOWN)
+        scoring.up()
 
         sleep(5000)
     }

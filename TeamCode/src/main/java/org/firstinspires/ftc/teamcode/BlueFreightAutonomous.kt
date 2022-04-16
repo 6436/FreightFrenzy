@@ -45,7 +45,6 @@ class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : A
             }
             drivetrain.reset()
 
-            scoring.up(Scoring.Companion.Level.DOWN)
             intake.fastSuck()
 
             drivetrain.move(

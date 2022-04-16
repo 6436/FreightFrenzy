@@ -89,7 +89,7 @@ class Scoring {
             gamepad2.b -> {state2 = "start";Level.TOP}
             else -> state
         }
-        up(state)
+        up()
         if (gamepad1.right_trigger > 0.0) open()
         if (gamepad1.left_stick_button) {
             leftLift.targetPosition -= 10
@@ -114,31 +114,31 @@ class Scoring {
     private var startTime = System.nanoTime()
     private var flag = false
     private var flag2 = false
-    fun up(level: Level) {
+    fun up() {
         if (state2 == "start") {
             leftLift.targetPosition = LIFT_OK_POSITION
             rightLift.targetPosition = LIFT_OK_POSITION
             state2= "next"
         }
-        if (state2 == "next") {
+        else if (state2 == "next") {
             if (!leftLift.isBusy) {
-                spin.position = level.spinPosition
+                spin.position = state.spinPosition
                 startTime = System.nanoTime()
                 state2 = "next2"
             }
         }
-        if (state2 == "next2") {if (System.nanoTime() - startTime > (if (level == Level.DOWN) 1.4 else 0.6) * NANOSECONDS_PER_SECOND) {
-            leftLift.targetPosition = level.liftPosition
-            rightLift.targetPosition = level.liftPosition
+        else if (state2 == "next2") {if (System.nanoTime() - startTime > (if (state == Level.DOWN) 1.4 else 0.6) * NANOSECONDS_PER_SECOND) {
+            leftLift.targetPosition = state.liftPosition
+            rightLift.targetPosition = state.liftPosition
             state2 = "done"
         }}
-        if (state2 == "done") {
+        else if (state2 == "done") {
 
         }
 
 
 
-        scoring.position = level.scoringPosition
+        scoring.position = state.scoringPosition
     }
 
     fun open() {

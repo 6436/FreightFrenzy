@@ -77,7 +77,7 @@ class  Carousel {
             position < SLOW_COUNTS -> {
                 slow()
             }
-            position < FAST_COUNTS -> {
+            position < FAST_COUNTS + if (autonomous) SLOW_COUNTS else 0.0 -> {
                 if (autonomous) {slow()} else{
                 fast()}
             }
