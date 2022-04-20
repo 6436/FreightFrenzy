@@ -16,8 +16,8 @@ class Cap {
         vertical = hardwareMap.get(Servo::class.java, ::vertical.name)
         extend = hardwareMap.get(CRServo::class.java, ::extend.name)
 
-        vertical.position = 0.2116666666666
-        horizontal.position = 0.0238888888888
+        vertical.position = 0.26722
+        horizontal.position = 0.68
     }
 
     fun update() {

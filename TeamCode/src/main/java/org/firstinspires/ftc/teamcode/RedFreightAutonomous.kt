@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.Scoring
 import kotlin.concurrent.thread
 
@@ -12,14 +13,38 @@ class RedFreightAutonomous : Autonomous() {
 
     override fun autonomous() {
         bonus()
-        for (i in 1..CYCLES) {
-            scoring.open()
 
+        when (camera.analysis) {
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
+//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
+            else -> drivetrain.move(23, -15, slot={scoring.up()})
+        }
+        while(scoring.state2 != "done") {
+            scoring.up()
+            drivetrain.odometry()
+        }
+        for (i in 1..CYCLES) {
             var startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 1.0 * NANOSECONDS_PER_SECOND) {
+                drivetrain.odometry()
+            }
+            when (camera.analysis) {
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> scoring.down()
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> scoring.mid()
+                else -> scoring.open()
+            }
+
+            startTime = System.nanoTime()
             while (System.nanoTime() - startTime < 0.4 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
-
+            scoring.state = Scoring.Companion.Level.DOWN
+            scoring.state2 = "start"
+            drivetrain.move(1, 5, 90, slot = {scoring.up()})
+//break
+//            intake.suck()
+            drivetrain.move(x=-28, slot = {scoring.up()})
+            break
 //            spin.down()
 //            lift.down()
             intake.verySlowSpit()

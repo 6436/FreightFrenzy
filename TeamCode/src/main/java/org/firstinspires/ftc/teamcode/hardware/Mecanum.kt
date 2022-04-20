@@ -305,7 +305,7 @@ class Mecanum(private val POWER: Double = 0.95) {
 
         setPowers(0.0)
 
-        lastTargetLocation = targetLocation
+        lastTargetLocation = TwoDimensionalPoint(x, y)
         lastTargetHeading = heading.toDouble()
     }
 

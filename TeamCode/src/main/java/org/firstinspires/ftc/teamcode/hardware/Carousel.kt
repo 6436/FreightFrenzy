@@ -93,6 +93,10 @@ class  Carousel {
         carousel.power = alliance.value * SLOW_POWER
     }
 
+    private fun auto() {
+        carousel.power = alliance.value * 0.25
+    }
+
     private fun fast() {
         carousel.power = alliance.value * FAST_POWER
     }

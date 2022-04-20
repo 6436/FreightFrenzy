@@ -112,6 +112,8 @@ class Scoring : BaseTeleOp()  {
         }
         if (gamepad2.a) scoring.position += 0.001
         if (gamepad2.b) scoring.position -= 0.001
+        telemetry()
+        telemetry.update()
     }
 
     private var startTime = System.nanoTime()

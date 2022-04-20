@@ -66,6 +66,12 @@ abstract class Autonomous : LinearOpMode() {
 //            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
 //            else -> drivetrain.move(24.5, -20)
 //        }
+        scoring.state = when (camera.analysis) {
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> Scoring.Companion.Level.BOTTOM
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> Scoring.Companion.Level.MIDDLE
+            else -> Scoring.Companion.Level.TOP
+        }
+        scoring.state2 = "start"
     }
 
     abstract fun autonomous()

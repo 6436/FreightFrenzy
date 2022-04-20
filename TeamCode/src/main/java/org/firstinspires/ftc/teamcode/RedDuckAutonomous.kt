@@ -4,25 +4,21 @@ import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.Scoring
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
-class RedDuckAutonomous : Autonomous() {
+open class RedDuckAutonomous : Autonomous() {
     override fun autonomous() {
-        drivetrain.move(17, 2.3, -90)
+        drivetrain.move(y=-5)
+        drivetrain.move(19.82, 1.82, heading=-90)
         while (!carousel.deliver(true)) {
             drivetrain.odometry()
         }
-        scoring.state = when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> Scoring.Companion.Level.BOTTOM
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> Scoring.Companion.Level.MIDDLE
-            else -> Scoring.Companion.Level.TOP
-        }
-        scoring.state2 = "start"
+        bonus()
         drivetrain.move(y=-38.5, slot = { scoring.up() })
-        drivetrain.move(x=1.5,  slot = { scoring.up() })
+        drivetrain.move(x=0, slot = { scoring.up() })
         var startTime = System.nanoTime()
         while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
             drivetrain.odometry()
         }
-        scoring.open()
+        scoring.open() // down if needed
         startTime = System.nanoTime()
         while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
             drivetrain.odometry()
@@ -35,5 +31,6 @@ class RedDuckAutonomous : Autonomous() {
             scoring.up()
             drivetrain.odometry()
         }
+
     }
 }

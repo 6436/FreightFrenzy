@@ -17,21 +17,21 @@ class Scoring {
             TOP(LIFT_TOP_POSITION, SPIN_TOP_POSITION, SCORING_CLOSE_POSITION)
         }
 
-        private const val LIFT_OK_POSITION = 1800
+        private const val LIFT_OK_POSITION = 1660
         private const val LIFT_DOWN_POSITION = 300
-        private const val LIFT_BOTTOM_POSITION = 100
-        private const val LIFT_MIDDLE_POSITION = 100
-        private const val LIFT_TOP_POSITION = 2030
+        private const val LIFT_BOTTOM_POSITION = 420
+        private const val LIFT_MIDDLE_POSITION = 550
+        private const val LIFT_TOP_POSITION = 2020
 
-        private const val SPIN_DOWN_POSITION = 0.9694
-        private const val SPIN_BOTTOM_POSITION = 0.0694444
-        private const val SPIN_MIDDLE_POSITION = 0.1572222
-        private const val SPIN_TOP_POSITION = 0.17611111
+        private const val SPIN_DOWN_POSITION = 0.994
+        private const val SPIN_BOTTOM_POSITION = 0.03777777
+        private const val SPIN_MIDDLE_POSITION = 0.12111111
+        private const val SPIN_TOP_POSITION = 0.21
 
         private const val SCORING_DEFAULT_POSITION = 0.5
         private const val SCORING_CLOSE_POSITION = 0.35111111
-        private const val SCORING_OPEN_POSITION = 0.84777777
-        private const val SCORING_BOTTOM_POSITION = 0.471666666
+        private const val SCORING_OPEN_POSITION = 0.4866666
+        private const val SCORING_BOTTOM_POSITION = 0.484
     }
 
     private lateinit var leftLift: DcMotorEx
@@ -143,6 +143,14 @@ class Scoring {
 
     fun open() {
         scoring.position = SCORING_OPEN_POSITION
+    }
+
+    fun mid() {
+        scoring.position = 0.50333333
+    }
+
+    fun down() {
+        scoring.position = SCORING_BOTTOM_POSITION
     }
 
     fun telemetry() {

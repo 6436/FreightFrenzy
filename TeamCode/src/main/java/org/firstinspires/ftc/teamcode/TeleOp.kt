@@ -16,7 +16,7 @@ open class TeleOp : BaseTeleOp() {
     private val intake = Intake()
     private val scoring = Scoring()
     private val carousel = Carousel()
-    private val cap = Cap()
+//    private val cap = Cap()
     private val pods = Pods()
 
     override fun initialize() {
@@ -32,7 +32,7 @@ open class TeleOp : BaseTeleOp() {
         intake.initialize()
         scoring.initialize()
         carousel.initialize(alliance)
-        cap.initialize()
+//        cap.initialize()
         pods.initialize()
 
         pods.up()
@@ -45,13 +45,13 @@ open class TeleOp : BaseTeleOp() {
         intake.update()
         scoring.update()
         carousel.update()
-        cap.update()
+//        cap.update()
 
 //        drivetrain.telemetry()
 //        intake.telemetry()
 //        scoring.telemetry()
 //        carousel.telemetry()
-        cap.telemetry()
+//        cap.telemetry()
 
         telemetry.update()
     }
