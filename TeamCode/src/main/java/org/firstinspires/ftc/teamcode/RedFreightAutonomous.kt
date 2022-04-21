@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.hardware.Scoring
 import kotlin.concurrent.thread
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
-class RedFreightAutonomous : Autonomous() {
+open class RedFreightAutonomous : Autonomous() {
     private companion object {
         // number of times Freight is scored, including Pre-Load box
         const val CYCLES = 5
@@ -13,12 +13,7 @@ class RedFreightAutonomous : Autonomous() {
 
     override fun autonomous() {
         bonus()
-
-        when (camera.analysis) {
-//            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> drivetrain.move(23, -19)
-//            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> drivetrain.move(24, -20)
-            else -> drivetrain.move(23, -15, slot={scoring.up()})
-        }
+        drivetrain.move(23, -17, slot={scoring.up()}, power=0.6)
         while(scoring.state2 != "done") {
             scoring.up()
             drivetrain.odometry()
@@ -41,9 +36,19 @@ class RedFreightAutonomous : Autonomous() {
             scoring.state = Scoring.Companion.Level.DOWN
             scoring.state2 = "start"
             drivetrain.move(1, 5, 90, slot = {scoring.up()})
+
 //break
-//            intake.suck()
+            intake.suck()
             drivetrain.move(x=-28, slot = {scoring.up()})
+            startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 1.0 * NANOSECONDS_PER_SECOND) {
+                drivetrain.odometry()
+            }
+            intake.off()
+            scoring.state = Scoring.Companion.Level.TOP
+            scoring.state2="start"
+            drivetrain.move(x=1, slot = {scoring.up()}, brake=false)
+            drivetrain.move(13, -17, 20, slot = {scoring.up()})
             break
 //            spin.down()
 //            lift.down()

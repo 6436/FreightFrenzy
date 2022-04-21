@@ -74,11 +74,11 @@ class  Carousel {
 
         val position = abs(carousel.currentPosition - startPosition)
         when {
-            position < SLOW_COUNTS -> {
+            !autonomous && position < SLOW_COUNTS -> {
                 slow()
             }
-            position < FAST_COUNTS + if (autonomous) SLOW_COUNTS else 0.0 -> {
-                if (autonomous) {slow()} else{
+            position < FAST_COUNTS + if (autonomous) SLOW_COUNTS*2.0 else 0.0 -> {
+                if (autonomous) {auto()} else{
                 fast()}
             }
             else -> {

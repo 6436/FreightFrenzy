@@ -43,15 +43,16 @@ abstract class Autonomous : LinearOpMode() {
 
         autonomous()
 
-        val startTime = System.nanoTime()
-        while (System.nanoTime() - startTime < 5.0 * NANOSECONDS_PER_SECOND && opModeIsActive()) {
-            drivetrain.odometry()
-            telemetry.addData("a power", 0.0)
-            telemetry.addData("b power", 0.0)
-            telemetry.addData("rotational power", 0.0)
-            drivetrain.telemetry()
-            telemetry.update()
-        }//        reset()
+//        val startTime = System.nanoTime()
+//        while (System.nanoTime() - startTime < 5.0 * NANOSECONDS_PER_SECOND && opModeIsActive()) {
+//            drivetrain.odometry()
+//            telemetry.addData("a power", 0.0)
+//            telemetry.addData("b power", 0.0)
+//            telemetry.addData("rotational power", 0.0)
+//            drivetrain.telemetry()
+//            telemetry.update()
+//        }
+        //        reset()
     }
 
     fun bonus() {

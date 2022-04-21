@@ -113,7 +113,7 @@ public class Camera {
          */
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(5, 205);
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(113, 205);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(216, 205);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(230, 205);
         static final int REGION_WIDTH = 20;
         static final int REGION_HEIGHT = 20;
 

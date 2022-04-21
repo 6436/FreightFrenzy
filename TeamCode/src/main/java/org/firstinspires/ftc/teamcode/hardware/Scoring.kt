@@ -17,7 +17,7 @@ class Scoring {
             TOP(LIFT_TOP_POSITION, SPIN_TOP_POSITION, SCORING_CLOSE_POSITION)
         }
 
-        private const val LIFT_OK_POSITION = 1660
+        private const val LIFT_OK_POSITION = 1800
         private const val LIFT_DOWN_POSITION = 300
         private const val LIFT_BOTTOM_POSITION = 420
         private const val LIFT_MIDDLE_POSITION = 550
@@ -30,12 +30,12 @@ class Scoring {
 
         private const val SCORING_DEFAULT_POSITION = 0.5
         private const val SCORING_CLOSE_POSITION = 0.35111111
-        private const val SCORING_OPEN_POSITION = 0.4866666
+        private const val SCORING_OPEN_POSITION = 0.847777
         private const val SCORING_BOTTOM_POSITION = 0.484
     }
 
-    private lateinit var leftLift: DcMotorEx
-    private lateinit var rightLift: DcMotorEx
+    lateinit var leftLift: DcMotorEx
+    lateinit var rightLift: DcMotorEx
     private lateinit var spin: Servo
 //    private lateinit var rightSpin: Servo
     lateinit var scoring: Servo

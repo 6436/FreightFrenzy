@@ -18,7 +18,11 @@ open class RedDuckAutonomous : Autonomous() {
         while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
             drivetrain.odometry()
         }
-        scoring.open() // down if needed
+        when (camera.analysis) {
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> scoring.down()
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> scoring.mid()
+            else -> scoring.open()
+        }
         startTime = System.nanoTime()
         while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
             drivetrain.odometry()
@@ -27,10 +31,12 @@ open class RedDuckAutonomous : Autonomous() {
         scoring.state2 = "start"
         drivetrain.move(x=23 ,slot = { scoring.up() })
         drivetrain.move(24, -23,slot = { scoring.up() })
-        while(scoring.state2 != "done") {
+        while (scoring.state2 != "done") {
             scoring.up()
             drivetrain.odometry()
         }
-
+        scoring.leftLift.targetPosition-=300
+        scoring.rightLift.targetPosition-=300
+        sleep(1000)
     }
 }
