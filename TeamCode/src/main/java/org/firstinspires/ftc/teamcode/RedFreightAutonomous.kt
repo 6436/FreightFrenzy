@@ -44,7 +44,7 @@ open class RedFreightAutonomous : Autonomous() {
             drivetrain.move(1, 5.2-i*0.242, 90-i*0.5, slot = {scoring.up()}, power=0.675 )
 //break
             intake.suck()
-            drivetrain.move(x=-31.6-i*1.5, slot = {scoring.up()}, power=0.675)
+            drivetrain.move(x=-31.6-i*2, slot = {scoring.up()}, power=0.675)
 
 
             startTime = System.nanoTime()
@@ -59,7 +59,7 @@ open class RedFreightAutonomous : Autonomous() {
             scoring.state = Scoring.Companion.Level.TOP
             scoring.state2="start"
             drivetrain.move(x=1, y=4.8-i*0.4, slot = {scoring.up()}, brake=false)
-            drivetrain.move(13.2, -17, 20, slot = {scoring.up()})
+            drivetrain.move(13.2, -17, 20+i*2.4, slot = {scoring.up()})
 
 
 //

@@ -128,7 +128,9 @@ class Scoring {
                 state2 = "next2"
             }
         }
-        else if (state2 == "next2") {if (System.nanoTime() - startTime > (if (state == Level.DOWN) 1.4 else 0.6) * NANOSECONDS_PER_SECOND) {
+        else if (state2 == "next2") {if (System.nanoTime() - startTime > (when (state) {Level.DOWN-> 1.4
+                Level.DEAD-> 1.8
+                else-> 0.6}) * NANOSECONDS_PER_SECOND) {
             leftLift.targetPosition = state.liftPosition
             rightLift.targetPosition = state.liftPosition
             state2 = "done"
