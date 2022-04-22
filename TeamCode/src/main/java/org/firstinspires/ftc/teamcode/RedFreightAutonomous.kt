@@ -7,50 +7,48 @@ import kotlin.concurrent.thread
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 open class RedFreightAutonomous : Autonomous() {
     private companion object {
-        // number of times Freight is scored, including Pre-Load box
+        // number of times Freight is scored, INCLUDING Pre-Load box
         const val CYCLES = 5
     }
 
     override fun autonomous() {
         bonus()
-        drivetrain.move(23, -17.2, slot={scoring.up()}, power=0.4)
+        drivetrain.move(23, -17.1, slot={scoring.up()}, power=0.4)
         while(scoring.state2 != "done") {
             scoring.up()
             drivetrain.odometry()
         }
         for (i in 1..CYCLES) {
             var startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
-            when (camera.analysis) {
+            if (i==1){when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> scoring.down()
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> scoring.mid()
                 else -> scoring.open()
+            }}else {
+                scoring.open()
             }
 
             startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.4 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.3 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
             scoring.state = Scoring.Companion.Level.DOWN
             scoring.state2 = "start"
-            drivetrain.move(1, 5, 90, slot = {scoring.up()})
+            drivetrain.move(1, 5.2-i*0.2, 90-i*0.5, slot = {scoring.up()})
 
 //break
             intake.suck()
-            drivetrain.move(x=-28, slot = {scoring.up()})
+            drivetrain.move(x=-28-i*2, slot = {scoring.up()})
                         if (i == CYCLES) {
                 break
-            }
-            startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 1.0 * NANOSECONDS_PER_SECOND) {
-                drivetrain.odometry()
             }
             intake.off()
             scoring.state = Scoring.Companion.Level.TOP
             scoring.state2="start"
-            drivetrain.move(x=1, slot = {scoring.up()}, brake=false)
+            drivetrain.move(x=1, y=4.8-i*0.4, slot = {scoring.up()}, brake=false)
             drivetrain.move(13, -17, 20, slot = {scoring.up()})
 
 
