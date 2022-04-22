@@ -210,6 +210,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         brake: Boolean = true,
         slot: () -> Unit = {}
     ) {
+        var flag = true
         val targetLocation = TwoDimensionalPoint(alliance.value * x.toDouble(), y)
 
         val targetHeading = run {
@@ -300,9 +301,12 @@ class Mecanum(private val POWER: Double = 0.95) {
 //
 //            telemetry()
             telemetry.update()
-//            if (locationChangeSpeedAverage ) {
-//                break
-//            }
+            if (locationChangeSpeedAverage>10) {
+                flag=false
+            }
+            if (!flag && locationChangeSpeedAverage<0.1 ) {
+                break
+            }
         } while (
             !(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) &&
             !isStopRequested())

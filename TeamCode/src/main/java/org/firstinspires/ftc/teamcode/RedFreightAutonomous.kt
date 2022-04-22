@@ -24,7 +24,7 @@ open class RedFreightAutonomous : Autonomous() {
         }
         for (i in 1..CYCLES) {
             var startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.2 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
             if (i==1){when (camera.analysis) {
