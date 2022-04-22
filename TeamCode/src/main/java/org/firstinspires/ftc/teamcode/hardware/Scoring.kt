@@ -8,9 +8,10 @@ import org.firstinspires.ftc.teamcode.*
 
 class Scoring {
     companion object {
-        private const val LIFT_POWER = 0.95
+        private const val LIFT_POWER = 0.98
 
         enum class Level(val liftPosition: Int, val spinPosition: Double, val scoringPosition: Double) {
+            DEAD(LIFT_DOWN_POSITION-200, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
             DOWN(LIFT_DOWN_POSITION, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
             BOTTOM(LIFT_BOTTOM_POSITION, SPIN_BOTTOM_POSITION, SCORING_CLOSE_POSITION),
             MIDDLE(LIFT_MIDDLE_POSITION, SPIN_MIDDLE_POSITION, SCORING_CLOSE_POSITION),
@@ -18,7 +19,7 @@ class Scoring {
         }
 
         private const val LIFT_OK_POSITION = 1800
-        private const val LIFT_DOWN_POSITION = 300
+        private const val LIFT_DOWN_POSITION = 200
         private const val LIFT_BOTTOM_POSITION = 420
         private const val LIFT_MIDDLE_POSITION = 550
         private const val LIFT_TOP_POSITION = 2020
@@ -26,7 +27,7 @@ class Scoring {
         private const val SPIN_DOWN_POSITION = 0.994
         private const val SPIN_BOTTOM_POSITION = 0.03777777
         private const val SPIN_MIDDLE_POSITION = 0.12111111
-        private const val SPIN_TOP_POSITION = 0.21
+        private const val SPIN_TOP_POSITION = 0.25
 
         private const val SCORING_DEFAULT_POSITION = 0.5
         private const val SCORING_CLOSE_POSITION = 0.35111111

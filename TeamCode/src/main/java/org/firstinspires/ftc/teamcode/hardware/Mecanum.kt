@@ -293,12 +293,16 @@ class Mecanum(private val POWER: Double = 0.95) {
 
             slot()
 
-            telemetry.addData("a power", aPower)
-            telemetry.addData("b power", bPower)
-            telemetry.addData("rotational power", rotationalPower)
-
-            telemetry()
+            telemetry.addData("lcaot", locationChangeSpeedAverage)
+//            telemetry.addData("a power", aPower)
+//            telemetry.addData("b power", bPower)
+//            telemetry.addData("rotational power", rotationalPower)
+//
+//            telemetry()
             telemetry.update()
+//            if (locationChangeSpeedAverage ) {
+//                break
+//            }
         } while (
             !(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) &&
             !isStopRequested())

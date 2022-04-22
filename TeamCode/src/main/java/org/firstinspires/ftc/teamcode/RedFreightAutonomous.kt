@@ -6,21 +6,25 @@ import kotlin.concurrent.thread
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 open class RedFreightAutonomous : Autonomous() {
-    private companion object {
-        // number of times Freight is scored, INCLUDING Pre-Load box
-        const val CYCLES = 5
-    }
 
     override fun autonomous() {
+        // number of times Freight is scored, INCLUDING Pre-Load box
+
+        val CYCLES = when(camera.analysis) {
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> 4
+            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> 4
+            else -> 4
+        }
+
         bonus()
-        drivetrain.move(23, -17.1, slot={scoring.up()}, power=0.4)
+        drivetrain.move(23.3, -17.1, slot={scoring.up()}, power=0.4)
         while(scoring.state2 != "done") {
             scoring.up()
             drivetrain.odometry()
         }
         for (i in 1..CYCLES) {
             var startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.2 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
             if (i==1){when (camera.analysis) {
@@ -32,24 +36,30 @@ open class RedFreightAutonomous : Autonomous() {
             }
 
             startTime = System.nanoTime()
-            while (System.nanoTime() - startTime < 0.3 * NANOSECONDS_PER_SECOND) {
+            while (System.nanoTime() - startTime < 0.25 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
-            scoring.state = Scoring.Companion.Level.DOWN
+            scoring.state = if (i == CYCLES) Scoring.Companion.Level.DEAD else Scoring.Companion.Level.DOWN
             scoring.state2 = "start"
-            drivetrain.move(1, 5.2-i*0.2, 90-i*0.5, slot = {scoring.up()})
-
+            drivetrain.move(1, 5.2-i*0.242, 90-i*0.5, slot = {scoring.up()}, power=0.675 )
 //break
             intake.suck()
-            drivetrain.move(x=-28-i*2, slot = {scoring.up()})
-                        if (i == CYCLES) {
+            drivetrain.move(x=-31.6-i*1.5, slot = {scoring.up()}, power=0.675)
+
+
+            startTime = System.nanoTime()
+            while (System.nanoTime() - startTime < 0.5 * NANOSECONDS_PER_SECOND) {
+                drivetrain.odometry()
+                scoring.up()
+            }
+            if (i == CYCLES) {
                 break
             }
             intake.off()
             scoring.state = Scoring.Companion.Level.TOP
             scoring.state2="start"
             drivetrain.move(x=1, y=4.8-i*0.4, slot = {scoring.up()}, brake=false)
-            drivetrain.move(13, -17, 20, slot = {scoring.up()})
+            drivetrain.move(13.2, -17, 20, slot = {scoring.up()})
 
 
 //

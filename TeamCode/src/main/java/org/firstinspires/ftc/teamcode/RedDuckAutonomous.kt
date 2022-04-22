@@ -35,8 +35,8 @@ open class RedDuckAutonomous : Autonomous() {
             scoring.up()
             drivetrain.odometry()
         }
-        scoring.leftLift.targetPosition-=300
-        scoring.rightLift.targetPosition-=300
+        scoring.leftLift.targetPosition-=200
+        scoring.rightLift.targetPosition-=200
         sleep(1000)
     }
 }

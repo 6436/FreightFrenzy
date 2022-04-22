@@ -21,7 +21,7 @@ class Scoring : BaseTeleOp()  {
         }
 
         private const val LIFT_OK_POSITION = 1800
-        private const val LIFT_DOWN_POSITION = 300
+        private const val LIFT_DOWN_POSITION = 200
         private const val LIFT_BOTTOM_POSITION = 100
         private const val LIFT_MIDDLE_POSITION = 100
         private const val LIFT_TOP_POSITION = 2030
@@ -76,8 +76,8 @@ class Scoring : BaseTeleOp()  {
 
         rightLift.power = LIFT_POWER
 
-        leftLift.targetPosition = -300
-        rightLift.targetPosition = -300
+        leftLift.targetPosition = -200
+        rightLift.targetPosition = -200
         spin.position = Level.DOWN.spinPosition
         scoring.position = Level.DOWN.scoringPosition
     }
