@@ -44,7 +44,7 @@ open class RedFreightAutonomous : Autonomous() {
             drivetrain.move(1, 5.2-i*0.242, 90-i*0.5, slot = {scoring.up()}, power=0.675 )
 //break
             intake.suck()
-            drivetrain.move(x=-31.6-i*2, slot = {scoring.up()}, power=0.675)
+            drivetrain.move(x=if (i != CYCLES) (-31.6-i*2) else -31.6, slot = {scoring.up()}, power=0.675)
 
 
             startTime = System.nanoTime()
@@ -53,6 +53,10 @@ open class RedFreightAutonomous : Autonomous() {
                 scoring.up()
             }
             if (i == CYCLES) {
+                while(scoring.state2 != "done") {
+                    scoring.up()
+                    drivetrain.odometry()
+                }
                 break
             }
             intake.off()
