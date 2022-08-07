@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.tuning
+package org.firstinspires.ftc.teamcode.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.BaseTeleOp
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
 import org.firstinspires.ftc.teamcode.NANOSECONDS_PER_SECOND
 
 @TeleOp
-class Scoring : BaseTeleOp()  {
+class Scoring : TeleOpMode()  {
     companion object {
         private const val LIFT_POWER = 0.95
 

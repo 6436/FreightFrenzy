@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.tuning
+package org.firstinspires.ftc.teamcode.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.BaseTeleOp
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
 
 @TeleOp
-class Servo : BaseTeleOp() {
+class Servo : TeleOpMode() {
     private lateinit var servo: Servo
 
     override fun initialize() {

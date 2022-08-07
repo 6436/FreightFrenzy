@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.Autonomous as NeutralAutonomous
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.BaseAutonomous as NeutralAutonomous
 
 @Autonomous
 class MoveTowardScoringSideFourFeet : NeutralAutonomous() {

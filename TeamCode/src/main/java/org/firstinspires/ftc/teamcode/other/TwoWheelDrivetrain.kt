@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.other
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
 import kotlin.math.abs
 
 @TeleOp
-class TwoWheelDrivetrain : BaseTeleOp() {
+class TwoWheelDrivetrain : TeleOpMode() {
     private companion object {
         const val POWER = 0.9
     }

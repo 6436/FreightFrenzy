@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.hardware.*
-import org.firstinspires.ftc.teamcode.gamepad1 as globalGamepad1
-import org.firstinspires.ftc.teamcode.gamepad2 as globalGamepad2
-import org.firstinspires.ftc.teamcode.gamepad3 as globalGamepad3
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-open class TeleOp : BaseTeleOp() {
+open class BaseTeleOp : TeleOpMode() {
     open val alliance = Alliance.RED
 
     private val drivetrain = Mecanum()
@@ -22,9 +20,7 @@ open class TeleOp : BaseTeleOp() {
     override fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        globalGamepad1 = gamepad1
-        globalGamepad2 = gamepad2
-        globalGamepad3 = gamepad2
+
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
 

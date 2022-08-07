@@ -39,6 +39,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /*
+This is a camera program originally used for Skystone (3 stones, one is black) that I copied and repurposed for Freight Frenzy (3 regions, one has yellow rubber duck or yellow custom team element)
+ */
+
+/*
  * This sample demonstrates a basic (but battle-tested and essentially
  * 100% accurate) method of detecting the skystone when lined up with
  * the sample regions over the first 3 stones.

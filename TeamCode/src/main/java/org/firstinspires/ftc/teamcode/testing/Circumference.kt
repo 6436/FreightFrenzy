@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuning
+package org.firstinspires.ftc.teamcode.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DEGREES_PER_ROTATION

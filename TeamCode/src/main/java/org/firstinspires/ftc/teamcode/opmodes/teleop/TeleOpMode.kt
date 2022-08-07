@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 
-abstract class BaseTeleOp : LinearOpMode() {
+abstract class TeleOpMode : LinearOpMode() {
     abstract fun initialize()
 
     abstract fun update()

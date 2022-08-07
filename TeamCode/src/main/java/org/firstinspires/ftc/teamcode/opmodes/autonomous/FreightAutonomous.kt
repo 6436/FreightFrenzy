@@ -1,24 +1,29 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.BaseAutonomous
 import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.Scoring
-import kotlin.concurrent.thread
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous
-open class RedFreightAutonomous : Autonomous() {
+@Autonomous
+class RedFreightAutonomous(override val alliance: Alliance = Alliance.RED) : FreightAutonomous()
 
+@Autonomous
+class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : FreightAutonomous()
+
+open class FreightAutonomous : BaseAutonomous() {
     override fun autonomous() {
         // number of times Freight is scored, INCLUDING Pre-Load box
 
-        val CYCLES = when(camera.analysis) {
+        val CYCLES = when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> 4
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> 4
             else -> 4
         }
 
         bonus()
-        drivetrain.move(23.3, -17.1, slot={scoring.up()}, power=0.4)
-        while(scoring.state2 != "done") {
+        drivetrain.move(23.3, -17.1, slot = { scoring.up() }, power = 0.4)
+        while (scoring.state2 != "done") {
             scoring.up()
             drivetrain.odometry()
         }
@@ -27,11 +32,13 @@ open class RedFreightAutonomous : Autonomous() {
             while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
-            if (i==1){when (camera.analysis) {
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> scoring.down()
-            Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> scoring.mid()
-                else -> scoring.open()
-            }}else {
+            if (i == 1) {
+                when (camera.analysis) {
+                    Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> scoring.down()
+                    Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> scoring.mid()
+                    else -> scoring.open()
+                }
+            } else {
                 scoring.open()
             }
 
@@ -39,12 +46,23 @@ open class RedFreightAutonomous : Autonomous() {
             while (System.nanoTime() - startTime < 0.25 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
             }
-            scoring.state = if (i == CYCLES) Scoring.Companion.Level.DEAD else Scoring.Companion.Level.DOWN
+            scoring.state =
+                if (i == CYCLES) Scoring.Companion.Level.DEAD else Scoring.Companion.Level.DOWN
             scoring.state2 = "start"
-            drivetrain.move(1, 5.2-i*0.242, 90-i*0.5, slot = {scoring.up()}, power=0.675 )
+            drivetrain.move(
+                1,
+                5.2 - i * 0.242,
+                90 - i * 0.5,
+                slot = { scoring.up() },
+                power = 0.675
+            )
 //break
             intake.suck()
-            drivetrain.move(x=if (i != CYCLES) (-31.6-i*2) else -31.6, slot = {scoring.up()}, power=0.675)
+            drivetrain.move(
+                x = if (i != CYCLES) (-31.6 - i * 2) else -31.6,
+                slot = { scoring.up() },
+                power = 0.675
+            )
 
 
             startTime = System.nanoTime()
@@ -53,7 +71,7 @@ open class RedFreightAutonomous : Autonomous() {
                 scoring.up()
             }
             if (i == CYCLES) {
-                while(scoring.state2 != "done") {
+                while (scoring.state2 != "done") {
                     scoring.up()
                     drivetrain.odometry()
                 }
@@ -61,10 +79,9 @@ open class RedFreightAutonomous : Autonomous() {
             }
             intake.off()
             scoring.state = Scoring.Companion.Level.TOP
-            scoring.state2="start"
-            drivetrain.move(x=1, y=4.8-i*0.4, slot = {scoring.up()}, brake=false)
-            drivetrain.move(13.2, -17, 20+i*2.4, slot = {scoring.up()})
-
+            scoring.state2 = "start"
+            drivetrain.move(x = 1, y = 4.8 - i * 0.4, slot = { scoring.up() }, brake = false)
+            drivetrain.move(13.2, -17, 20 + i * 2.4, slot = { scoring.up() })
 
 //
 ////            spin.down()

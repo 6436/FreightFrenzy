@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmodes.autonomous
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.Alliance
 import org.firstinspires.ftc.teamcode.hardware.*
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-abstract class Autonomous : LinearOpMode() {
+abstract class BaseAutonomous : LinearOpMode() {
     open val alliance = Alliance.RED
 
     protected val drivetrain = Mecanum(0.9)
