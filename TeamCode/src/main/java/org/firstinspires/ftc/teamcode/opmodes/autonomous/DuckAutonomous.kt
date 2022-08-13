@@ -1,17 +1,31 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmodes.autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.BaseAutonomous
-import org.firstinspires.ftc.teamcode.hardware.Camera
-import org.firstinspires.ftc.teamcode.hardware.Scoring
+import org.firstinspires.ftc.teamcode.Alliance
+import org.firstinspires.ftc.teamcode.NANOSECONDS_PER_SECOND
+import org.firstinspires.ftc.teamcode.mechanisms.Camera
+import org.firstinspires.ftc.teamcode.mechanisms.Scoring
+import org.firstinspires.ftc.teamcode.alliance as globalAlliance
 
 @Autonomous
-class RedDuckAutonomous(override val alliance: Alliance = Alliance.RED) : DuckAutonomous()
+class RedDuckAutonomous : DuckAutonomous() {
+    override fun runOpMode() {
+        super.runOpMode()
+
+        globalAlliance = Alliance.RED
+    }
+}
 
 @Autonomous
-class BlueDuckAutonomous(override val alliance: Alliance = Alliance.BLUE) : DuckAutonomous()
+class BlueDuckAutonomous : DuckAutonomous() {
+    override fun runOpMode() {
+        super.runOpMode()
 
-open class DuckAutonomous : BaseAutonomous() {
+        globalAlliance = Alliance.BLUE
+    }
+}
+
+abstract class DuckAutonomous : BaseAutonomous() {
     override fun autonomous() {
         drivetrain.move(y = -5)
         drivetrain.move(19.82, 1.82, heading = -90)

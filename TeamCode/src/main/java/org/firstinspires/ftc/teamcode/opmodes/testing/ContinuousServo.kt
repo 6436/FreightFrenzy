@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
-import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
+import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode
 
 @TeleOp
 class ContinuousServo : TeleOpMode() {

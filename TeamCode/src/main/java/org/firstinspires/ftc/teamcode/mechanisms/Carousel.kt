@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.mechanisms
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.*
 import kotlin.math.abs
 
-class  Carousel {
+class Carousel : Mechanism {
     private companion object {
         // chosen
 
@@ -31,13 +31,9 @@ class  Carousel {
             (SLOW_CAROUSEL_ROTATIONS + FAST_CAROUSEL_ROTATIONS) * COUNTS_PER_CAROUSEL_ROTATION
     }
 
-    private lateinit var alliance: Alliance
-
     private lateinit var carousel: DcMotorEx
 
-    fun initialize(alliance: Alliance) {
-        this.alliance = alliance
-
+    override fun initialize() {
         carousel = hardwareMap.get(DcMotorEx::class.java, ::carousel.name)
 
         carousel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -49,7 +45,7 @@ class  Carousel {
         carousel.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
-    fun update() {
+    override fun update() {
         when {
             gamepad1.dpad_left ->
                 deliver()
@@ -77,9 +73,12 @@ class  Carousel {
             !autonomous && position < SLOW_COUNTS -> {
                 slow()
             }
-            position < FAST_COUNTS + if (autonomous) SLOW_COUNTS*2.0 else 0.0 -> {
-                if (autonomous) {auto()} else{
-                fast()}
+            position < FAST_COUNTS + if (autonomous) SLOW_COUNTS * 2.0 else 0.0 -> {
+                if (autonomous) {
+                    auto()
+                } else {
+                    fast()
+                }
             }
             else -> {
                 off()
@@ -105,7 +104,7 @@ class  Carousel {
         carousel.power = 0.0
     }
 
-    fun telemetry() {
+    override fun telemetry() {
         telemetry.addData("carousel power", carousel.power)
         telemetry.addData("carousel position", carousel.currentPosition)
         telemetry.addData("slow counts", SLOW_COUNTS)

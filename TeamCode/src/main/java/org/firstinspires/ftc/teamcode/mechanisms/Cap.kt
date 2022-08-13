@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.mechanisms
 
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.Servo
@@ -6,12 +6,12 @@ import org.firstinspires.ftc.teamcode.gamepad3
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 
-class Cap {
+class Cap : Mechanism {
     private lateinit var horizontal: Servo
     private lateinit var vertical: Servo
     private lateinit var extend: CRServo
 
-    fun initialize() {
+    override fun initialize() {
         horizontal = hardwareMap.get(Servo::class.java, ::horizontal.name)
         vertical = hardwareMap.get(Servo::class.java, ::vertical.name)
         extend = hardwareMap.get(CRServo::class.java, ::extend.name)
@@ -20,7 +20,7 @@ class Cap {
         horizontal.position = 0.68
     }
 
-    fun update() {
+    override fun update() {
         when {
             gamepad3.dpad_right -> horizontal.position += 0.0001
             gamepad3.dpad_left -> horizontal.position -= 0.0001
@@ -39,7 +39,7 @@ class Cap {
         }
     }
 
-    fun telemetry() {
+    override fun telemetry() {
         telemetry.addData("horizontal currentPosition", horizontal.position)
         telemetry.addData("vertical position", vertical.position)
         telemetry.addData("extend power", extend.power)

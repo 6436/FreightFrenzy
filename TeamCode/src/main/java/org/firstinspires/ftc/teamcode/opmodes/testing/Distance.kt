@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
-import org.firstinspires.ftc.teamcode.hardware.Mecanum
+import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode
+import org.firstinspires.ftc.teamcode.mechanisms.Mecanum
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 

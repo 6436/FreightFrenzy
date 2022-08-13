@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.lynx.LynxModule
@@ -9,14 +9,17 @@ import org.firstinspires.ftc.teamcode.*
 import kotlin.math.*
 
 @Config
-class Mecanum(private val POWER: Double = 0.95) {
+class Mecanum(
+    private val power: Double = 0.95,
+    private val brake: Boolean = true
+) : Mechanism {
     private companion object {
         // tuned
 
         const val TARGET_LOCATION_TOLERANCE_INCHES = 2.5
         const val TARGET_HEADING_TOLERANCE_DEGREES = 3.0
 
-        const val X_ODOMETRY_COUNTS_PER_ROTATION =  45004.1666
+        const val X_ODOMETRY_COUNTS_PER_ROTATION = 45004.1666
         const val Y_ODOMETRY_COUNTS_PER_ROTATION = 61288.8295
 
         const val TRANSLATIONAL_DECELERATION_INCHES_PER_SECOND_PER_SECOND = 50.0
@@ -43,38 +46,33 @@ class Mecanum(private val POWER: Double = 0.95) {
             Y_ODOMETRY_COUNTS_PER_ROTATION / DEGREES_PER_ROTATION
     }
 
-    private lateinit var alliance: Alliance
-
     private lateinit var hubs: List<LynxModule>
 
     private lateinit var fl: DcMotorEx
     private lateinit var fr: DcMotorEx
     private lateinit var bl: DcMotorEx
     private lateinit var br: DcMotorEx
-    private lateinit var motors: Array<DcMotorEx>
+    private lateinit var motors: List<DcMotorEx>
 
-    fun initialize(alliance: Alliance = Alliance.RED, brake: Boolean = true) {
-        this.alliance = alliance
-
+    override fun initialize() {
         hubs = hardwareMap.getAll(LynxModule::class.java)
-        for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+        hubs.forEach { it.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL }
 
         fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
         fr = hardwareMap.get(DcMotorEx::class.java, ::fr.name)
         bl = hardwareMap.get(DcMotorEx::class.java, ::bl.name)
         br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
-        motors = arrayOf(fl, fr, bl, br)
+        motors = listOf(fl, fr, bl, br)
 
-        for (motor in motors) {
-
-            motor.zeroPowerBehavior =
+        motors.forEach {
+            it.zeroPowerBehavior =
                 if (brake) DcMotor.ZeroPowerBehavior.BRAKE else DcMotor.ZeroPowerBehavior.FLOAT
 
-            motor.targetPosition = 0
+            it.targetPosition = 0
 
-            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+            it.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
         fl.direction = DcMotorSimple.Direction.REVERSE
@@ -83,31 +81,31 @@ class Mecanum(private val POWER: Double = 0.95) {
         br.direction = DcMotorSimple.Direction.FORWARD
     }
 
-    fun reset() {
-        for (motor in motors) {
-            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//    fun reset() {
+//        motors.forEach {
+//            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//
+//            it.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+//        }
+//
+//        location = TwoDimensionalPoint()
+//        heading = 0.0
+//        locationChange = TwoDimensionalPoint()
+//        headingChange = 0.0
+//        locationChangeSpeedAverage = 0.0
+//        headingChangeSpeedAverage = 0.0
+//
+//        lastTime = 0.0
+//        locationChangeSpeeds = DoubleArray(13)
+//        locationChangeSpeedsIndex = 0
+//        headingChangeSpeeds = DoubleArray(13)
+//        headingChangeSpeedsIndex = 0
+//        lastLeftPosition = 0
+//        lastRightPosition = 0
+//        lastBackPosition = 0
+//    }
 
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        }
-
-        location = TwoDimensionalPoint()
-        heading = 0.0
-        locationChange = TwoDimensionalPoint()
-        headingChange = 0.0
-        locationChangeSpeedAverage = 0.0
-        headingChangeSpeedAverage = 0.0
-
-        lastTime = 0.0
-        locationChangeSpeeds = DoubleArray(13)
-        locationChangeSpeedsIndex = 0
-        headingChangeSpeeds = DoubleArray(13)
-        headingChangeSpeedsIndex = 0
-        lastLeftPosition = 0
-        lastRightPosition = 0
-        lastBackPosition = 0
-    }
-
-    fun update() {
+    override fun update() {
         val (xPower, yPower) = TwoDimensionalVector(
             gamepad1.left_stick_x,
             -gamepad1.left_stick_y
@@ -144,7 +142,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         val timeChange = time - lastTime
 
         // bulk read
-        for (hub in hubs) hub.clearBulkCache()
+        hubs.forEach { it.clearBulkCache() }
 
         val leftCurrentPosition = -fr.currentPosition
         val rightCurrentPosition = fl.currentPosition
@@ -155,12 +153,13 @@ class Mecanum(private val POWER: Double = 0.95) {
 
         headingChange = newHeading - heading
 
-        /* assumes robot follows straight path between updates
-           (as opposed to using "pose exponential" to correct for curvature), because
-           loop time vs. error tradeoff is untested,
-           it is simpler to implement,
-           our loop time is short (improving curve approximation), and
-           robot only needs to follow straight paths (for now) */
+        /*
+        assumes robot follows straight path between updates
+        (as opposed to using "pose exponential" to correct for curvature), because
+        it is simpler to implement and already tested,
+        the approximation seems acceptable (our short loop time helps), and
+        robot only needs to follow straight paths for now
+         */
         locationChange = run {
             val leftPositionChange = leftCurrentPosition - lastLeftPosition
             val rightPositionChange = rightCurrentPosition - lastRightPosition
@@ -206,7 +205,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         x: Number = lastTargetLocation.x,
         y: Number = lastTargetLocation.y,
         heading: Number = lastTargetHeading,
-        power: Double = POWER,
+        power: Double = this.power,
         brake: Boolean = true,
         slot: () -> Unit = {}
     ) {
@@ -301,15 +300,16 @@ class Mecanum(private val POWER: Double = 0.95) {
 //
 //            telemetry()
             telemetry.update()
-            if (locationChangeSpeedAverage>10) {
-                flag=false
+            if (locationChangeSpeedAverage > 10) {
+                flag = false
             }
-            if (!flag && locationChangeSpeedAverage<0.1 ) {
+            if (!flag && locationChangeSpeedAverage < 0.1) {
                 break
             }
         } while (
             !(remainingTranslationalDistance < TARGET_LOCATION_TOLERANCE_INCHES && remainingRotationalDistance < TARGET_HEADING_TOLERANCE_DEGREES) &&
-            !isStopRequested())
+            !isStopRequested()
+        )
 
         setPowers(0.0)
 
@@ -328,7 +328,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         frPower: Double,
         blPower: Double,
         brPower: Double,
-        maxPower: Double = POWER,
+        maxPower: Double = power,
         maximize: Boolean = false,
     ) {
         val powers = doubleArrayOf(flPower, frPower, blPower, brPower)
@@ -341,7 +341,7 @@ class Mecanum(private val POWER: Double = 0.95) {
         }
     }
 
-    fun telemetry() {
+    override fun telemetry() {
         telemetry.addData("x", location.x)
         telemetry.addData("y", location.y)
         telemetry.addData("heading", heading)

@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.opmodes.teleop.TeleOpMode
-import org.firstinspires.ftc.teamcode.hardware.Pods
+import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode
+import org.firstinspires.ftc.teamcode.mechanisms.Pods
 
 @TeleOp
 class Pods : TeleOpMode() {

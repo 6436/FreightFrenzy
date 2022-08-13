@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -31,12 +31,10 @@ class Encoder : OpMode() {
     private var power = 0.0
     override fun loop() {
         if (gamepad1.x) {
-                motor.targetPosition += INCREMENT
-
+            motor.targetPosition += INCREMENT
         } else if (gamepad1.y) {
-                motor.targetPosition -= INCREMENT
-            }
-
+            motor.targetPosition -= INCREMENT
+        }
 
         telemetry.addData("position", motor.targetPosition)
     }

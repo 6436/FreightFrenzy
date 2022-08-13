@@ -19,12 +19,11 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.hardware;
+package org.firstinspires.ftc.teamcode.mechanisms;
 
 import static org.firstinspires.ftc.teamcode.GlobalsKt.hardwareMap;
 import static org.firstinspires.ftc.teamcode.GlobalsKt.telemetry;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -36,10 +35,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 /*
-This is a camera program originally used for Skystone (3 stones, one is black) that I copied and repurposed for Freight Frenzy (3 regions, one has yellow rubber duck or yellow custom team element)
+Below is a camera program originally used for Skystone (3 stones,
+one is black) that I copied and modified for Freight Frenzy (3
+regions, one has yellow rubber duck or yellow custom team element)
  */
 
 /*
@@ -47,12 +47,12 @@ This is a camera program originally used for Skystone (3 stones, one is black) t
  * 100% accurate) method of detecting the skystone when lined up with
  * the sample regions over the first 3 stones.
  */
-public class Camera {
+public class Camera implements Mechanism {
     OpenCvCamera webcam;
     SkystoneDeterminationPipeline pipeline;
 
     public void initialize() {
-        /**
+        /*
          * NOTE: Many comments have been omitted from this sample for the
          * sake of conciseness. If you're just starting out with EasyOpenCv,
          * you should take a look at {@link InternalCamera1Example} or its
@@ -64,9 +64,11 @@ public class Camera {
         pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
+        /*
+         * We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+         * out when the RC activity is in portrait. We do our actual image processing assuming
+         * landscape orientation, though.
+         */
 //        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -82,6 +84,9 @@ public class Camera {
                  */
             }
         });
+    }
+
+    public void update() {
     }
 
     public SkystoneDeterminationPipeline.SkystonePosition getAnalysis() {
@@ -138,22 +143,22 @@ public class Camera {
          *   ------------------------------------
          *
          */
-        Point region1_pointA = new Point(
+        final Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
+        final Point region1_pointB = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region2_pointA = new Point(
+        final Point region2_pointA = new Point(
                 REGION2_TOPLEFT_ANCHOR_POINT.x,
                 REGION2_TOPLEFT_ANCHOR_POINT.y);
-        Point region2_pointB = new Point(
+        final Point region2_pointB = new Point(
                 REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region3_pointA = new Point(
+        final Point region3_pointA = new Point(
                 REGION3_TOPLEFT_ANCHOR_POINT.x,
                 REGION3_TOPLEFT_ANCHOR_POINT.y);
-        Point region3_pointB = new Point(
+        final Point region3_pointB = new Point(
                 REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
@@ -161,8 +166,8 @@ public class Camera {
          * Working variables
          */
         Mat region1_Cb, region2_Cb, region3_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
+        final Mat YCrCb = new Mat();
+        final Mat Cb = new Mat();
         int avg1, avg2, avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
@@ -325,7 +330,8 @@ public class Camera {
                         region2_pointB, // Second point which defines the rectangle
                         GREEN, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-            } else if (max == avg3) // Was it from region 3?
+            } else //noinspection ConstantConditions
+                if (max == avg3) // Was it from region 3?
             {
                 position = SkystonePosition.RIGHT; // Record our analysis
 

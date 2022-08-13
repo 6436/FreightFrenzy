@@ -2,48 +2,47 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.Alliance
-import org.firstinspires.ftc.teamcode.hardware.*
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.mechanisms.*
+import org.firstinspires.ftc.teamcode.opmodes.AutonomousMode
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.isStopRequested as globalIsStopRequested
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-abstract class BaseAutonomous : LinearOpMode() {
-    open val alliance = Alliance.RED
-
-    protected val drivetrain = Mecanum(0.9)
+// This autonomous implements an empty autonomous() function and can be run to test the autonomous setup
+// Actual autonomouses extend this class
+@Disabled
+@Autonomous
+open class BaseAutonomous : AutonomousMode() {
+    protected val drivetrain = Mecanum(0.9, false)
     protected val intake = Intake()
     protected val scoring = Scoring()
     protected val carousel = Carousel()
     private val pods = Pods()
     protected val camera = Camera()
+    private val mechanisms = setOf(drivetrain, intake, scoring, carousel, pods, camera)
 
-
-    @Throws(InterruptedException::class)
-    override fun runOpMode() {
+    override fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         globalTelemetry = telemetry
         globalHardwareMap = hardwareMap
         globalIsStopRequested = ::isStopRequested
 
-        drivetrain.initialize(alliance, false)
-        intake.initialize()
-        scoring.initialize()
-        carousel.initialize(alliance)
-        pods.initialize()
-        camera.initialize()
+        mechanisms.forEach { it.initialize() }
 
         pods.down()
         scoring.scoring.position = Scoring.Companion.Level.TOP.scoringPosition
+    }
 
-        waitForStart()
-
+    override fun begin() {
         camera.off()
+    }
 
-        autonomous()
+    override fun autonomous() {}
 
+    override fun end() {
 //        val startTime = System.nanoTime()
 //        while (System.nanoTime() - startTime < 5.0 * NANOSECONDS_PER_SECOND && opModeIsActive()) {
 //            drivetrain.odometry()
@@ -53,7 +52,7 @@ abstract class BaseAutonomous : LinearOpMode() {
 //            drivetrain.telemetry()
 //            telemetry.update()
 //        }
-        //        reset()
+//        reset()
     }
 
     fun bonus() {
@@ -75,8 +74,6 @@ abstract class BaseAutonomous : LinearOpMode() {
         }
         scoring.state2 = "start"
     }
-
-    abstract fun autonomous()
 
     private fun reset() {
         sleep(2500)

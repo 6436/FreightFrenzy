@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -21,7 +21,7 @@ abstract class Drivetrain : OpMode() {
     lateinit var fr: DcMotorEx
     lateinit var bl: DcMotorEx
     lateinit var br: DcMotorEx
-    lateinit var motors: Array<DcMotorEx>
+    lateinit var motors: List<DcMotorEx>
 
     override fun init() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -30,23 +30,22 @@ abstract class Drivetrain : OpMode() {
         globalHardwareMap = hardwareMap
 
         hubs = hardwareMap.getAll(LynxModule::class.java)
-        for (hub in hubs) hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+        hubs.forEach { it.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL }
 
         fl = hardwareMap.get(DcMotorEx::class.java, ::fl.name)
         fr = hardwareMap.get(DcMotorEx::class.java, ::fr.name)
         bl = hardwareMap.get(DcMotorEx::class.java, ::bl.name)
         br = hardwareMap.get(DcMotorEx::class.java, ::br.name)
-        motors = arrayOf(fl, fr, bl, br)
+        motors = listOf(fl, fr, bl, br)
 
-        for (motor in motors) {
+        motors.forEach {
+            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+            it.targetPosition = 0
 
-            motor.targetPosition = 0
+            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+            it.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
         fl.direction = DcMotorSimple.Direction.FORWARD
         bl.direction = DcMotorSimple.Direction.FORWARD
@@ -55,7 +54,7 @@ abstract class Drivetrain : OpMode() {
     }
 
     override fun loop() {
-        for (hub in hubs) hub.clearBulkCache()
+        hubs.forEach { it.clearBulkCache() }
 
         telemetry.addData("left current position", -fr.currentPosition)
         telemetry.addData("right current position", fl.currentPosition)

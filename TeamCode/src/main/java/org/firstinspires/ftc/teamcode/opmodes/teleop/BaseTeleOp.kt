@@ -2,34 +2,29 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import org.firstinspires.ftc.teamcode.Alliance
-import org.firstinspires.ftc.teamcode.hardware.*
+import org.firstinspires.ftc.teamcode.mechanisms.*
+import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode
 import org.firstinspires.ftc.teamcode.hardwareMap as globalHardwareMap
 import org.firstinspires.ftc.teamcode.telemetry as globalTelemetry
 
-open class BaseTeleOp : TeleOpMode() {
-    open val alliance = Alliance.RED
-
+abstract class BaseTeleOp : TeleOpMode() {
     private val drivetrain = Mecanum()
     private val intake = Intake()
     private val scoring = Scoring()
     private val carousel = Carousel()
-//    private val cap = Cap()
+
+    //    private val cap = Cap()
+
     private val pods = Pods()
+    private val mechanisms = setOf(drivetrain, intake, scoring, carousel, pods)
 
     override fun initialize() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-
         globalHardwareMap = hardwareMap
         globalTelemetry = telemetry
 
-        drivetrain.initialize()
-        intake.initialize()
-        scoring.initialize()
-        carousel.initialize(alliance)
-//        cap.initialize()
-        pods.initialize()
+        mechanisms.forEach { it.initialize() }
 
         pods.up()
     }
@@ -37,17 +32,10 @@ open class BaseTeleOp : TeleOpMode() {
     override fun update() {
         drivetrain.odometry()
 
-        drivetrain.update()
-        intake.update()
-        scoring.update()
-        carousel.update()
-//        cap.update()
-
-//        drivetrain.telemetry()
-//        intake.telemetry()
-//        scoring.telemetry()
-//        carousel.telemetry()
-//        cap.telemetry()
+        mechanisms.forEach {
+            it.update()
+            it.telemetry()
+        }
 
         telemetry.update()
     }

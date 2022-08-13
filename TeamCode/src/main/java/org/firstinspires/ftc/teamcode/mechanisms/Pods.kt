@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.mechanisms
 
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.hardwareMap
 import org.firstinspires.ftc.teamcode.telemetry
 
-class Pods {
+class Pods : Mechanism {
     private lateinit var left: Servo
     private lateinit var right: Servo
     private lateinit var back: Servo
 
-    fun initialize() {
+    override fun initialize() {
         left = hardwareMap.get(Servo::class.java, ::left.name)
         right = hardwareMap.get(Servo::class.java, ::right.name)
         back = hardwareMap.get(Servo::class.java, ::back.name)
@@ -27,7 +27,7 @@ class Pods {
         back.position = 0.0
     }
 
-    fun telemetry() {
+    override fun telemetry() {
         telemetry.addData("left position", left.position)
         telemetry.addData("right position", right.position)
         telemetry.addData("back position", back.position)

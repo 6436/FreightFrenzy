@@ -1,21 +1,35 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmodes.autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.BaseAutonomous
-import org.firstinspires.ftc.teamcode.hardware.Camera
-import org.firstinspires.ftc.teamcode.hardware.Scoring
+import org.firstinspires.ftc.teamcode.Alliance
+import org.firstinspires.ftc.teamcode.NANOSECONDS_PER_SECOND
+import org.firstinspires.ftc.teamcode.alliance
+import org.firstinspires.ftc.teamcode.mechanisms.Camera
+import org.firstinspires.ftc.teamcode.mechanisms.Scoring
 
 @Autonomous
-class RedFreightAutonomous(override val alliance: Alliance = Alliance.RED) : FreightAutonomous()
+class RedFreightAutonomous : FreightAutonomous() {
+    override fun initialize() {
+        super.initialize()
+
+        alliance = Alliance.RED
+    }
+}
 
 @Autonomous
-class BlueFreightAutonomous(override val alliance: Alliance = Alliance.BLUE) : FreightAutonomous()
+class BlueFreightAutonomous : FreightAutonomous() {
+    override fun initialize() {
+        super.initialize()
 
-open class FreightAutonomous : BaseAutonomous() {
+        alliance = Alliance.BLUE
+    }
+}
+
+abstract class FreightAutonomous : BaseAutonomous() {
     override fun autonomous() {
         // number of times Freight is scored, INCLUDING Pre-Load box
 
-        val CYCLES = when (camera.analysis) {
+        val cycles = when (camera.analysis) {
             Camera.SkystoneDeterminationPipeline.SkystonePosition.LEFT -> 4
             Camera.SkystoneDeterminationPipeline.SkystonePosition.CENTER -> 4
             else -> 4
@@ -27,7 +41,7 @@ open class FreightAutonomous : BaseAutonomous() {
             scoring.up()
             drivetrain.odometry()
         }
-        for (i in 1..CYCLES) {
+        for (i in 1..cycles) {
             var startTime = System.nanoTime()
             while (System.nanoTime() - startTime < 0.1 * NANOSECONDS_PER_SECOND) {
                 drivetrain.odometry()
@@ -47,7 +61,7 @@ open class FreightAutonomous : BaseAutonomous() {
                 drivetrain.odometry()
             }
             scoring.state =
-                if (i == CYCLES) Scoring.Companion.Level.DEAD else Scoring.Companion.Level.DOWN
+                if (i == cycles) Scoring.Companion.Level.DEAD else Scoring.Companion.Level.DOWN
             scoring.state2 = "start"
             drivetrain.move(
                 1,
@@ -59,7 +73,7 @@ open class FreightAutonomous : BaseAutonomous() {
 //break
             intake.suck()
             drivetrain.move(
-                x = if (i != CYCLES) (-31.6 - i * 2) else -31.6,
+                x = if (i != cycles) (-31.6 - i * 2) else -31.6,
                 slot = { scoring.up() },
                 power = 0.675
             )
@@ -70,7 +84,7 @@ open class FreightAutonomous : BaseAutonomous() {
                 drivetrain.odometry()
                 scoring.up()
             }
-            if (i == CYCLES) {
+            if (i == cycles) {
                 while (scoring.state2 != "done") {
                     scoring.up()
                     drivetrain.odometry()

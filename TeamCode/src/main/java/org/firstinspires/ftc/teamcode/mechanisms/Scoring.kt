@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware
+package org.firstinspires.ftc.teamcode.mechanisms
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -6,12 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.*
 
-class Scoring {
+class Scoring : Mechanism {
     companion object {
         private const val LIFT_POWER = 0.98
 
-        enum class Level(val liftPosition: Int, val spinPosition: Double, val scoringPosition: Double) {
-            DEAD(LIFT_DOWN_POSITION-200, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
+        enum class Level(
+            val liftPosition: Int,
+            val spinPosition: Double,
+            val scoringPosition: Double
+        ) {
+            DEAD(LIFT_DOWN_POSITION - 200, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
             DOWN(LIFT_DOWN_POSITION, SPIN_DOWN_POSITION, SCORING_DEFAULT_POSITION),
             BOTTOM(LIFT_BOTTOM_POSITION, SPIN_BOTTOM_POSITION, SCORING_CLOSE_POSITION),
             MIDDLE(LIFT_MIDDLE_POSITION, SPIN_MIDDLE_POSITION, SCORING_CLOSE_POSITION),
@@ -38,10 +42,11 @@ class Scoring {
     lateinit var leftLift: DcMotorEx
     lateinit var rightLift: DcMotorEx
     private lateinit var spin: Servo
-//    private lateinit var rightSpin: Servo
+
+    //    private lateinit var rightSpin: Servo
     lateinit var scoring: Servo
 
-    fun initialize() {
+    override fun initialize() {
         leftLift = hardwareMap.get(DcMotorEx::class.java, ::leftLift.name)
         rightLift = hardwareMap.get(DcMotorEx::class.java, ::rightLift.name)
 
@@ -80,14 +85,23 @@ class Scoring {
         scoring.position = Level.DOWN.scoringPosition
     }
 
+    // This is bad code that was hacked together in a time crunch
     var state = Level.DOWN
     var state2 = "done"
-    fun update() {
+    override fun update() {
         state = when {
-            gamepad2.a -> {state2 = "start";Level.DOWN}
-            gamepad2.x -> {state2 = "start";Level.BOTTOM}
-            gamepad2.y -> {state2 = "start";Level.MIDDLE}
-            gamepad2.b -> {state2 = "start";Level.TOP}
+            gamepad2.a -> {
+                state2 = "start";Level.DOWN
+            }
+            gamepad2.x -> {
+                state2 = "start";Level.BOTTOM
+            }
+            gamepad2.y -> {
+                state2 = "start";Level.MIDDLE
+            }
+            gamepad2.b -> {
+                state2 = "start";Level.TOP
+            }
             else -> state
         }
         up()
@@ -112,6 +126,7 @@ class Scoring {
 //        if (gamepad2.b) scoring.position -= 0.001
     }
 
+    // This is bad code that was hacked together in a time crunch
     private var startTime = System.nanoTime()
     private var flag = false
     private var flag2 = false
@@ -119,23 +134,25 @@ class Scoring {
         if (state2 == "start") {
             leftLift.targetPosition = LIFT_OK_POSITION
             rightLift.targetPosition = LIFT_OK_POSITION
-            state2= "next"
-        }
-        else if (state2 == "next") {
+            state2 = "next"
+        } else if (state2 == "next") {
             if (!leftLift.isBusy) {
                 spin.position = state.spinPosition
                 startTime = System.nanoTime()
                 state2 = "next2"
             }
-        }
-        else if (state2 == "next2") {if (System.nanoTime() - startTime > (when (state) {Level.DOWN-> 1.4
-                Level.DEAD-> 1.8
-                else-> 0.6}) * NANOSECONDS_PER_SECOND) {
-            leftLift.targetPosition = state.liftPosition
-            rightLift.targetPosition = state.liftPosition
-            state2 = "done"
-        }}
-        else if (state2 == "done") {
+        } else if (state2 == "next2") {
+            if (System.nanoTime() - startTime > (when (state) {
+                    Level.DOWN -> 1.4
+                    Level.DEAD -> 1.8
+                    else -> 0.6
+                }) * NANOSECONDS_PER_SECOND
+            ) {
+                leftLift.targetPosition = state.liftPosition
+                rightLift.targetPosition = state.liftPosition
+                state2 = "done"
+            }
+        } else if (state2 == "done") {
 
         }
 
@@ -156,7 +173,7 @@ class Scoring {
         scoring.position = SCORING_BOTTOM_POSITION
     }
 
-    fun telemetry() {
+    override fun telemetry() {
         telemetry.addData("left lift position", leftLift.currentPosition)
         telemetry.addData("right lift position", rightLift.currentPosition)
         telemetry.addData("stick position", scoring.position)

@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DEGREES_PER_ROTATION
-import org.firstinspires.ftc.teamcode.hardware.Imu
+import org.firstinspires.ftc.teamcode.mechanisms.Imu
 
 @TeleOp
 class Circumference : Drivetrain() {
@@ -25,8 +25,8 @@ class Circumference : Drivetrain() {
             for (index in motors.indices) motors[index].power =
                 POWER * if (index % 2 == 0) -1 else 1
         } else {
-            for (motor in motors) {
-                motor.power = 0.0
+            motors.forEach {
+                it.power = 0.0
             }
         }
 

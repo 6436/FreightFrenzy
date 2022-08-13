@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.testing
+package org.firstinspires.ftc.teamcode.opmodes.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.BaseAutonomous as NeutralAutonomous
 
 @Autonomous
-class Turn90Degrees : NeutralAutonomous() {
+class MoveLeftFourFeet : NeutralAutonomous() {
     override fun autonomous() {
-        drivetrain.move(heading = 90)
+        drivetrain.move(x = -48)
     }
 }
